@@ -123,7 +123,6 @@ class Notificacion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='notificaciones')
     solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE, related_name='notificaciones')
     contenido = models.CharField(max_length=255)
-    leida = models.BooleanField(default=False)
     fecha_envio = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
