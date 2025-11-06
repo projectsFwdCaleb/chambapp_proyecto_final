@@ -1,24 +1,24 @@
-from django.db import models;
+from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 
 # ============================================================
-# :uno: USUARIO (trabajador o cliente)
+# 1️ CANTÓN / PROVINCIA
 # ============================================================
-class Roles(models.model):
-    nombre = models.CharField()
-    permisos = models.CharField()
+class CantonProvincia(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
 
 
-class canton_provincia:
-    nombre: models.CharField()
-
-
+# ============================================================
+# 2️ USUARIO
+# ============================================================
 class Usuario(AbstractUser):
-    rol = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, related_name='usuarios')
-    foto_perfil = models.TextField()
+    foto_perfil = models.TextField(blank=True, null=True)
     verificado = models.BooleanField(default=False)
-    # Ubicación (compatible con Google Maps APIs)
-    canton_provincia = models.ForeignKey(canton_provincia, on_delete=models.SET_NULL, null=True, related_name='usuarios')
+    canton_provincia = models.ForeignKey(CantonProvincia, on_delete=models.SET_NULL, null=True, related_name='usuarios')
     direccion = models.CharField(max_length=255, blank=True, null=True)
     latitud = models.FloatField(blank=True, null=True)
     longitud = models.FloatField(blank=True, null=True)
@@ -26,20 +26,21 @@ class Usuario(AbstractUser):
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.username} ({self.rol})"
-    
+        return f"{self.username} registrado el {self.fecha_registro}"
+
 
 # ============================================================
-# :dos: CATEGORÍA
+# 3️ CATEGORÍA
 # ============================================================
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
+
     def __str__(self):
         return self.nombre
-    
+
 
 # ============================================================
-# :tres: SERVICIO (lo que ofrece un trabajador)
+# 4️ SERVICIO (lo que ofrece un trabajador)
 # ============================================================
 class Servicio(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='servicios')
@@ -49,31 +50,32 @@ class Servicio(models.Model):
     precio_referencial = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     disponibilidad = models.BooleanField(default=True)
     whatsapp_contacto = models.CharField(max_length=20, blank=True, null=True)
-    def __str__ (self):
+
+    def __str__(self):
         return f"{self.nombre_servicio} - {self.usuario.username}"
 
 
 # ============================================================
-# :cuatro: SOLICITUD (publicaciones pidiendo servicios)
+# 5️ SOLICITUD (publicaciones pidiendo servicios)
 # ============================================================
 class Solicitud(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='solicitudes')
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, related_name='solicitudes')
     titulo = models.CharField(max_length=150)
     descripcion = models.TextField()
-    estado = models.BooleanField()
+    estado = models.BooleanField(default=True)
     fecha_publicacion = models.DateTimeField(auto_now_add=True)
-    # Ubicación asociada a la solicitud
-    canton_provincia = models.ForeignKey(canton_provincia, on_delete=models.SET_NULL, null=True, related_name='solicitudes')
+    canton_provincia = models.ForeignKey(CantonProvincia, on_delete=models.SET_NULL, null=True, related_name='solicitudes')
     latitud = models.FloatField(blank=True, null=True)
     longitud = models.FloatField(blank=True, null=True)
     direccion = models.CharField(max_length=255, blank=True, null=True)
+
     def __str__(self):
-        return f"{self.titulo} ({self.estado})"
-    
+        return f"{self.titulo} ({'Activa' if self.estado else 'Cerrada'})"
+
 
 # ============================================================
-# :cinco: RESEnha / CALIFICACIÓN
+# 6️ RESEÑA
 # ============================================================
 class Resenha(models.Model):
     autor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='resenhas_realizadas')
@@ -81,25 +83,27 @@ class Resenha(models.Model):
     puntuacion = models.IntegerField(default=5)
     comentario = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(auto_now_add=True)
-    servicio = models.ForeignKey(Servicio, on_delete=models.SET_NULL, null=True, related_name='resenhas_realizadas')
+    servicio = models.ForeignKey(Servicio, on_delete=models.SET_NULL, null=True, related_name='resenhas')
+
     def __str__(self):
-        return f"Resenha de {self.autor.username} a {self.trabajador.username}"
-    
+        return f"Reseña de {self.autor.username} a {self.trabajador.username}"
+
 
 # ============================================================
-# :seis: MENSAJE / CHAT
+# 7️ MENSAJES
 # ============================================================
 class Mensaje(models.Model):
     remitente = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mensajes_enviados')
     destinatario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mensajes_recibidos')
-    contenido = models.TextField() #cifrado
+    contenido = models.TextField()
     fecha_envio = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return f"{self.remitente.username} → {self.destinatario.username}"
-    
+
 
 # ============================================================
-# :siete: PORTAFOLIO / TRABAJOS REALIZADOS
+# 8️ PORTAFOLIO
 # ============================================================
 class Portafolio(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='portafolio')
@@ -110,10 +114,10 @@ class Portafolio(models.Model):
 
     def __str__(self):
         return f"{self.titulo} - {self.usuario.username}"
-    
+
 
 # ============================================================
-# :ocho: NOTIFICACIONES
+# 9️ NOTIFICACIÓN
 # ============================================================
 class Notificacion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='notificaciones')
@@ -121,17 +125,20 @@ class Notificacion(models.Model):
     contenido = models.CharField(max_length=255)
     leida = models.BooleanField(default=False)
     fecha_envio = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        return f"Notif. para {self.usuario.username} - {self.mensaje[:30]}..."
-    
+        return f"Notif. para {self.usuario.username} - {self.contenido[:30]}..."
+
 
 # ============================================================
-# :nueve: Favoritos
+# 10 FAVORITOS
 # ============================================================
 class Favorito(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='favoritos')
     trabajador = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='guardado_por')
+
     class Meta:
-        unique_together = ('usuario', 'trabajador')  # evita duplicados
+        unique_together = ('usuario', 'trabajador')
+
     def __str__(self):
         return f"{self.usuario.username} → {self.trabajador.username}"
