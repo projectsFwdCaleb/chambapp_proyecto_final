@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from cryptography.fernet import Fernet
+from django.conf import settings
+cipher = Fernet(settings.ENCRYPTION_KEY)
 
 
 # ============================================================
@@ -106,8 +109,14 @@ class Resenha(models.Model):
 class Mensaje(models.Model):
     remitente = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mensajes_enviados')
     destinatario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mensajes_recibidos')
-    contenido = models.TextField()
+    contenido_cifrado = models.BinaryField()  # se almacena el texto cifrado
     fecha_envio = models.DateTimeField(auto_now_add=True)
+
+    def set_contenido(self, texto):
+        self.contenido_cifrado = cipher.encrypt(texto.encode())
+
+    def get_contenido(self):
+        return cipher.decrypt(self.contenido_cifrado).decode()
 
     def __str__(self):
         return f"{self.remitente.username} → {self.destinatario.username}"
