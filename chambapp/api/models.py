@@ -18,12 +18,23 @@ class canton_provincia(models.Model):
 class Usuario(AbstractUser):
     foto_perfil = models.TextField(blank=True, null=True)
     verificado = models.BooleanField(default=False)
-    canton_provincia = models.ForeignKey(CantonProvincia, on_delete=models.SET_NULL, null=True, related_name='usuarios')
+    canton_provincia = models.ForeignKey(canton_provincia, on_delete=models.SET_NULL, null=True, related_name='usuarios')
     direccion = models.CharField(max_length=255, blank=True, null=True)
     latitud = models.FloatField(blank=True, null=True)
     longitud = models.FloatField(blank=True, null=True)
     calificacion_promedio = models.FloatField(default=0)
     fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='api_usuarios',
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='api_usuarios_permisos',
+        blank=True
+    )    
 
     def __str__(self):
         return f"{self.username} registrado el {self.fecha_registro}"
@@ -65,7 +76,7 @@ class Solicitud(models.Model):
     descripcion = models.TextField()
     estado = models.BooleanField(default=True)
     fecha_publicacion = models.DateTimeField(auto_now_add=True)
-    canton_provincia = models.ForeignKey(CantonProvincia, on_delete=models.SET_NULL, null=True, related_name='solicitudes')
+    canton_provincia = models.ForeignKey(canton_provincia, on_delete=models.SET_NULL, null=True, related_name='solicitudes')
     latitud = models.FloatField(blank=True, null=True)
     longitud = models.FloatField(blank=True, null=True)
     direccion = models.CharField(max_length=255, blank=True, null=True)

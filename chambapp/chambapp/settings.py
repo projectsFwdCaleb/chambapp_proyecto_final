@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+AUTH_USER_MODEL = 'api.Usuario'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,8 +42,9 @@ INSTALLED_APPS = [
     'api',
     'rest_framework'
 ]  
-
+CORS_ALLOW_ALL_ORIGINS= True
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -79,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_chambapp',
         'USER': 'root',
-        'PASSWORD': 'Glavenus714!',
+        'PASSWORD': '1234',
         'HOST': '127.0.0.1',
         'PORT': 3306
     }

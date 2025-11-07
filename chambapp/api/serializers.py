@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth.hashers import make_password
 
 
 # canton_provincia
@@ -9,10 +10,14 @@ class canton_provinciaSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 # Usuario
-class UsuarioSerializers(serializers.ModelSerializer):
+class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = '__all__'
+        fields = ['id', 'username', 'password', 'email', 'Nombre', 'Apellido', 'Correo', 'foto_perfil', 'verificado', 'canton_provincia', 'direccion', 'latitud','longitud','calificacion_promedio', 'fecha_registro']
+        extra_kwargs = {'password': {'write_only': True}}
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)
 
 # Categoria
 class CategoriaSerializers(serializers.ModelSerializer):
@@ -20,7 +25,7 @@ class CategoriaSerializers(serializers.ModelSerializer):
         model = Categoria
         fields = '__all__'
 
-# servicio
+# Servicio
 class ServicioSerializers(serializers.ModelSerializer):
     class Meta:
         model = Servicio
