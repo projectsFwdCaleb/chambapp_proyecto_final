@@ -30,7 +30,7 @@ class CategoriaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=CategoriaSerializers  
 
 # Servicio
-class servicioListCreateView(generics.ListCreateAPIView):
+class ServicioListCreateView(generics.ListCreateAPIView):
     queryset = Servicio.objects.all()
     serializer_class=ServicioSerializers
 class ServicioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
