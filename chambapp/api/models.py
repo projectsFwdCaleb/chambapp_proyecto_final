@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 # ============================================================
 # 1️ CANTÓN / PROVINCIA
 # ============================================================
-class CantonProvincia(models.Model):
+class canton_provincia(models.Model):
     nombre = models.CharField(max_length=100)
 
     def __str__(self):
@@ -75,7 +75,7 @@ class Solicitud(models.Model):
 
 
 # ============================================================
-# 6️ RESEÑA
+# 6️ RESENHA
 # ============================================================
 class Resenha(models.Model):
     autor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='resenhas_realizadas')
