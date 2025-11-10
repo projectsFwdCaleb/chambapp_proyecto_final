@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 
 
 # canton_provincia
-class canton_provinciaSerializers(serializers.ModelSerializer):
+class canton_provinciaSerializer(serializers.ModelSerializer):
     class Meta:
         model = canton_provincia
         fields = '__all__'
@@ -76,7 +76,7 @@ class ServicioSerializer(serializers.ModelSerializer):
 
 
 # Solicitud
-class SolicitudSerializers(serializers.ModelSerializer):
+class SolicitudSerializer(serializers.ModelSerializer):
     class Meta:
         model = Solicitud
         fields = '__all__'
@@ -92,7 +92,7 @@ class SolicitudSerializers(serializers.ModelSerializer):
         return data
 
 # Resenha
-class ResenhaSerializers(serializers.ModelSerializer):
+class ResenhaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resenha
         fields = '__all__'
@@ -111,16 +111,24 @@ class ResenhaSerializers(serializers.ModelSerializer):
 
 
 # Mensaje
-class MensajeSerializers(serializers.ModelSerializer):
+class MensajeSerializer(serializers.ModelSerializer):
+    contenido = serializers.CharField(write_only=True)
     class Meta:
         model = Mensaje
-        fields = '__all__'
+        fields = ['id', 'remitente', 'destinatario', 'contenido', 'fecha_envio']
+        read_only_fields = ['fecha_envio']
+    # manejar contenido cifrado
+    def create(self, validated_data):
+        contenido_texto = validated_data.pop('contenido')
+        mensaje = Mensaje.objects.create(**validated_data)
+        mensaje.set_contenido(contenido_texto)
+        mensaje.save()
+        return mensaje
     
-    def validate_contenido(self, value):
-        # El mensaje no puede estar vacío
-        if not value.strip():
-            raise serializers.ValidationError("El mensaje no puede estar vacío.")
-        return value
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['contenido'] = instance.get_contenido()
+        return representation
 
    # def validate(self, data):
         # Evita que un usuario se envíe mensajes a sí mismo
@@ -129,7 +137,7 @@ class MensajeSerializers(serializers.ModelSerializer):
       #  return data
 
 # Portafolio
-class PortafolioSerializers(serializers.ModelSerializer):
+class PortafolioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Portafolio
         fields = '__all__'
@@ -141,14 +149,14 @@ class PortafolioSerializers(serializers.ModelSerializer):
         return value
 
 # Notificacion
-class NotificacionSerializers(serializers.ModelSerializer):
+class NotificacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notificacion
         fields = '__all__'
         read_only_fields = ['fecha_envio']  # La fecha se genera automáticamente al crear
 
 # Favorito
-class FavoritoSerializers(serializers.ModelSerializer):
+class FavoritoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorito
         fields = '__all__'
