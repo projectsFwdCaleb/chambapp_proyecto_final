@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import Group
 
 
 # canton_provincia
@@ -8,6 +9,21 @@ class canton_provinciaSerializer(serializers.ModelSerializer):
     class Meta:
         model = canton_provincia
         fields = '__all__'
+
+#UsuarioGroup
+class UsuarioGroupSerializer(serializers.ModelSerializer):
+    groups = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Group.objects.all()  # Necesario para poder asignar grupos existentes
+    )
+    class Meta:
+        model = Usuario
+        fields = ['id', 'username', 'groups']
+#group 
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['id', 'name']  # solo campos básicos
 
 # Usuario
 class UsuarioSerializer(serializers.ModelSerializer):
