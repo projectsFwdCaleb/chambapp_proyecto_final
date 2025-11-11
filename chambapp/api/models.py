@@ -21,6 +21,7 @@ class canton_provincia(models.Model):
 class Usuario(AbstractUser):
     foto_perfil = models.TextField(blank=True, null=True)
     verificado = models.BooleanField(default=False)
+    email = models.EmailField(unique=True, blank=False)
     canton_provincia = models.ForeignKey(canton_provincia, on_delete=models.SET_NULL, null=True, related_name='usuarios')
     direccion = models.CharField(max_length=255, blank=True, null=True)
     latitud = models.FloatField(blank=True, null=True)
@@ -109,9 +110,9 @@ class Resenha(models.Model):
 class Mensaje(models.Model):
     remitente = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mensajes_enviados')
     destinatario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mensajes_recibidos')
-    contenido_cifrado = models.BinaryField()  # se almacena el texto cifrado
+    contenido_cifrado = models.BinaryField(default=b'', blank=True)# se almacena el texto cifrado
     fecha_envio = models.DateTimeField(auto_now_add=True)
-
+    
     def set_contenido(self, texto):
         self.contenido_cifrado = cipher.encrypt(texto.encode())
 

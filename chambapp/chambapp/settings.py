@@ -14,6 +14,7 @@ from pathlib import Path
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from cryptography.fernet import Fernet
 
 AUTH_USER_MODEL = 'api.Usuario'
 
@@ -26,6 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-m$a_hlokwxoxl_k=-)efuxc(bzgq=7!l)!=*#5r37kypi_3)3e'
+ENCRYPTION_KEY = Fernet.generate_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

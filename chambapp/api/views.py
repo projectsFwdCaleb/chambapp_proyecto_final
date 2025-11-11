@@ -1,13 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import * 
 from rest_framework import generics
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from .serializers import *
 from django.utils import timezone # lapso de tiempo
 from datetime import timedelta # tiempo que se resta y se obtiene por ejemplo los ultimos 7 dias
 from rest_framework.decorators import api_view # permite que una funcion de python se com´porte como un endpoint
 from rest_framework.response import Response # necesario para api view 
-from django.db.models import Avg 
+from django.db.models import Avg, Q, Count
 
 
 # canton_provincia
@@ -134,31 +134,33 @@ def populares_hoy(request):
             resultados.append(usuario)
         return Response(resultados)
 
-# Obtener conversaciones de un usuario (personas con las que ha hablado)
+
+# conversaciones entre usuarios 
 @api_view(['GET'])
 def conversaciones_usuario(request, usuario_id):
-    # Obtener todas las combinaciones remitente/destinatario donde participa el usuario
-    ids_conversaciones = (
-        Mensaje.objects.filter(Q(remitente_id=usuario_id) | Q(destinatario_id=usuario_id))
-        .values_list('remitente_id', 'destinatario_id')
-        .distinct()
-    )
-    #IDs unicos de los otros usuarios
-    ids_flat = {i for par in ids_conversaciones for i in par if i != usuario_id}
-    # ultimo mensaje de cada conversación
-    conversaciones = []
-    for uid in ids_flat:
-        ultimo_mensaje = (
-            Mensaje.objects.filter(
-                Q(remitente_id=usuario_id, destinatario_id=uid) |
-                Q(remitente_id=uid, destinatario_id=usuario_id))
-            .order_by('-fecha_envio')
-            .first())
-        conversaciones.append({
-            'usuario': UsuarioSerializer(Usuario.objects.get(id=uid)).data,
-            'ultimo_mensaje': MensajeSerializer(ultimo_mensaje).data if ultimo_mensaje else None})
+    # Obtener todos los mensajes donde el usuario participa
+    mensajes = Mensaje.objects.filter(
+        Q(remitente_id=usuario_id) | Q(destinatario_id=usuario_id)
+    ).select_related('remitente', 'destinatario').order_by('-fecha_envio')
+    
+    # Procesar para obtener el último mensaje de cada conversación
+    conversaciones_dict = {}
+    
+    for msg in mensajes:
+        # Determinar quién es el otro usuario
+        other_user_id = msg.destinatario_id if msg.remitente_id == usuario_id else msg.remitente_id
+        
+        # Solo guardar si es la primera vez que vemos este usuario (el más reciente)
+        if other_user_id not in conversaciones_dict:
+            other_user = msg.destinatario if msg.remitente_id == usuario_id else msg.remitente
+            conversaciones_dict[other_user_id] = {
+                'usuario': UsuarioSerializer(other_user).data,
+                'ultimo_mensaje': MensajeSerializer(msg).data,
+                'ultima_fecha': msg.fecha_envio}
+    # Convertir a lista y ordenar
+    conversaciones = list(conversaciones_dict.values())
+    conversaciones.sort(key=lambda x: x['ultima_fecha'], reverse=True)
     return Response(conversaciones)
-
 
 # Obtener mensajes entre dos usuarios
 @api_view(['GET'])
@@ -171,24 +173,41 @@ def mensajes_entre_usuarios(request, usuario1_id, usuario2_id):
     serializer = MensajeSerializer(mensajes, many=True)
     return Response(serializer.data)
 
-# Obtener solicitudes por categoría
+# solicitudes_por_categoria
 @api_view(['GET'])
 def solicitudes_por_categoria(request, categoria_id):
-    solicitudes = Solicitud.objects.filter(
-        categoria_id=categoria_id,
-        estado=True
-    ).order_by('-fecha_publicacion')
-    serializer = SolicitudSerializer(solicitudes, many=True)
+    qs = Solicitud.objects.filter(categoria_id=categoria_id, estado=True).select_related('canton_provincia','usuario').order_by('-fecha_publicacion')
+    serializer = SolicitudSerializer(qs, many=True)
     return Response(serializer.data)
 
 # Obtener reseñas de un trabajador con promedio
 @api_view(['GET'])
 def resenhas_trabajador(request, trabajador_id):
-    resenhas = Resenha.objects.filter(trabajador_id=trabajador_id).order_by('-fecha')
-    promedio = resenhas.aggregate(Avg('puntuacion'))
-    serializer = ResenhaSerializer(resenhas, many=True)
+    trabajador = get_object_or_404(Usuario, id=trabajador_id)
+    qs = Resenha.objects.filter(trabajador_id=trabajador_id).order_by('-fecha')
+    agg = qs.aggregate(promedio=Avg('puntuacion'), total=Count('id'))
+    serializer = ResenhaSerializer(qs, many=True)
     return Response({
         'resenhas': serializer.data,
-        'promedio': round(promedio['puntuacion__avg'] or 0, 2),
-        'total': resenhas.count()
-    })
+        'promedio': round(agg['promedio'] or 0, 2),
+        'total': agg['total'] or 0})
+
+# Estadísticas de un trabajador
+@api_view(['GET'])
+def estadisticas_trabajador(request, trabajador_id):
+    trabajador = Usuario.objects.get(id=trabajador_id)
+    # Contar trabajos (reseñas recibidas)
+    trabajos_completados = Resenha.objects.filter(trabajador_id=trabajador_id).count()
+    # Promedio de calificación
+    promedio = Resenha.objects.filter(trabajador_id=trabajador_id).aggregate(Avg('puntuacion'))
+    # Servicios ofrecidos
+    servicios = Servicio.objects.filter(usuario_id=trabajador_id).count()
+    # Tasa de satisfacción (reseñas >= 4)
+    resenhas_positivas = Resenha.objects.filter(trabajador_id=trabajador_id, puntuacion__gte=4).count()
+    tasa_satisfaccion = (resenhas_positivas / trabajos_completados * 100) if trabajos_completados > 0 else 0
+    return Response({
+        'trabajos_completados': trabajos_completados,
+        'promedio_calificacion': round(promedio['puntuacion__avg'] or 0, 2),
+        'servicios_ofrecidos': servicios,
+        'tasa_satisfaccion': round(tasa_satisfaccion, 2),
+        'verificado': trabajador.verificado})
