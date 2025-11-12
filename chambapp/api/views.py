@@ -103,6 +103,8 @@ class FavoritoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Favorito.objects.all()
     serializer_class=FavoritoSerializer
 
+# CUSTOM VIEWS
+
 # Obtener servicios por categoría
 @api_view(['GET'])
 def servicios_por_categoria(request, categoria_id):

@@ -89,6 +89,13 @@ class ServicioSerializer(serializers.ModelSerializer):
         if Servicio.objects.filter(usuario=usuario, nombre_servicio__iexact=nombre).exists():
             raise serializers.ValidationError("Ya tienes un servicio con ese nombre.")
         return data
+    
+    def validate_cantidad_servicios(self, data):
+        #Evita que usuario añada mas de 3 servicios
+        user = data['usuario']
+        if Servicio.objects.filter(usuario=user).count() >= 3:
+            raise serializers.ValidationError("No puedes registrar más de 3 servicios.")
+        return data
 
 
 # Solicitud
@@ -106,6 +113,13 @@ class SolicitudSerializer(serializers.ModelSerializer):
         if lon is not None and not (-180 <= lon <= 180):
             raise serializers.ValidationError("Longitud fuera del rango válido (-180 a 180).")
         return data
+    
+    def validate_numero_activas(self, datos):
+        user = datos['usuario']
+        activas = Solicitud.objects.filter(usuario=user, estado=True).count()
+        if activas >= 3:
+            raise serializers.ValidationError("Solo se puede tener 3 solicitudes activas a la vez")
+        return datos
 
 # Resenha
 class ResenhaSerializer(serializers.ModelSerializer):
@@ -124,26 +138,33 @@ class ResenhaSerializer(serializers.ModelSerializer):
         if data['autor'] == data['trabajador']:
             raise serializers.ValidationError("No puedes reseñarte a ti mismo.")
         return data
-
+    
+    def validate_resenha_existente(self, respuesta):
+        usuario = respuesta['usuario']
+        trabajador = respuesta['trabajador']
+        if Resenha.objects.filter(usuario=usuario, trabajador=trabajador).exists():
+            raise serializers.ValidationError("Ya has reseñado a este trabajador.")
+        return respuesta
 
 # Mensaje
 class MensajeSerializer(serializers.ModelSerializer):
-    contenido_cifrado = serializers.CharField(write_only=True)
+    contenido = serializers.CharField(write_only=True)  # nombre lógico, el texto plano
+
     class Meta:
         model = Mensaje
-        fields = ['id', 'remitente', 'destinatario', 'contenido_cifrado', 'fecha_envio']
+        fields = ['id', 'remitente', 'destinatario', 'contenido', 'fecha_envio']
         read_only_fields = ['fecha_envio']
-    # manejar contenido cifrado
+
     def create(self, validated_data):
-        contenido_texto = validated_data.pop('contenido_cifrado')
+        contenido_texto = validated_data.pop('contenido')
         mensaje = Mensaje.objects.create(**validated_data)
-        mensaje.set_contenido_cifrado(contenido_texto)
+        mensaje.set_contenido(contenido_texto)  # ✅ usa el método real del modelo
         mensaje.save()
         return mensaje
-    
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['contenido_cifrado'] = instance.get_contenido_cifrado()
+        representation['contenido'] = instance.get_contenido()  # ✅ se descifra al devolver
         return representation
 
    # def validate(self, data):
