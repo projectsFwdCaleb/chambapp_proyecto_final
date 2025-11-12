@@ -15,6 +15,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from cryptography.fernet import Fernet
+from datetime import timedelta
 
 AUTH_USER_MODEL = 'api.Usuario'
 
@@ -27,13 +28,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-m$a_hlokwxoxl_k=-)efuxc(bzgq=7!l)!=*#5r37kypi_3)3e'
-ENCRYPTION_KEY = Fernet.generate_key()
+ENCRYPTION_KEY = b'5HqeT3lRK9tMdWIaQW8LtUk9hlJcU_4h5pOe6q04WrA='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Duración del token de acceso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),     # Duración del token de refresco
+    'ROTATE_REFRESH_TOKENS': False,                  # Si True, genera un nuevo refresh al renovar
+}
 
 # Application definition
 
@@ -48,7 +63,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'rest_framework_simplejwt'
 
 ]  
 CORS_ALLOW_ALL_ORIGINS= True

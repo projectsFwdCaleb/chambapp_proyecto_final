@@ -128,22 +128,22 @@ class ResenhaSerializer(serializers.ModelSerializer):
 
 # Mensaje
 class MensajeSerializer(serializers.ModelSerializer):
-    contenido = serializers.CharField(write_only=True)
+    contenido_cifrado = serializers.CharField(write_only=True)
     class Meta:
         model = Mensaje
-        fields = ['id', 'remitente', 'destinatario', 'contenido', 'fecha_envio']
+        fields = ['id', 'remitente', 'destinatario', 'contenido_cifrado', 'fecha_envio']
         read_only_fields = ['fecha_envio']
     # manejar contenido cifrado
     def create(self, validated_data):
-        contenido_texto = validated_data.pop('contenido')
+        contenido_texto = validated_data.pop('contenido_cifrado')
         mensaje = Mensaje.objects.create(**validated_data)
-        mensaje.set_contenido(contenido_texto)
+        mensaje.set_contenido_cifrado(contenido_texto)
         mensaje.save()
         return mensaje
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['contenido'] = instance.get_contenido()
+        representation['contenido_cifrado'] = instance.get_contenido_cifrado()
         return representation
 
    # def validate(self, data):

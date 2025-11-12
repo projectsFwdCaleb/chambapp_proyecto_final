@@ -108,20 +108,24 @@ class Resenha(models.Model):
 # 7️ MENSAJES
 # ============================================================
 class Mensaje(models.Model):
-    remitente = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mensajes_enviados')
-    destinatario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mensajes_recibidos')
-    contenido_cifrado = models.BinaryField(default=b'', blank=True)# se almacena el texto cifrado
+    remitente = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='mensajes_enviados')
+    destinatario = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='mensajes_recibidos')
+    contenido_cifrado = models.BinaryField(default=b'', blank=True)
     fecha_envio = models.DateTimeField(auto_now_add=True)
-    
+
     def set_contenido(self, texto):
         self.contenido_cifrado = cipher.encrypt(texto.encode())
 
     def get_contenido(self):
-        return cipher.decrypt(self.contenido_cifrado).decode()
+        if not self.contenido_cifrado:
+            return ''
+        try:
+            return cipher.decrypt(self.contenido_cifrado).decode()
+        except Exception:
+            return '[Error al descifrar mensaje]'
 
     def __str__(self):
         return f"{self.remitente.username} → {self.destinatario.username}"
-
 
 # ============================================================
 # 8️ PORTAFOLIO
