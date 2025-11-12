@@ -8,35 +8,35 @@ urlpatterns = [
     path('canton_provincia/', canton_provinciaListCreateView.as_view(), name='get y post canton_provincia'),
     path('canton_provincia/<int:pk>', canton_provinciaRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById canton_provincias'),
     # Usuario
-    path('Usuario/', UsuarioListCreateView.as_view(), name='get y post Usuarios'),
-    path('Usuario/<int:pk>', UsuarioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Usuarios'),
+    path('usuario/', UsuarioListCreateView.as_view(), name='get y post Usuarios'),
+    path('usuario/<int:pk>', UsuarioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Usuarios'),
     #login
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # Categoria
-    path('Categoria/', CategoriaListCreateView.as_view(), name='get y post Categorias'),
-    path('Categoria/<int:pk>', CategoriaRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Categorias'),
+    path('categoria/', CategoriaListCreateView.as_view(), name='get y post Categorias'),
+    path('categoria/<int:pk>', CategoriaRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Categorias'),
     # Servicio
-    path('Servicio/', ServicioListCreateView.as_view(), name='get y post Servicios'),
-    path('Servicio/<int:pk>', ServicioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Servicios'),
+    path('servicio/', ServicioListCreateView.as_view(), name='get y post Servicios'),
+    path('servicio/<int:pk>', ServicioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Servicios'),
     # Solicitud
-    path('Solicitud/', SolicitudListCreateView.as_view(), name='get y post Solicitudes'),
-    path('Solicitud/<int:pk>', SolicitudRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Solicitudes'),
+    path('solicitud/', SolicitudListCreateView.as_view(), name='get y post Solicitudes'),
+    path('solicitud/<int:pk>', SolicitudRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Solicitudes'),
     # Resenha
-    path('Resenha/', ResenhaListCreateView.as_view(), name='get y post Resenhas'),
-    path('Resenha/<int:pk>', ResenhaRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Resenhas'),
+    path('resenha/', ResenhaListCreateView.as_view(), name='get y post Resenhas'),
+    path('resenha/<int:pk>', ResenhaRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Resenhas'),
     # Mensaje
-    path('Mensaje/', MensajeListCreateView.as_view(), name='get y post Mensajes'),
-    path('Mensaje/<int:pk>', MensajeRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Mensajes'),
+    path('mensaje/', MensajeListCreateView.as_view(), name='get y post Mensajes'),
+    path('mensaje/<int:pk>', MensajeRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Mensajes'),
     # Portafolio
-    path('Portafolio/', PortafolioListCreateView.as_view(), name='get y post Portafolios'),
-    path('Portafolio/<int:pk>', PortafolioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Portafolios'),
+    path('portafolio/', PortafolioListCreateView.as_view(), name='get y post Portafolios'),
+    path('portafolio/<int:pk>', PortafolioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Portafolios'),
     # Notificacion
-    path('Notificacion/', NotificacionListCreateView.as_view(), name='get y post Notificaciones'),
-    path('Notificacion/<int:pk>', NotificacionRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Notificaciones'),
+    path('notificacion/', NotificacionListCreateView.as_view(), name='get y post Notificaciones'),
+    path('notificacion/<int:pk>', NotificacionRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Notificaciones'),
     # Favorito
-    path('Favorito/', FavoritoListCreateView.as_view(), name='get y post Favoritos'),
-    path('Favorito/<int:pk>', FavoritoRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Favoritos'),
+    path('favorito/', FavoritoListCreateView.as_view(), name='get y post Favoritos'),
+    path('favorito/<int:pk>', FavoritoRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Favoritos'),
 
     # ------------------------ CUSTOM ENDPOINTS ------------------------
     # Servicios por categoría
