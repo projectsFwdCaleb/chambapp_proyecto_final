@@ -1,8 +1,9 @@
-async function getGrupos() {
+async function getUsuarioGrupos
+() {
     
     try {
         
-        const response = await fetch("¿?",{
+        const response = await fetch("http://localhost:8000/api/usuario_group/",{
         method:'GET',
         headers : {
             'Content-Type': 'application/json'
@@ -21,11 +22,11 @@ async function getGrupos() {
 
 
 
-async function postGrupos (consulta) {
+async function postUsuarioGrupos (consulta) {
     
     try {
         
-        const response =await fetch("¿?",{
+        const response =await fetch("http://localhost:8000/api/usuario_group/",{
         method:'POST',
         headers : {
             'Content-Type': 'application/json' },
@@ -43,11 +44,11 @@ async function postGrupos (consulta) {
 
 
 
-async function deleteGrupos (id) {
+async function deleteUsuarioGrupos (id) {
     
     try {
         
-        const response =await fetch("¿?/"+ id,{
+        const response =await fetch("http://localhost:8000/api/usuario_group//"+ id,{
         method:'DELETE',
         headers : {
             'Content-Type': 'application/json'
@@ -64,11 +65,11 @@ async function deleteGrupos (id) {
 }
 
 
-async function putGrupos (id, consulta) {
+async function putUsuarioGrupos (id, consulta) {
     
     try {
         
-        const response =await fetch("¿?/"+ id,{
+        const response =await fetch("http://localhost:8000/api/usuario_group//"+ id,{
         method:'PUT',
         headers : {
             'Content-Type': 'application/json'
@@ -82,4 +83,6 @@ async function putGrupos (id, consulta) {
     }
 }
 
-export default {putGrupos,deleteGrupos,postGrupos,getGrupos}
+export default {putUsuarioGrupos,deleteUsuarioGrupos,postUsuarioGrupos,getUsuarioGrupos
+    
+}

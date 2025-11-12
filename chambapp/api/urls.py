@@ -10,6 +10,9 @@ urlpatterns = [
     # Usuario
     path('usuario/', UsuarioListCreateView.as_view(), name='get y post Usuarios'),
     path('usuario/<int:pk>', UsuarioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Usuarios'),
+    # UsuarioGroup
+    path('usuario_group/', UsuarioListCreateView.as_view(), name='get y post Usuarios'),
+    path('usuario_group/<int:pk>', UsuarioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Usuarios'),
     #login
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

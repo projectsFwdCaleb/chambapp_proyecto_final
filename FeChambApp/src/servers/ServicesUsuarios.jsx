@@ -2,7 +2,7 @@ async function getUsuarios() {
     
     try {
         
-        const response = await fetch("http://localhost:3001/Usuarios",{
+        const response = await fetch("http://localhost:8000/api/usuario/",{
         method:'GET',
         headers : {
             'Content-Type': 'application/json'
@@ -13,7 +13,7 @@ async function getUsuarios() {
         return Usuarios
 
     } catch (error) {
-        console.error("Error al obtener las Usuarios",error)
+        console.error("Error al obtener los Usuarios",error)
         throw error
     }
 }
@@ -25,7 +25,7 @@ async function postUsuarios (consulta) {
     
     try {
         
-        const response =await fetch("http://localhost:3001/Usuarios",{
+        const response =await fetch("http://localhost:8000/api/usuario/",{
         method:'POST',
         headers : {
             'Content-Type': 'application/json' },
@@ -36,7 +36,7 @@ async function postUsuarios (consulta) {
         return Usuarios
 
     } catch (error) {
-        console.error("Error al guardar las Usuarios",error)
+        console.error("Error al guardar los Usuarios",error)
         throw error
     }
 }
@@ -47,7 +47,7 @@ async function deleteUsuarios (id) {
     
     try {
         
-        const response =await fetch("http://localhost:3001/api/usuario/"+ id,{
+        const response =await fetch("http://localhost:8000/api/usuario/"+ id,{
         method:'DELETE',
         headers : {
             'Content-Type': 'application/json'
@@ -58,7 +58,7 @@ async function deleteUsuarios (id) {
         return products
  */
     } catch (error) {
-        console.error("Error al eliminar las Usuarios",error)
+        console.error("Error al eliminar los Usuarios",error)
         throw error
     }
 }
@@ -68,7 +68,7 @@ async function putUsuarios (id, consulta) {
     
     try {
         
-        const response =await fetch("http://localhost:3001/api/usuario/"+ id,{
+        const response =await fetch("http://localhost:8000/api/usuario/"+ id,{
         method:'PUT',
         headers : {
             'Content-Type': 'application/json'
@@ -77,7 +77,7 @@ async function putUsuarios (id, consulta) {
         })
         
     } catch (error) {
-        console.error("Error al actualizar las Usuarios",error)
+        console.error("Error al actualizar los Usuarios",error)
         throw error
     }
 }
