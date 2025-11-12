@@ -1,19 +1,19 @@
-async function getUsuarios() {
+async function getLogin() {
     
     try {
         
-        const response = await fetch("http://localhost:3001/Usuarios",{
+        const response = await fetch("http://localhost:3001/api/login/",{
         method:'GET',
         headers : {
             'Content-Type': 'application/json'
         }
         })
-        const Usuarios = await response.json()
+        const Login = await response.json()
         
-        return Usuarios
+        return Login
 
     } catch (error) {
-        console.error("Error al obtener las Usuarios",error)
+        console.error("Error al obtener el Login",error)
         throw error
     }
 }
@@ -21,33 +21,33 @@ async function getUsuarios() {
 
 
 
-async function postUsuarios (consulta) {
+async function postLogin (consulta) {
     
     try {
         
-        const response =await fetch("http://localhost:3001/Usuarios",{
+        const response =await fetch("http://localhost:3001/api/login/",{
         method:'POST',
         headers : {
             'Content-Type': 'application/json' },
         body:JSON.stringify(consulta)
         })
-        const Usuarios = await response.json()
+        const Login = await response.json()
         
-        return Usuarios
+        return Login
 
     } catch (error) {
-        console.error("Error al guardar las Usuarios",error)
+        console.error("Error al guardar el Login",error)
         throw error
     }
 }
 
 
 
-async function deleteUsuarios (id) {
+async function deleteLogin (id) {
     
     try {
         
-        const response =await fetch("http://localhost:3001/api/usuario/"+ id,{
+        const response =await fetch("http://localhost:3001/api/login/"+ id,{
         method:'DELETE',
         headers : {
             'Content-Type': 'application/json'
@@ -58,17 +58,17 @@ async function deleteUsuarios (id) {
         return products
  */
     } catch (error) {
-        console.error("Error al eliminar las Usuarios",error)
+        console.error("Error al eliminar el Login",error)
         throw error
     }
 }
 
 
-async function putUsuarios (id, consulta) {
+async function putLogin (id, consulta) {
     
     try {
         
-        const response =await fetch("http://localhost:3001/api/usuario/"+ id,{
+        const response =await fetch("http://localhost:3001/api/login/"+ id,{
         method:'PUT',
         headers : {
             'Content-Type': 'application/json'
@@ -77,9 +77,9 @@ async function putUsuarios (id, consulta) {
         })
         
     } catch (error) {
-        console.error("Error al actualizar las Usuarios",error)
+        console.error("Error al actualizar el Login",error)
         throw error
     }
 }
 
-export default {putUsuarios,deleteUsuarios,postUsuarios,getUsuarios}
+export default {putLogin,deleteLogin,postLogin,getLogin}

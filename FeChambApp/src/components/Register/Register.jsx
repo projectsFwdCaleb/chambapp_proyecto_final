@@ -10,6 +10,24 @@ function Register() {
     const [exito, setExito] = useState("")
     const navigate=useNavigate()
 
+    const ManejarRegistros = async () => {
+      /* borrar los mensajes de error y exito anteriores */
+      setError("")    
+      setExito("")
+      /* para que no puedan registrarse con campos en blanco (minimo que los inventen) */
+     if (!nombre || !correo || !telefono || !contraseña) {
+      setError("No has llenado todos los campos")
+      return
+     }
+     /* asegurarse que las contraseñas tengan mas de 8 carateres(Porque sera el minimo siempre es 8?) */
+    if (contraseña.length < 8) {
+      setError("La contraseña debe tener un minimo de 8 caracteres (porque no usas el nombre de una cancion).")
+      return
+    }
+    
+
+    }
+
   return (
     <div className="AreaRegister">
       <h1>Registro Para Usuarios</h1>
