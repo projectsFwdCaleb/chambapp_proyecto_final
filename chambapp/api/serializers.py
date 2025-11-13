@@ -135,16 +135,14 @@ class ResenhaSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         # Evita que un usuario se reseñe a sí mismo
-        if data['autor'] == data['trabajador']:
+        autor = data['autor']
+        trabajador = data['trabajador']
+        if autor == trabajador:
             raise serializers.ValidationError("No puedes reseñarte a ti mismo.")
-        return data
-    
-    def validate_resenha_existente(self, respuesta):
-        usuario = respuesta['usuario']
-        trabajador = respuesta['trabajador']
-        if Resenha.objects.filter(usuario=usuario, trabajador=trabajador).exists():
+        
+        if Resenha.objects.filter(autor=autor, trabajador=trabajador).exists():
             raise serializers.ValidationError("Ya has reseñado a este trabajador.")
-        return respuesta
+        return data
 
 # Mensaje
 class MensajeSerializer(serializers.ModelSerializer):

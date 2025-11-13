@@ -8,6 +8,8 @@ from datetime import timedelta # tiempo que se resta y se obtiene por ejemplo lo
 from rest_framework.decorators import api_view # permite que una funcion de python se com´porte como un endpoint
 from rest_framework.response import Response # necesario para api view 
 from django.db.models import Avg, Q, Count
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from .permissions import IsTrabajador
 
 
 # canton_provincia
@@ -16,12 +18,14 @@ class canton_provinciaListCreateView(generics.ListCreateAPIView):
     serializer_class=canton_provinciaSerializer
 class canton_provinciaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = canton_provincia.objects.all()
-    serializer_class=canton_provinciaSerializer  
+    serializer_class=canton_provinciaSerializer
+    permission_classes= [IsAuthenticated, IsAdminUser]  
 
 # Group
 class GroupReadOnlyView(generics.ListAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    permission_classes= [IsAuthenticated, IsAdminUser]
 
 # UsuarioGroup
 class UsuarioGroupListCreateView(generics.ListCreateAPIView):
@@ -30,6 +34,7 @@ class UsuarioGroupListCreateView(generics.ListCreateAPIView):
 class UsuarioGroupUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioGroupSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
 # Usuario
 class UsuarioListCreateView(generics.ListCreateAPIView):
@@ -37,7 +42,8 @@ class UsuarioListCreateView(generics.ListCreateAPIView):
     serializer_class=UsuarioSerializer
 class UsuarioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
-    serializer_class=UsuarioSerializer    
+    serializer_class=UsuarioSerializer
+    permission_classes = [IsAuthenticated]    
 
 # Categoria
 class CategoriaListCreateView(generics.ListCreateAPIView):
@@ -46,6 +52,7 @@ class CategoriaListCreateView(generics.ListCreateAPIView):
 class CategoriaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Categoria.objects.all()
     serializer_class=CategoriaSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
 # Servicio
 class ServicioListCreateView(generics.ListCreateAPIView):
@@ -53,7 +60,8 @@ class ServicioListCreateView(generics.ListCreateAPIView):
     serializer_class=ServicioSerializer
 class ServicioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Servicio.objects.all()
-    serializer_class=ServicioSerializer    
+    serializer_class=ServicioSerializer
+    permission_classes = [IsAuthenticated, IsTrabajador | IsAdminUser]    
 
 # Solicitud
 class SolicitudListCreateView(generics.ListCreateAPIView):
@@ -61,23 +69,28 @@ class SolicitudListCreateView(generics.ListCreateAPIView):
     serializer_class=SolicitudSerializer
 class SolicitudRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Solicitud.objects.all()
-    serializer_class=SolicitudSerializer    
+    serializer_class=SolicitudSerializer
+    permission_classes = [IsAuthenticated] 
 
 # Resenha
 class ResenhaListCreateView(generics.ListCreateAPIView):
     queryset = Resenha.objects.all()
     serializer_class=ResenhaSerializer
+    permission_classes = [IsAuthenticated]
 class ResenhaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Resenha.objects.all()
-    serializer_class=ResenhaSerializer    
+    serializer_class=ResenhaSerializer
+    permission_classes = [IsAuthenticated]
 
 # Mensaje
 class MensajeListCreateView(generics.ListCreateAPIView):
     queryset = Mensaje.objects.all()
     serializer_class=MensajeSerializer
+    permission_classes = [IsAuthenticated]
 class MensajeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Mensaje.objects.all()
-    serializer_class=MensajeSerializer    
+    serializer_class=MensajeSerializer
+    permission_classes = [IsAuthenticated] 
 
 # Portafolio
 class PortafolioListCreateView(generics.ListCreateAPIView):
@@ -91,17 +104,21 @@ class PortafolioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView)
 class NotificacionListCreateView(generics.ListCreateAPIView):
     queryset = Notificacion.objects.all()
     serializer_class=NotificacionSerializer
+    permission_classes = [IsAuthenticated, IsTrabajador]
 class NotificacionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Notificacion.objects.all()
-    serializer_class=NotificacionSerializer    
+    serializer_class=NotificacionSerializer
+    permission_classes = [IsAuthenticated, IsTrabajador]    
 
 # Favorito
 class FavoritoListCreateView(generics.ListCreateAPIView):
     queryset = Favorito.objects.all()
     serializer_class=FavoritoSerializer
+    permission_classes = [IsAuthenticated]
 class FavoritoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Favorito.objects.all()
     serializer_class=FavoritoSerializer
+    permission_classes = [IsAuthenticated]
 
 # CUSTOM VIEWS
 
@@ -163,6 +180,7 @@ def conversaciones_usuario(request, usuario_id):
     conversaciones = list(conversaciones_dict.values())
     conversaciones.sort(key=lambda x: x['ultima_fecha'], reverse=True)
     return Response(conversaciones)
+    
 
 # Obtener mensajes entre dos usuarios
 @api_view(['GET'])
