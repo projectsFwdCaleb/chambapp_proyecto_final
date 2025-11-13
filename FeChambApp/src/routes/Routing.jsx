@@ -7,14 +7,14 @@ import PaginaPerfil from '../pages/PaginaPerfil'
 import PaginaAdministrador from '../pages/PaginaAdministrador'
 export default function Routing() {
   return (
-    <div>
       <Router>
-        <Route path='/' element={<LandingPage/>} />
-        <Route path='/Loging' element={<PaginaLogingRegister/>}/>
-        <Route path='/Trabajador' element={<PaginaTrabajador/>}/>
-        <Route path='/Perfil' element={<PaginaPerfil/>}/>
-        <Route path='/Administrador' element={<PaginaAdministrador/>}/>
+        <Routes>
+          <Route path='/' element={<LandingPage/>} />
+          <Route path='/Loging' element={<PaginaLogingRegister/>}/>
+          <Route path='/Trabajador' element={<PaginaTrabajador/>}/>
+          <Route path='/Perfil' element={<PaginaPerfil/>}/>
+          <Route path='/Administrador' element={<PaginaAdministrador/>}/>
+        </Routes>
       </Router>
-    </div>
-  )
+  );
 }

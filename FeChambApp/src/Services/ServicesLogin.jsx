@@ -5,13 +5,15 @@ async function postLogin (consulta) {
         method:'POST',
         headers : {
             'Content-Type': 'application/json',
-            headers: 'Bearer $(token)'
             },
             body:JSON.stringify(consulta)
-        })
-        const Login = await response.json()
-        
-        return await response.json()
+        });
+
+        if(!response.ok){
+            throw new Error("Error al iniciar sesion :C")
+        }
+        const login = await response.json()
+        return login
 
     } catch (error) {
         console.error("Error al guardar el Login",error)
