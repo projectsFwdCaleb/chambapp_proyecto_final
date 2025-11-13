@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './Login.css'
-import ServicesLogin from '../../servers/ServicesLogin'
+import ServicesLogin from '../../Services/ServicesLogin'
 function Login() {
     const [nombreU,SetNombreU] = useState("")
     const [contraseña,setContraseña] = useState("")

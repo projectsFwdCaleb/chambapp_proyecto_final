@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './Register.css'
-import ServicesUsuarios from '../../servers/ServicesUsuarios'
+import ServicesUsuarios from '../../Services/ServicesUsuarios'
 function Register() {
     const [nombreU,SetNombreU] = useState("")
     const [contraseña,setContraseña] = useState("")
