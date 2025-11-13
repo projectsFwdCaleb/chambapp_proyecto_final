@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './Login.css'
-import ServicesUsuarios from '../../servers/ServicesUsuarios'
+import ServicesLogin from '../../servers/ServicesLogin'
 function Login() {
     const [nombreU,SetNombreU] = useState("")
     const [contraseña,setContraseña] = useState("")
@@ -9,32 +9,20 @@ function Login() {
 
     const verificarU = async () => {
         try {
-          const usuarios = await ServicesUsuarios.getUsuarios()
+          const credentials = {
+            username: nombreU,
+            password: contraseña
+          }
+          const response = await ServicesLogin.postLogin(credentials)
 
-          console.log(usuarios);
-
-          const usuarioEncontrado = usuarios.find(
-        user => user.nombre === nombre && user.contraseña === contraseña
-      )
-
-      if (!usuarioEncontrado) {
-        /*console.log("Tus credenciales no son correctas ")*/
-        navigate("/")
-        return
-      }
-
-      if (usuarioEncontrado.grupo=== "?") {
-        /*localStorage.setItem("usuario", JSON.stringify(usuarioEncontrado))
-        console.log("Tus credenciales son correctas",usuarioEncontrado)*/
-        navigate("/")
-      } else {
-        /*console.log("Tipo de usuario no reconocido")*/
-      }
+          localStorage.setItem('access_token', response.access)
+          localStorage.setItem('refresh_token', response.refresh)
+          console.log("Login exitoso :)")
+          navigate("/dashboard")
 
         } catch (error) {
-      console.error("Error al obtener usuarios:", error)
-    }      
-        
+          console.error("Error al del Login:", error)
+        }         
     }
 
   return (
@@ -46,7 +34,7 @@ function Login() {
         {/* InCon = ingresar contraseña */}
         <label htmlFor="InCon">Contraseña</label><br />
         <input type="password" id='InCon' value={contraseña} onChange={(e) => setContraseña(e.target.value)}/><br />
-        <button onClick={VerificarUser}>Entrar</button>
+        <button onClick={verificarU}>Entrar</button>
     </div>
   )
 }

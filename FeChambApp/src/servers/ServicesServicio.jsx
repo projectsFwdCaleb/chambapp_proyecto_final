@@ -2,7 +2,7 @@ async function getServicio() {
     
     try {
         
-        const response = await fetch("¿?",{
+        const response = await fetch("http://localhost:8000/api/servicio/",{
         method:'GET',
         headers : {
             'Content-Type': 'application/json'
@@ -25,7 +25,7 @@ async function postServicio (consulta) {
     
     try {
         
-        const response =await fetch("¿?",{
+        const response =await fetch("http://localhost:8000/api/servicio/",{
         method:'POST',
         headers : {
             'Content-Type': 'application/json' },
@@ -47,7 +47,7 @@ async function deleteServicio (id) {
     
     try {
         
-        const response =await fetch("¿?/"+ id,{
+        const response =await fetch("http://localhost:8000/api/servicio//"+ id,{
         method:'DELETE',
         headers : {
             'Content-Type': 'application/json'
@@ -68,7 +68,7 @@ async function putServicio (id, consulta) {
     
     try {
         
-        const response =await fetch("¿?/"+ id,{
+        const response =await fetch("http://localhost:8000/api/servicio//"+ id,{
         method:'PUT',
         headers : {
             'Content-Type': 'application/json'
