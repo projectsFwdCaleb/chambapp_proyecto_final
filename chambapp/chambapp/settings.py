@@ -73,7 +73,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt'
 
 ]  
-CORS_ALLOW_ALL_ORIGINS= True
+CORS_ALLOW_ALL_ORIGINS = True
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
