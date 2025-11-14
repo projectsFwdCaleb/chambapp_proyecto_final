@@ -2,7 +2,7 @@ import React,{useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './Register.css'
 import ServicesUsuarios from '../../Services/ServicesUsuarios'
-/*Traeremos los servicios del login para una funcion especial ;) */
+import ServicesUsuarioGrupos from '../../Services/ServicesUsuarioGrupos'
 import ServicesLogin from '../../Services/ServicesLogin';
 function Register() {
     /*Las constantes, porque llevamos 5 meses haciendo constantes y no 
@@ -24,7 +24,7 @@ function Register() {
       return
      }
      /* asegurarse que las passwords tengan mas de 8 carateres(Porque sera el minimo siempre es 8?) */
-    if (password.length < 8) {
+     if (password.length < 8) {
       setError("La password debe tener un minimo de 8 caracteres (y trata de no olvidarla).")
       return
     }
@@ -33,10 +33,15 @@ function Register() {
         const nuevoUsuario={
           username: username,
           email: correo,
-          password: password
+          password: password,
         };
-        const respuesta = await ServicesUsuarios.postUsuarios(nuevoUsuario);
+        const grupo={
+          group_id: 1,
+          usuario_id: nuevoUsuario.usuario_id
+        }
 
+        const respuesta = await ServicesUsuarios.postUsuarios(nuevoUsuario);
+        const respuestaG = await ServicesUsuarioGrupos.postUsuarioGrupos(grupo) 
         if (respuesta && respuesta.id) {
           /*Aqui la funcionalidad Especial, un [AUTOLOGIN]  */
           setExito("Usuario registrado correctamente. Iniciado sesion.....;)")
