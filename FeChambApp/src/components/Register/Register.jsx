@@ -8,7 +8,6 @@ function Register() {
     /*Las constantes, porque llevamos 5 meses haciendo constantes y no 
     pareses que vallamos a parar en algun momento  */
     const [username,Setusername] = useState("")
-    const [email, setEmail] = useState("");
     const [password,setpassword] = useState("")
     const [correo,setCorreo] = useState("")
     const [error,setError] = useState("")
@@ -31,12 +30,12 @@ function Register() {
     }
     
     try{
-        const nuevoUsario={
+        const nuevoUsuario={
           username: username,
-          email: email,
+          email: correo,
           password: password
         };
-        const respuesta = await ServicesUsuarios.postUsuarios(nuevoUsario);
+        const respuesta = await ServicesUsuarios.postUsuarios(nuevoUsuario);
 
         if (respuesta && respuesta.id) {
           /*Aqui la funcionalidad Especial, un [AUTOLOGIN]  */
@@ -47,7 +46,7 @@ function Register() {
           /*Usaremos estas dos lineas para guardar los tokens en el local storage*/
           localStorage.setItem('access_token', loginResponse.access);
           localStorage.setItem('refresh_token', loginResponse.refresh);
-
+          navigate("/Home")
         } else if(respuesta.username) {
           setError("Ese nombre de usuario ya está en uso.");
         } else if (respuesta.email) {

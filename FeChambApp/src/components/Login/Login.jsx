@@ -18,7 +18,7 @@ function Login() {
           localStorage.setItem('access_token', response.access)
           localStorage.setItem('refresh_token', response.refresh)
           console.log("Login exitoso :)")
-          navigate("/dashboard")
+          navigate("/Home")
 
         } catch (error) {
           console.error("Error al del Login:", error)
