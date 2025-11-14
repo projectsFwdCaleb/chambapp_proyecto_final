@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import * 
-from rest_framework import generics
+from rest_framework import generics, filters
 from django.contrib.auth.models import Group
 from .serializers import *
 from django.utils import timezone # lapso de tiempo
@@ -10,7 +10,7 @@ from rest_framework.response import Response # necesario para api view
 from django.db.models import Avg, Q, Count
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .permissions import IsTrabajador
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 # canton_provincia
 class canton_provinciaListCreateView(generics.ListCreateAPIView):
@@ -43,7 +43,7 @@ class UsuarioListCreateView(generics.ListCreateAPIView):
 class UsuarioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
     serializer_class=UsuarioSerializer
-    permission_classes = [IsAuthenticated]    
+    permission_classes = [IsAuthenticated]  
 
 # Categoria
 class CategoriaListCreateView(generics.ListCreateAPIView):
@@ -56,8 +56,12 @@ class CategoriaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 # Servicio
 class ServicioListCreateView(generics.ListCreateAPIView):
-    queryset = Servicio.objects.all()
-    serializer_class=ServicioSerializer
+    queryset = Servicio.objects.all().exclude(nombre_servicio__isnull=True).exclude(descripcion__isnull=True)
+    serializer_class = ServicioSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['usuario', 'categoria']
+    search_fields = ['nombre_servicio', 'descripcion']
+
 class ServicioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Servicio.objects.all()
     serializer_class=ServicioSerializer

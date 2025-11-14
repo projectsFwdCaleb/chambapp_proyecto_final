@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 // import Dropdown from 'react-bootstrap/Dropdown';
-import ServicesCategoria from '../../servers/ServicesCategoria';
+import ServicesCategoria from '../../Services/ServicesCategoria';
 import { useNavigate } from "react-router-dom";
 import "../SidebarRender/SidebarRender.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,7 +16,7 @@ function SidebarRender() {
   useEffect(() => {
     const getCategories = async () => {
         const data = await ServicesCategoria.getCategoria()
-        setCategorias(data)
+        setCategorias(Array.isArray(data) ? data : data.results || data.data || [])
     }
     getCategories()
   }, [])
