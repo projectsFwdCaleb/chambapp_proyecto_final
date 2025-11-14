@@ -20,4 +20,23 @@ async function postLogin (consulta) {
         throw error
     }
 }
-export default {postLogin}
+
+async function getUserSession() {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch("http://localhost:8000/auth/user/", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error("No se pudo obtener usuario en sesión");
+  }
+
+  return await response.json();
+}
+
+export default { postLogin, getUserSession };

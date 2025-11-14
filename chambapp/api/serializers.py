@@ -10,6 +10,17 @@ class canton_provinciaSerializer(serializers.ModelSerializer):
         model = canton_provincia
         fields = '__all__'
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        groups = self.user.groups.values_list('name', flat=True)
+
+        data['role'] = groups[0] if groups else None
+        data['id'] = self.user.id 
+        
+        return data
+
 #UsuarioGroup
 class UsuarioGroupSerializer(serializers.ModelSerializer):
     groups = serializers.PrimaryKeyRelatedField(

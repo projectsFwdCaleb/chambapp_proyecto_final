@@ -1,11 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import ServicesServicio from '../../Services/ServicesServicio';
+import ServicesLogin from "../../Services/ServicesLogin";
+import Dropdown from 'react-bootstrap/Dropdown';
 
 function Header() {
   const [search, setSearch] = useState("");
   const [servicios, setServicios] = useState([]);
   const [page, setPage] = useState(1);
+  const [user, setUser] = useState(null);
+
+
+// Obtener usuario en sesión usando el token
+useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const data = await ServicesLogin.getUserSession();
+        setUser(data);
+      } catch (err) {
+        console.error("Error al obtener usuario en sesión:", err);
+      }
+    };
+  fetchUser();
+}, []);
+
 
 useEffect(() => {
 // Solo buscar si hay texto en el search
@@ -41,7 +59,48 @@ useEffect(() => {
        </ul>
       </div>
 
+   {/* PROFILE DROPDOWN */}
+      <Dropdown>
+        <Dropdown.Toggle variant="light" id="dropdown-user">
+          {user ? (
+            <div className="dropdownProfileMenu">
+              <img
+                src={user.foto_perfil || "/default.png"}
+                alt={user.username}
+                className="img-perfil"
+              />
+              <span>{user.username}</span>
+            </div>
+          ) : (
+            <button>Iniciar sesión</button>
+          )}
+        </Dropdown.Toggle>
 
+        <Dropdown.Menu>
+          <Dropdown.Item disabled>
+            {user && (
+              <div>
+                <strong>{user.username}</strong>
+                <br />
+                <small>{user.email}</small>
+              </div>
+            )}
+          </Dropdown.Item>
+
+          <Dropdown.Divider />
+
+          <Dropdown.Item href="/perfil">Editar Perfil</Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              localStorage.removeItem("access_token");
+              localStorage.removeItem("refresh_token");
+              window.location.href = "/";
+            }}
+          >
+            Cerrar sesión
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
 
 
     </div>

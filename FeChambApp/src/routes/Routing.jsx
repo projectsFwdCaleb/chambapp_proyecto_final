@@ -9,19 +9,11 @@ export default function Routing() {
   return (
       <Router>
         <Routes>
-<<<<<<< HEAD
-          <Route path='/' element={<LandingPage/>} />
-          <Route path='/Loging' element={<PaginaLogingRegister/>}/>
-          <Route path='/Trabajador' element={<PaginaTrabajador/>}/>
-          <Route path='/Perfil' element={<PaginaPerfil/>}/>
-          <Route path='/Administrador' element={<PaginaAdministrador/>}/>
-=======
         <Route path='/Home' element={<LandingPage/>} />
         <Route path='/Loging' element={<PaginaLogingRegister/>}/>
         <Route path='/Trabajador' element={<PaginaTrabajador/>}/>
         <Route path='/Perfil' element={<PaginaPerfil/>}/>
         <Route path='/Administrador' element={<PaginaAdministrador/>}/>
->>>>>>> 58ef66ae3e6db3db8b48d0cacf0c5472fabc4e5d
         </Routes>
       </Router>
   );

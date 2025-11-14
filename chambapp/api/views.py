@@ -6,11 +6,22 @@ from .serializers import *
 from django.utils import timezone # lapso de tiempo
 from datetime import timedelta # tiempo que se resta y se obtiene por ejemplo los ultimos 7 dias
 from rest_framework.decorators import api_view # permite que una funcion de python se com´porte como un endpoint
-from rest_framework.response import Response # necesario para api view 
+from rest_framework.response import Response # necesario para api view
+from rest_framework.views import APIView
 from django.db.models import Avg, Q, Count
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .permissions import IsTrabajador
 from django_filters.rest_framework import DjangoFilterBackend
+from .serializers import UserSerializer
+
+
+# usuario en sesion
+class UserInSession(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
 
 # canton_provincia
 class canton_provinciaListCreateView(generics.ListCreateAPIView):
@@ -19,7 +30,10 @@ class canton_provinciaListCreateView(generics.ListCreateAPIView):
 class canton_provinciaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = canton_provincia.objects.all()
     serializer_class=canton_provinciaSerializer
-    permission_classes= [IsAuthenticated, IsAdminUser]  
+    permission_classes= [IsAuthenticated, IsAdminUser]
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 # Group
 class GroupReadOnlyView(generics.ListAPIView):
