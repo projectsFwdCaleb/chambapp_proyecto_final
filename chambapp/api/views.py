@@ -13,12 +13,10 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .permissions import IsTrabajador
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import UserSerializer
-
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 # usuario en sesion
 class UserInSession(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)

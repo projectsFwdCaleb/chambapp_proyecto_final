@@ -17,6 +17,7 @@ urlpatterns = [
     #login
     path('login/', CustomTokenObtainPairView.as_view(), name='custom_token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('user/', UserInSession.as_view(), name='user_in_session'),
     # Categoria
     path('categoria/', CategoriaListCreateView.as_view(), name='get y post Categorias'),
     path('categoria/<int:pk>', CategoriaRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Categorias'),

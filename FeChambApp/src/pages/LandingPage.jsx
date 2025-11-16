@@ -8,14 +8,20 @@ import SidebarRender from "../components/SidebarRender/SidebarRender";
 
 function LandingPage() {
   return (
-    <div>
-      <Header/>
-      <SidebarRender />
-      <CarruselTrabajo/>
-      <Footer/>
+    <div className="d-flex">
+      <div className="col-2">
+        <SidebarRender/>
+      </div>
+      
+      <div className="col-6">
+        <Header/>
+      </div>
+      <div className="col-2">
+
+      </div>
+     
     </div>
   )
 }
 
 export default LandingPage
- /* </> */

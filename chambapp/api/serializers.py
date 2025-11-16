@@ -2,6 +2,23 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+User = get_user_model()
+
+# Usuario en sesión
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'foto_perfil',
+        ]
 
 
 # canton_provincia

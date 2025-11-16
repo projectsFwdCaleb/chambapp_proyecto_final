@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ServicesServicio from '../../Services/ServicesServicio';
 import ServicesLogin from "../../Services/ServicesLogin";
 import Dropdown from 'react-bootstrap/Dropdown';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "../Header/Header.css"
 
 function Header() {
   const [search, setSearch] = useState("");
@@ -44,65 +46,76 @@ useEffect(() => {
   return () => clearTimeout(delay);
 }, [search, page]);
 
+
+
+
   return (
-    <div>
+    <div className='header-container'>
+      {/* Barra de búsqueda */}
       <div className='searchBar'>
-        <input type="text" placeholder='Buscar por trabajador o servicio' value={search}
-        onChange={(e) => setSearch(e.target.value)}/>
-      
-        <ul>
+        <span className='search-icon'></span>
+        <input 
+          type="text" 
+          placeholder='Buscar por nombre o servicio' 
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        
+        {search.trim() && servicios.length > 0 && (
+          <ul className='search-results'>
             {servicios.map((servicio) => (
               <li key={servicio.id}>
                 <strong>{servicio.nombre_servicio}</strong> – {servicio.descripcion}
               </li>
             ))}
-       </ul>
+          </ul>
+        )}
       </div>
 
-   {/* PROFILE DROPDOWN */}
-      <Dropdown>
-        <Dropdown.Toggle variant="light" id="dropdown-user">
-          {user ? (
-            <div className="dropdownProfileMenu">
-              <img
-                src={user.foto_perfil || "/default.png"}
-                alt={user.username}
-                className="img-perfil"
-              />
-              <span>{user.username}</span>
-            </div>
-          ) : (
-            <button>Iniciar sesión</button>
-          )}
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu>
-          <Dropdown.Item disabled>
-            {user && (
-              <div>
-                <strong>{user.username}</strong>
-                <br />
-                <small>{user.email}</small>
+      {/* Usuario */}
+      <div className='user-section'>
+        {!user ? (
+          <Link to="/Loging">
+            <button>Iniciar Sesión</button>
+          </Link>
+        ) : (
+          <Dropdown align="end">
+            <Dropdown.Toggle variant="dark" id="dropdown-user">
+              <div className="dropdownProfileMenu">
+                <img
+                  src={user.foto_perfil || "/default.png"}
+                  alt={user.username}
+                  className="img-perfil"
+                />
+                <span>{user.username}</span>
               </div>
-            )}
-          </Dropdown.Item>
+            </Dropdown.Toggle>
 
-          <Dropdown.Divider />
+            <Dropdown.Menu>
+              <Dropdown.Item disabled>
+                <div>
+                  <strong>{user.username}</strong>
+                  <br />
+                  <small>{user.email}</small>
+                </div>
+              </Dropdown.Item>
 
-          <Dropdown.Item href="/perfil">Editar Perfil</Dropdown.Item>
-          <Dropdown.Item
-            onClick={() => {
-              localStorage.removeItem("access_token");
-              localStorage.removeItem("refresh_token");
-              window.location.href = "/";
-            }}
-          >
-            Cerrar sesión
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+              <Dropdown.Divider />
 
-
+              <Dropdown.Item href="/perfil">Editar Perfil</Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
+                  localStorage.removeItem("access_token");
+                  localStorage.removeItem("refresh_token");
+                  window.location.href = "/";
+                }}
+              >
+                Cerrar sesión
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
+      </div>
     </div>
   )
 }

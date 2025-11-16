@@ -24,7 +24,7 @@ async function postLogin (consulta) {
 async function getUserSession() {
   const token = localStorage.getItem("access_token");
 
-  const response = await fetch("http://localhost:8000/auth/user/", {
+  const response = await fetch("http://localhost:8000/api/user/", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
