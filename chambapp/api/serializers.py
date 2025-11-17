@@ -9,6 +9,8 @@ User = get_user_model()
 
 # Usuario en sesión
 class UserSerializer(serializers.ModelSerializer):
+    grupos = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -18,7 +20,12 @@ class UserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'foto_perfil',
+            'grupos',  
         ]
+
+    def get_grupos(self, obj):
+        # Esto lee los grupos desde la tabla usuario_groups
+        return list(obj.groups.values_list("name", flat=True))
 
 
 # canton_provincia

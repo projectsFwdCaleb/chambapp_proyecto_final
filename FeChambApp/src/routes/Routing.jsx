@@ -9,7 +9,7 @@ export default function Routing() {
   return (
       <Router>
         <Routes>
-        <Route path='/Home' element={<LandingPage/>} />
+        <Route path='/' element={<LandingPage/>} />
         <Route path='/Loging' element={<PaginaLogingRegister/>}/>
         <Route path='/Trabajador' element={<PaginaTrabajador/>}/>
         <Route path='/Perfil' element={<PaginaPerfil/>}/>

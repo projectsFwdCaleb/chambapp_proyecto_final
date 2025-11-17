@@ -2,15 +2,17 @@ import {Navigate} from "react-router-dom"
 import React from 'react'
 
 function PrivateRoutes({ children, allowedRoles }) {
-  const grupo = JSON.parse(localStorage.getItem("grupo"))
+  const token = localStorage.getItem("access_token");
+  const grupos = JSON.parse(localStorage.getItem("grupos"));
 
-    if(!grupo ) {
-        return <Navigate to="/" replace />;
+    if(!token ) {
+        return <Navigate to="/Loging" replace />;
     }
 
-    if (allowedRoles && !allowedRoles.includes(grupo)) {
+     if (allowedRoles && !grupos.some(g => allowedRoles.includes(g))) {
     return <Navigate to="/" replace />;
   }
+
 
   return children;
 

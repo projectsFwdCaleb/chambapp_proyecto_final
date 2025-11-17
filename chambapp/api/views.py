@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from .serializers import *
 from django.utils import timezone # lapso de tiempo
 from datetime import timedelta # tiempo que se resta y se obtiene por ejemplo los ultimos 7 dias
-from rest_framework.decorators import api_view # permite que una funcion de python se com´porte como un endpoint
+from rest_framework.decorators import api_view, permission_classes# permite que una funcion de python se com´porte como un endpoint
 from rest_framework.response import Response # necesario para api view
 from rest_framework.views import APIView
 from django.db.models import Avg, Q, Count

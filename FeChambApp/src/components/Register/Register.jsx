@@ -55,7 +55,7 @@ function Register({ onSwitchToLogin }) {
         localStorage.setItem('access_token', loginResponse.access)
         localStorage.setItem('refresh_token', loginResponse.refresh)
 
-        navigate('/Home')
+        navigate('/')
 
       } else if (respuesta?.username) {
         setError("Ese nombre de usuario ya está en uso.")
