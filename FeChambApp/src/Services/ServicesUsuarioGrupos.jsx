@@ -48,7 +48,7 @@ async function deleteUsuarioGrupos (id) {
     
     try {
         
-        const response =await fetch("http://localhost:8000/api/usuario_group//"+ id,{
+        const response =await fetch("http://localhost:8000/api/usuario_group/"+ id,{
         method:'DELETE',
         headers : {
             'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ async function putUsuarioGrupos (id, consulta) {
     
     try {
         
-        const response =await fetch("http://localhost:8000/api/usuario_group//"+ id,{
+        const response =await fetch("http://localhost:8000/api/usuario_group/"+ id,{
         method:'PUT',
         headers : {
             'Content-Type': 'application/json'

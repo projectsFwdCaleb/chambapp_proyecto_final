@@ -12,8 +12,8 @@ urlpatterns = [
     path('usuario/', UsuarioListCreateView.as_view(), name='get y post Usuarios'),
     path('usuario/<int:pk>', UsuarioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Usuarios'),
     # UsuarioGroup
-    path('usuario_group/', UsuarioListCreateView.as_view(), name='get y post Usuarios'),
-    path('usuario_group/<int:pk>', UsuarioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Usuarios'),
+    path('usuario_group/', UsuarioGroupListView.as_view(), name='get y post Usuarios'),
+    path('usuario_group/<int:pk>', UsuarioGroupUpdateView.as_view(), name='Put,Delete y ById Usuarios'),
     #login
     path('login/', CustomTokenObtainPairView.as_view(), name='custom_token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -58,4 +58,5 @@ urlpatterns = [
     path('mensajes/conversaciones/<int:usuario_id>/', conversaciones_usuario, name='conversaciones_usuario'),
     # Mensajes entre dos usuarios
     path('mensajes/entre/<int:usuario1_id>/<int:usuario2_id>/', mensajes_entre_usuarios, name='mensajes_entre_usuarios'),
+    path('usuarios/cercanos/', usuarios_cercanos, name='usuarios_cercanos'),
 ]

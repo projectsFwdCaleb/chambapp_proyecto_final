@@ -40,13 +40,13 @@ class GroupReadOnlyView(generics.ListAPIView):
     permission_classes= [IsAuthenticated, IsAdminUser]
 
 # UsuarioGroup
-class UsuarioGroupListCreateView(generics.ListCreateAPIView):
+class UsuarioGroupListView(generics.ListAPIView):
     queryset = Usuario.objects.all()
-    serializer_class=UsuarioGroupSerializer
+    serializer_class = UsuarioGroupSerializer
 class UsuarioGroupUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioGroupSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    #permission_classes = [IsAuthenticated, IsAdminUser]
 
 # Usuario
 class UsuarioListCreateView(generics.ListCreateAPIView):
@@ -55,7 +55,7 @@ class UsuarioListCreateView(generics.ListCreateAPIView):
 class UsuarioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
     serializer_class=UsuarioSerializer
-    permission_classes = [IsAuthenticated]  
+    #permission_classes = [IsAuthenticated]  
 
 # Categoria
 class CategoriaListCreateView(generics.ListCreateAPIView):
@@ -247,3 +247,52 @@ def estadisticas_trabajador(request, trabajador_id):
         'servicios_ofrecidos': servicios,
         'tasa_satisfaccion': round(tasa_satisfaccion, 2),
         'verificado': trabajador.verificado})
+
+# cercanos 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def usuarios_cercanos(request):
+    user = request.user
+
+    if not user.canton_provincia:
+        return Response([], status=200)
+
+    limit = request.query_params.get('limit')
+    try:
+        limit = int(limit) if limit is not None else 10
+    except ValueError:
+        limit = 10
+
+    # Filtrar usuarios en el mismo cantón, excluir al propio usuario
+    qs = Usuario.objects.filter(
+        canton_provincia=user.canton_provincia
+    ).exclude(id=user.id)
+
+    # Calcular promedio de reseñas (si quieres ordenar por mejor puntuación)
+    top = (
+        Resenha.objects
+            .filter(trabajador__in=qs)
+            .values('trabajador')
+            .annotate(promedio=Avg('puntuacion'))
+    )
+
+    ids = [item['trabajador'] for item in top]
+    # Ordena por promedio si existe, sino por fecha_registro (o por id)
+    if ids:
+        usuarios = Usuario.objects.filter(id__in=ids).order_by(
+            '-resenhas_recibidas__puntuacion'
+        )[:limit]
+    else:
+        usuarios = qs[:limit]
+
+    serializer = UsuarioSerializer(usuarios, many=True)
+
+    # Añadir promedio de forma consistente (similar a populares_hoy)
+    resultados = []
+    for usuario in serializer.data:
+        user_id = usuario['id']
+        promedio = next((item['promedio'] for item in top if item['trabajador'] == user_id), None)
+        usuario['promedio_calificacion'] = round(promedio, 2) if promedio is not None else None
+        resultados.append(usuario)
+
+    return Response(resultados)

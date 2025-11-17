@@ -9,12 +9,16 @@ import SidebarRender from "../components/SidebarRender/SidebarRender";
 function LandingPage() {
   return (
     <div className="d-flex">
-      <div className="col-2">
+      {/* <div className="col-2">
         <SidebarRender/>
-      </div>
+      </div> */}
       
-      <div className="col-6">
+      <div className="col-8">
         <Header/>
+        <CarruselPopular/>
+        <br />
+        <br />
+        <CarruselCercanos/>
       </div>
       <div className="col-2">
 

@@ -1,17 +1,20 @@
-import React from 'react'
-import Header from '../components/Header/Header'
-import Footer from '../components/Footer/Footer'
-import Login from '../components/Login/Login'
+import React, { useState } from 'react'
+import './PaginaLogingRegister.css'
 import Register from '../components/Register/Register'
-
+import Login from '../components/Login/Login'
 
 function PaginaLogingRegister() {
+  const [isLogin, setIsLogin] = useState(true)
+
   return (
-    <div>
-      <Header/>
-      <Login/>
-      <Register/>
-      <Footer/>
+    <div className="auth-container">
+      <div className="auth-wrapper">
+        {isLogin ? (
+          <Login onSwitchToRegister={() => setIsLogin(false)} />
+        ) : (
+          <Register onSwitchToLogin={() => setIsLogin(true)} />
+        )}
+      </div>
     </div>
   )
 }

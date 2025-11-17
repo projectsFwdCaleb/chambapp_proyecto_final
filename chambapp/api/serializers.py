@@ -42,11 +42,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UsuarioGroupSerializer(serializers.ModelSerializer):
     groups = serializers.PrimaryKeyRelatedField(
         many=True,
-        queryset=Group.objects.all()  # Necesario para poder asignar grupos existentes
+        queryset=Group.objects.all()
     )
     class Meta:
         model = Usuario
         fields = ['id', 'username', 'groups']
+        read_only_fields = ['id', 'username']  # <--- importante
+        
 #group 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
