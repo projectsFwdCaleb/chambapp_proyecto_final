@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from .serializers import *
 from django.utils import timezone # lapso de tiempo
 from datetime import timedelta # tiempo que se resta y se obtiene por ejemplo los ultimos 7 dias
-from rest_framework.decorators import api_view # permite que una funcion de python se com´porte como un endpoint
+from rest_framework.decorators import api_view, permission_classes # permite que una funcion de python se com´porte como un endpoint
 from rest_framework.response import Response # necesario para api view
 from rest_framework.views import APIView
 from django.db.models import Avg, Q, Count
@@ -103,6 +103,7 @@ class MensajeListCreateView(generics.ListCreateAPIView):
     queryset = Mensaje.objects.all()
     serializer_class=MensajeSerializer
     permission_classes = [IsAuthenticated]
+
 class MensajeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Mensaje.objects.all()
     serializer_class=MensajeSerializer
@@ -114,7 +115,7 @@ class PortafolioListCreateView(generics.ListCreateAPIView):
     serializer_class=PortafolioSerializer
 class PortafolioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Portafolio.objects.all()
-    serializer_class=PortafolioSerializer    
+    serializer_class=PortafolioSerializer  
 
 # Notificacion
 class NotificacionListCreateView(generics.ListCreateAPIView):
@@ -148,30 +149,40 @@ def servicios_por_categoria(request, categoria_id):
 # populares hoy (Devuelve los trabajadores más populares (mejor promedio de reseñas)en los últimos 7 días.)
 @api_view(['GET'])
 def populares_hoy(request):
-        #fecha de hoy - 7 dias
-        hace_7_dias = timezone.now() - timedelta(days=7)
-        top_trabajoderes = (
-            Resenha.objects
-            .filter(fecha__gte=hace_7_dias)
-            .values('trabajador')
-            .annotate(promedio=Avg('puntuacion')) #annotate agrega un nuevo atributo al modelo
-            .order_by('-promedio')[:10] # reduce el filtrado a 10 resultados
-        )
-        ids_usuarios = [item['trabajador'] for item in top_trabajoderes]
-        usuarios = Usuario.objects.filter(id__in=ids_usuarios)
-        serializer = UsuarioSerializer(usuarios, many=True)
+    hace_7_dias = timezone.now() - timedelta(days=7)
+    # Agrupamos reseñas por trabajador y obtenemos promedio
+    top_trabajoderes = (
+        Resenha.objects
+        .filter(fecha__gte=hace_7_dias)
+        .values('trabajador')
+        .annotate(promedio=Avg('puntuacion'))
+        .order_by('-promedio')[:10]
+    )
+    ids_usuarios = [item['trabajador'] for item in top_trabajoderes]
+    # Traemos los usuarios y prefetch de servicios para eficiencia
+    usuarios_qs = Usuario.objects.filter(id__in=ids_usuarios).prefetch_related('servicios')
+    usuarios_map = {u.id: u for u in usuarios_qs}
 
-        resultados= []
-        for usuario in serializer.data:
-            user_id = usuario['id']
-            promedio = next((item['promedio'] for item in top_trabajoderes if item['trabajador'] == user_id), 0)
-            usuario['promedio_calificacion_7_dias'] = round(promedio, 2)
-            resultados.append(usuario)
-        return Response(resultados)
+    resultados = []
+    for item in top_trabajoderes:
+        user_id = item['trabajador']
+        usuario_obj = usuarios_map.get(user_id)
+        if not usuario_obj:
+            continue
+        # Serializamos usuario (campos básicos)
+        usuario_data = UsuarioSerializer(usuario_obj).data
+        # Tomamos servicios disponibles del usuario (podemos limitar el número si queremos)
+        servicios_qs = usuario_obj.servicios.filter(disponibilidad=True).select_related('categoria')  # si quieres categoria incluida
+        servicios_ser = ServicioSerializer(servicios_qs, many=True).data
+        usuario_data['servicios'] = servicios_ser
+        usuario_data['promedio_calificacion_7_dias'] = round(item.get('promedio') or 0, 2)
+        resultados.append(usuario_data)
+    return Response(resultados)
 
 
 # conversaciones entre usuarios 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def conversaciones_usuario(request, usuario_id):
     # Obtener todos los mensajes donde el usuario participa
     mensajes = Mensaje.objects.filter(
@@ -200,6 +211,7 @@ def conversaciones_usuario(request, usuario_id):
 
 # Obtener mensajes entre dos usuarios
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def mensajes_entre_usuarios(request, usuario1_id, usuario2_id):
     mensajes = Mensaje.objects.filter(
         Q(remitente_id=usuario1_id, destinatario_id=usuario2_id) |
@@ -248,15 +260,14 @@ def estadisticas_trabajador(request, trabajador_id):
         'tasa_satisfaccion': round(tasa_satisfaccion, 2),
         'verificado': trabajador.verificado})
 
-# cercanos 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def usuarios_cercanos(request):
     user = request.user
-
     if not user.canton_provincia:
+        # Si el usuario no tiene ubicación definida, devuelve una lista vacía
         return Response([], status=200)
-
+    # Obtener el límite de resultados
     limit = request.query_params.get('limit')
     try:
         limit = int(limit) if limit is not None else 10
@@ -264,35 +275,9 @@ def usuarios_cercanos(request):
         limit = 10
 
     # Filtrar usuarios en el mismo cantón, excluir al propio usuario
-    qs = Usuario.objects.filter(
+    usuarios = Usuario.objects.filter(
         canton_provincia=user.canton_provincia
-    ).exclude(id=user.id)
-
-    # Calcular promedio de reseñas (si quieres ordenar por mejor puntuación)
-    top = (
-        Resenha.objects
-            .filter(trabajador__in=qs)
-            .values('trabajador')
-            .annotate(promedio=Avg('puntuacion'))
-    )
-
-    ids = [item['trabajador'] for item in top]
-    # Ordena por promedio si existe, sino por fecha_registro (o por id)
-    if ids:
-        usuarios = Usuario.objects.filter(id__in=ids).order_by(
-            '-resenhas_recibidas__puntuacion'
-        )[:limit]
-    else:
-        usuarios = qs[:limit]
-
+    ).exclude(id=user.id)[:limit]  # Aplicar el límite directamente
+    # Serializar y devolver
     serializer = UsuarioSerializer(usuarios, many=True)
-
-    # Añadir promedio de forma consistente (similar a populares_hoy)
-    resultados = []
-    for usuario in serializer.data:
-        user_id = usuario['id']
-        promedio = next((item['promedio'] for item in top if item['trabajador'] == user_id), None)
-        usuario['promedio_calificacion'] = round(promedio, 2) if promedio is not None else None
-        resultados.append(usuario)
-
-    return Response(resultados)
+    return Response(serializer.data)

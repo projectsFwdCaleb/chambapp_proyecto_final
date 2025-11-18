@@ -1,0 +1,38 @@
+/* Contenedor principal */
+.sidebar-chats-container {
+}
+
+/* Panel de conversaciones (izquierda) */
+.sidebar-chats-panel {
+  width: 100%;
+  overflow-y: auto;
+}
+
+.sidebar-chats-panel.chat-abierto {
+  width: 33%;
+}
+
+/* Items de conversación */
+.conversacion-item {
+  cursor: pointer;
+}
+
+.conversacion-ultimo-mensaje {
+  max-width: 100%;
+}
+
+/* Panel de chat (derecha) */
+.chat-panel {
+  width: 67%;
+  max-width: 100%;
+}
+
+/* Contenedor de mensajes */
+.mensajes-container {
+  overflow-y: auto;
+}
+
+/* Mensajes individuales */
+.mensaje {
+  max-width: 75%;
+}

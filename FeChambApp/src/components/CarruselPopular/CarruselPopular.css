@@ -93,3 +93,23 @@
 .slider-btn.right {
   right: -5px;
 }
+
+.services-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.service-badge {
+  background: #58c7f3; /* color ejemplo */
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.service-badge:hover {
+  opacity: 0.9;
+}

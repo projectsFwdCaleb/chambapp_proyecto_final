@@ -1,0 +1,7 @@
+.columna-derecha-completa {
+  height: 100vh;
+}
+
+.sidebar-chats-container {
+  flex-basis: 70%;
+}

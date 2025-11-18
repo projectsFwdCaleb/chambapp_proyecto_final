@@ -9,7 +9,7 @@ function CarruselCercanos() {
   useEffect(() => {
     const fetchCercanos = async () => {
       try {
-        const resp = await ServicesTop.getCercanos(12); // opcional limit
+        const resp = await ServicesTop.getCercanos(); // opcional limit
         // adaptarse a respuesta { data: [...] } o a array puro
         const data = Array.isArray(resp) ? resp : resp.data ?? [];
         setCercanos(data);
