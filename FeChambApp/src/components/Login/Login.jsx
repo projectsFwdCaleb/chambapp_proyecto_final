@@ -24,9 +24,15 @@ function Login({ onSwitchToRegister }) {
       /* Guardando tokens como si fueran tesoros del dragón Smaug */
       localStorage.setItem('access_token', response.access)
       localStorage.setItem('refresh_token', response.refresh)
+      
+      /*trallendo los datos de usuario por contrabando dese la base */
+      const user = await ServicesLogin.getUserSession()
+
+      /*guardando los datos en laugh tale*/
+      localStorage.setItem("grupo", JSON.stringify(user.grupos[0]));
 
       console.log("Login exitoso :)")
-      navigate("/Home")
+      navigate("/")
 
     } catch (error) {
       console.error("Error al del Login:", error)
