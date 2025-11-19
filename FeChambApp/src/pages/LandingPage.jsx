@@ -18,10 +18,12 @@ function LandingPage() {
       
       <div className="col-7">
         <Header/>
-        <CarruselPopular/>
-        <br />
-        <br />
-        <CarruselCercanos/>
+          <div className="mainNav">
+            <CarruselPopular/>
+            <br />
+            <br />
+            <CarruselCercanos/>
+          </div>
       </div>
       <div className="col-3 d-flex flex-column columna-derecha-completa">
 

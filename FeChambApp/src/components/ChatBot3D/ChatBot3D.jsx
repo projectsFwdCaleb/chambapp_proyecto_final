@@ -10,6 +10,7 @@ function ChatBot3D({ onOpenChat }) {
       {/* Fondo 3D */}
       <div className="spline-wrapper">
         <Spline scene="https://prod.spline.design/3YvYuy7vpGXK43cJ/scene.splinecode" />
+        
       </div>
 
       {/* Overlay con texto */}

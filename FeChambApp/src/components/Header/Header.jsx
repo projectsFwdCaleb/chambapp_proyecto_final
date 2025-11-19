@@ -94,8 +94,6 @@ useEffect(() => {
             <Dropdown.Menu>
               <Dropdown.Item disabled>
                 <div>
-                  <strong>{user.username}</strong>
-                  <br />
                   <small>{user.email}</small>
                 </div>
               </Dropdown.Item>

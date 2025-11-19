@@ -1,115 +1,77 @@
-.carrusel-container {
-  position: relative;
+/* Wrapper del slide */
+.slide-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  width: 100%;
+  padding: 20px;
 }
 
-.titulo-populares {
-  font-size: 26px;
-  font-weight: bold;
+/* Imagen */
+.slide-img img {
+  width: 350px;
+  height: 350px;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+}
+
+/* Panel derecho */
+.slide-info {
+  width: 50%;
+  background: rgba(255,255,255,0.9);
+  padding: 25px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+}
+
+/* Nombre */
+.slide-info h3 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* Rating */
+.rating {
+  font-size: 18px;
+  font-weight: 600;
   margin-bottom: 15px;
 }
 
-/* ----- SLIDER PRINCIPAL ----- */
-.slider-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.slider {
-  display: flex;
-  gap: 18px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 10px 5px;
-}
-
-.slider::-webkit-scrollbar {
-  height: 8px;
-}
-
-.slider::-webkit-scrollbar-thumb {
-  background: #cccccc;
-  border-radius: 10px;
-}
-
-/* ----- CARD ----- */
-.card-popular {
-  min-width: 180px;
-  max-width: 180px;
-  background: white;
-  border-radius: 12px;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  transition: transform 0.25s ease;
-  cursor: pointer;
-}
-
-.card-popular:hover {
-  transform: scale(1.05);
-}
-
-.card-img {
-  width: 100%;
-  height: 140px;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-.card-nombre {
-  margin-top: 10px;
-  font-size: 17px;
-  font-weight: 600;
-}
-
-.card-rating {
-  margin-top: 5px;
-  color: #444;
-  font-size: 15px;
-}
-
-/* ----- BOTONES ----- */
-.slider-btn {
-  position: absolute;
-  background: rgba(0,0,0,0.55);
-  color: white;
-  border: none;
-  font-size: 32px;
-  cursor: pointer;
-  padding: 5px 12px;
-  border-radius: 8px;
-  z-index: 5;
-  transition: 0.2s;
-}
-
-.slider-btn:hover {
-  background: rgba(0,0,0,0.75);
-}
-
-.slider-btn.left {
-  left: -5px;
-}
-
-.slider-btn.right {
-  right: -5px;
-}
-
+/* Botones de servicios */
 .services-list {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
-  margin-top: 8px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .service-badge {
-  background: #58c7f3; /* color ejemplo */
-  color: #fff;
+  background: #00b3ff;
   border: none;
-  padding: 6px 10px;
-  border-radius: 18px;
-  cursor: pointer;
-  font-size: 0.9rem;
+  padding: 10px 15px;
+  border-radius: 15px;
+  color: white;
+  font-weight: 600;
+  cursor: default;
 }
-.service-badge:hover {
-  opacity: 0.9;
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .slide-wrapper {
+    flex-direction: column;
+  }
+
+  .slide-img img {
+    width: 90%;
+    height: auto;
+  }
+
+  .slide-info {
+    width: 90%;
+  }
 }

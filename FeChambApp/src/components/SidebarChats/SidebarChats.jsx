@@ -170,7 +170,7 @@ console.log("Usuario ID recibido por Sidebar:", user?.id);
             <ArrowLeftCircle className="me-2" /> Volver
           </button>
 
-          <h5 className="mb-3 border-bottom pb-2">Chat con {chatAbierto.username}</h5>
+          <h3 className="mb-3 border-bottom pb-2">{chatAbierto.username}</h3>
 
           <div className="mensajes-container flex-grow-1 mb-3 bg-white border rounded p-3">
             {mensajes.length === 0 ? (

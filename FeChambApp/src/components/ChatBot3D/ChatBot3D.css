@@ -5,7 +5,7 @@
   overflow: hidden;
   border-radius: 18px;
   margin-top: 20px;
-  left: 30px;
+  left: 20px;
 }
 
 
@@ -24,7 +24,7 @@
   position: absolute;
   bottom: 70px;   /* más arriba */
   z-index: 9999;
-  left: 22px;
+  right: 0;
 }
 
 .showcase-overlay h1 {
@@ -42,13 +42,12 @@
 .chatbot-btn {
   margin-top: 22px;
   padding: 12px 22px;
-  font-size: 18px;
+  font-size: 14px;
   border: none;
   border-radius: 50px;
   background: #00b3ff;
   color: white;
   cursor: pointer;
-  font-weight: bold;
   transition: 0.2s ease;
   box-shadow: 0 4px 14px rgba(0, 179, 255, 0.45);
 }
@@ -57,3 +56,4 @@
   background: #008ed1;
   transform: scale(1.05);
 }
+

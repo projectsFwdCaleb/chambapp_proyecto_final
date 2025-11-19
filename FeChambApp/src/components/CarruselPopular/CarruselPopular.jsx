@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import ServicesTop from "../../Services/ServicesTop";
 import "./CarruselPopular.css";
+import Carousel from 'react-bootstrap/Carousel';
 
 function CarruselPopular() {
   const [populares, setPopulares] = useState([]);
-  const sliderRef = useRef(null);
 
   useEffect(() => {
     const fetchPopulares = async () => {
@@ -37,56 +37,35 @@ function CarruselPopular() {
     <div className="container mt-4 carrusel-container">
       <h2 className="titulo-populares">Populares esta semana</h2>
 
-      <div className="slider-wrapper">
-        <button className="slider-btn left" onClick={scrollLeft}>❮</button>
-
-        <div className="slider" ref={sliderRef}>
-          {populares.length === 0 && (
-            <p className="text-center w-100">Cargando...</p>
-          )}
-
-          {populares.map((user) => (
-            <div className="card-popular" key={user.id}>
+      <Carousel>
+         {populares.map((user) => (
+        <Carousel.Item key={user.id}>
+          <div className="slide-wrapper">
+            <div className="slide-img">
               <img
                 src={user.foto_perfil || "/default-profile.png"}
                 alt="perfil"
-                className="card-img"
               />
+            </div>
 
-              <div className="card-body">
-                <h4 className="card-nombre">
-                  {user.first_name} {user.last_name}
-                </h4>
+            <div className="slide-info">
+              <h3>{user.first_name} {user.last_name}</h3>
 
-                <p className="card-rating">
-                  ⭐ {user.promedio_calificacion_7_dias ?? 0} / 5
-                </p>
+              <p className="rating">⭐ {user.promedio_calificacion_7_dias ?? 0} / 5</p>
 
-                {/* Servicios como badges/botones */}
-                <div className="services-list">
-                  {user.servicios && user.servicios.length > 0 ? (
-                    user.servicios.map((s) => (
-                      <button
-                        key={s.id}
-                        className="service-badge"
-                        onClick={() => {
-                          /* opcional: navegar a detalle de servicio o perfil del usuario */
-                        }}
-                      >
-                        {s.nombre_servicio}
-                      </button>
-                    ))
-                  ) : (
-                    <small className="text-muted">Sin servicios disponibles</small>
-                  )}
-                </div>
+              <div className="services-list">
+                {user.servicios?.map(s => (
+                  <button key={s.id} className="service-badge">
+                    {s.nombre_servicio}
+                  </button>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        </Carousel.Item>
 
-        <button className="slider-btn right" onClick={scrollRight}>❯</button>
-      </div>
+        ))}
+      </Carousel>
     </div>
   );
 }
