@@ -1,0 +1,32 @@
+.footer {
+  background-color: rgb(148, 193, 235);
+  padding: 20px 0;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+}
+.footer-title {
+  font-weight: 700;
+  color: rgb(139, 31, 116);
+}
+.footer-text {
+  color: #333;
+  font-size: 14px;
+}
+.whatsapp-link {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  text-decoration: none;
+  color: #25D366;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+.whatsapp-link:hover {
+  color: #1EBC57;
+}
+.whatsapp-icon {
+  font-size: 28px;
+}
+.footer-copy {
+  font-size: 13px;
+  color: #555;
+}
