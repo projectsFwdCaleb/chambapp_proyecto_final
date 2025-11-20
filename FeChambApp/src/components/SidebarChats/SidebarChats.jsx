@@ -114,7 +114,7 @@ function SidebarChats() {
       }
     } catch (err) {
       console.error("Error enviando mensaje:", err);
-      // Aquí podrías mostrar una notificación al usuario
+     
     }
   };
 console.log("Usuario ID recibido por Sidebar:", user?.id);

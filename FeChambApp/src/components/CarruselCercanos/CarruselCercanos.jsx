@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import ServicesTop from "../../Services/ServicesTop";
-
+import "../CarruselCercanos/CarruselCercanos.css"
 
 function CarruselCercanos() {
   const [cercanos, setCercanos] = useState([]);
