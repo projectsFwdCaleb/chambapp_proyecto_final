@@ -13,6 +13,19 @@ function SidebarRender() {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false) 
   const navigate = useNavigate()
 
+  // Obtener usuario en sesión usando el token
+  useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const data = await ServicesLogin.getUserSession();
+          setUser(data);
+        } catch (err) {
+          console.error("Error al obtener usuario en sesión:", err);
+        }
+      };
+    fetchUser();
+  }, []);
+
   useEffect(() => {
     const getCategories = async () => {
         const data = await ServicesCategoria.getCategoria()
@@ -99,7 +112,7 @@ function SidebarRender() {
         <div className='generalMenu'>
             <h3 className='text-muted'>General</h3>
             <button>Ajustes</button>
-            <button>Cerrar sessión</button>
+            <button>Sobre nosotros</button>
         </div>
     </div>
   )

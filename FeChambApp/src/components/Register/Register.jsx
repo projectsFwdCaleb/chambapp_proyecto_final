@@ -3,6 +3,8 @@ import './Register.css'
 import { useNavigate } from "react-router-dom";
 import ServicesUsuarios from '../../Services/ServicesUsuarios'
 import ServicesLogin from '../../Services/ServicesLogin';
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function Register({ onSwitchToLogin }) {
 
@@ -11,33 +13,46 @@ function Register({ onSwitchToLogin }) {
   const [username, Setusername] = useState('')
   const [correo, setCorreo] = useState('')
   const [password, setpassword] = useState('')
-  const [error, setError] = useState('')
-  const [exito, setExito] = useState('')
   const navigate = useNavigate()
 
   const ManejarRegistros = async () => {
 
-    /* borrar los mensajes de error y exito anteriores (no queremos que se acumulen) */
-    setError('')
-    setExito('')
+    /* Aplicar trim a todos los campos */
+    const usernameTrimmed = username.trim()
+    const correoTrimmed = correo.trim()
+    const passwordTrimmed = password.trim()
 
     /* para que no puedan registrarse con campos en blanco (minimo que los inventen) */
-    if (!username || !correo || !password) {
-      setError('No has llenado todos los campos, regresa y llenalos')
+    if (!usernameTrimmed || !correoTrimmed || !passwordTrimmed) {
+      toast.error('No has llenado todos los campos, regresa y llenalos', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
       return
     }
 
     /* asegurarse que las passwords tengan mas de 8 carateres(Porque sera el minimo siempre es 8?) */
-    if (password.length < 8) {
-      setError('La password debe tener un minimo de 8 caracteres (y trata de no olvidarla).')
+    if (passwordTrimmed.length < 8) {
+      toast.error('La password debe tener un minimo de 8 caracteres (y trata de no olvidarla).', {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
       return
     }
 
     try {
       const nuevoUsuario = {
-        username: username,
-        email: correo,
-        password: password,
+        username: usernameTrimmed,
+        email: correoTrimmed,
+        password: passwordTrimmed,
       }
 
       const respuesta = await ServicesUsuarios.postUsuarios(nuevoUsuario)
@@ -45,8 +60,16 @@ function Register({ onSwitchToLogin }) {
       if (respuesta && respuesta.id) {
 
         /*Aqui la funcionalidad Especial, un [AUTOLOGIN]  */
-        setExito("Usuario registrado correctamente. Iniciado sesion.....;)")
-        const credentials = { username, password }
+        toast.success("Usuario registrado correctamente. Iniciado sesion.....;)", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
+
+        const credentials = { username: usernameTrimmed, password: passwordTrimmed }
 
         /*Y para esto importamos el servicios Login */
         const loginResponse = await ServicesLogin.postLogin(credentials)
@@ -55,26 +78,58 @@ function Register({ onSwitchToLogin }) {
         localStorage.setItem('access_token', loginResponse.access)
         localStorage.setItem('refresh_token', loginResponse.refresh)
 
-        navigate('/')
+        setTimeout(() => {
+          navigate('/')
+        }, 2000)
 
       } else if (respuesta?.username) {
-        setError("Ese nombre de usuario ya está en uso.")
+        toast.error("Ese nombre de usuario ya está en uso.", {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
       } else if (respuesta?.email) {
-        setError("Ese correo ya está registrado.")
+        toast.error("Ese correo ya está registrado.", {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
       } else {
-        setError("No se pudo registrar el usuario.")
+        toast.error("No se pudo registrar el usuario.", {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
       }
 
     } catch (error) {
       console.error('Error al registrar:', error)
-      setError('Error al conectar con el servidor.')
+      toast.error('Error al conectar con el servidor.', {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
     }
   }
 
   return (
+    <>
+    <ToastContainer />
     <div className="register-container">
 
-      {/* Left side - Blue section */}
+
       <div className="register-left">
         <div className="register-content">
           <h2>Únete a nosotros</h2>
@@ -90,7 +145,7 @@ function Register({ onSwitchToLogin }) {
         </div>
       </div>
 
-      {/* Right side - Gray section with form */}
+   
       <div className="register-right">
         <div className="register-header">
           <img src="/logo.png" alt="ChambApp" />
@@ -138,12 +193,10 @@ function Register({ onSwitchToLogin }) {
           <button className="btn-register-submit" onClick={ManejarRegistros}>
             Registrar
           </button>
-
-          {error && <p className="error-message">{error}</p>}
-          {exito && <p className="success-message">{exito}</p>}
         </div>
       </div>
     </div>
+    </>
   )
 }
 

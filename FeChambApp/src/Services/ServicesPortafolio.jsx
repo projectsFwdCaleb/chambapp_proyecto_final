@@ -22,7 +22,7 @@ async function getEstadisticas() {
     
     try {
         
-        const response = await fetch("http://localhost:8000/api/estadisticas/trabajador/",{
+        const response = await fetch("http://localhost:8000/api/estadisticas/trabajador/"+ id,{
         method:'GET',
         headers : {
             'Content-Type': 'application/json'

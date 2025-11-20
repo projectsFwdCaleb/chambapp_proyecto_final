@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import './Login.css'
 import { useNavigate } from 'react-router-dom'
 import ServicesLogin from '../../Services/ServicesLogin'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function Login({ onSwitchToRegister }) {
 
@@ -12,11 +14,39 @@ function Login({ onSwitchToRegister }) {
 
   const verificarU = async () => {
 
+    /* Validación de campos vacíos con trim */
+    const nombreTrimmed = nombreU.trim()
+    const contraseñaTrimmed = contraseña.trim()
+
+    if (!nombreTrimmed) {
+      toast.error('Por favor ingresa tu nombre de usuario', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
+      return
+    }
+
+    if (!contraseñaTrimmed) {
+      toast.error('Por favor ingresa tu contraseña', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
+      return
+    }
+
     /* Aquí hacemos la magia del login */
     try {
       const credentials = {
-        username: nombreU,
-        password: contraseña
+        username: nombreTrimmed,
+        password: contraseñaTrimmed
       }
 
       const response = await ServicesLogin.postLogin(credentials)
@@ -29,17 +59,62 @@ function Login({ onSwitchToRegister }) {
       const user = await ServicesLogin.getUserSession()
 
       /*guardando los datos en laugh tale*/
-      localStorage.setItem("grupo", JSON.stringify(user.grupos[0]));
+      const grupo = user.grupos[0] // El primer grupo del usuario
+      localStorage.setItem("grupo", JSON.stringify(grupo));
+
+      toast.success('¡Login exitoso! Bienvenido', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
 
       console.log("Login exitoso :)")
-      navigate("/")
+      
+      /* Redirigir según el grupo del usuario */
+      setTimeout(() => {
+        if (grupo === "clientes") {
+          navigate("/")
+        } else if (grupo === "trabajadores") {
+          navigate("/Trabajador/"+ user.id )
+        } else if (grupo === "admin") {
+          navigate("/Administrador")
+        } else {
+          navigate("/") // Ruta por defecto si no coincide ningún grupo
+        }
+      }, 2000)
 
     } catch (error) {
       console.error("Error al del Login:", error)
+      
+      /* Validación de credenciales incorrectas */
+      if (error.response && error.response.status === 401) {
+        toast.error('Usuario o contraseña incorrectos', {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
+      } else {
+        toast.error('Error al iniciar sesión. Intenta nuevamente', {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
+      }
     }
   }
 
   return (
+    <>
+    <ToastContainer />
     <div className="login-container">
 
       <div className="login-left">
@@ -112,6 +187,7 @@ function Login({ onSwitchToRegister }) {
 
       </div>
     </div>
+    </>
   )
 }
 

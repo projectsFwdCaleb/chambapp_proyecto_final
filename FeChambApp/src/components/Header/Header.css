@@ -2,7 +2,7 @@
 .header-container {
   display: flex;
   flex-direction: column-reverse;
-  background: linear-gradient(135deg, #e937ad 0%, #70c7d6 100%);
+  background: linear-gradient(135deg, #e937ad 0%, #182224 100%);
   padding: 1.5rem 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
