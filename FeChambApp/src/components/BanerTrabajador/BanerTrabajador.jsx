@@ -1,13 +1,15 @@
 import React, { useState,useEffect  } from 'react'
 import ServicesPortafolio from '../../Services/ServicesPortafolio'
+import { useParams } from 'react-router-dom';
 
 function BanerTrabajador() {
-    const [userStats, setUserStats]=useState(null); 
+    const [userStats, setUserStats]=useState(null);
+    const {id} = useParams() /*traese el id, por que parese que lo ocupo  */ 
     
     useEffect(()=>{ 
         const fetchEstadisticas = async() =>{
             try{
-                const resp = await ServicesPortafolio.getEstadisticas();
+                const resp = await ServicesPortafolio.getEstadisticas(id);
 
                  const data = (resp && typeof resp === "object") ? resp : null;
 
@@ -40,6 +42,7 @@ function BanerTrabajador() {
             <h3>
                 {userStats.servicios ?? 0}
             </h3>
+
         </div>
     </div>
   )
