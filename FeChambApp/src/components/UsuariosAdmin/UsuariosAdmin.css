@@ -1,13 +1,13 @@
 .usuarios-admin {
   max-width: 1200px;
   margin: 0 auto;
+  background: #869cb1;
 }
 
 .titulo-principal {
   color: #2c3e50;
   font-weight: 700;
   border-bottom: 3px solid #3498db;
-  padding-bottom: 10px;
   display: inline-block;
 }
 
