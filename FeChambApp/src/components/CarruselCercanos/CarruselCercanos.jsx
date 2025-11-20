@@ -40,7 +40,7 @@ function CarruselCercanos() {
           {cercanos.map(user => (
             <div className="card-popular" key={user.id} onClick={() => {/* navega a perfil si quieres */}}>
               <img src={user.foto_perfil || "/default-profile.png"} alt="perfil" className="card-img" />
-              <h4 className="card-nombre">{user.first_name} {user.last_name}</h4>
+              <h3 className="card-nombre">{user.first_name} {user.last_name}</h3>
               <p className="card-rating">⭐ {user.promedio_calificacion ?? (user.promedio_calificacion_7_dias ?? '—')} / 5</p>
             </div>
           ))}
