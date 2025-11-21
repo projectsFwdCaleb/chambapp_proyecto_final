@@ -81,7 +81,7 @@ function Register({ onSwitchToLogin }) {
         setTimeout(() => {
           navigate('/')
         }, 2000)
-
+          /*validaciones,validaciones y mas validaciones, solo las tipicas nesesarias a la hora de hacer un usuario */
       } else if (respuesta?.username) {
         toast.error("Ese nombre de usuario ya está en uso.", {
           position: "top-right",
@@ -110,7 +110,7 @@ function Register({ onSwitchToLogin }) {
           draggable: true
         })
       }
-
+      /*el mensaje de error, esta vez mas resposivo que nunca antes */
     } catch (error) {
       console.error('Error al registrar:', error)
       toast.error('Error al conectar con el servidor.', {
@@ -128,8 +128,9 @@ function Register({ onSwitchToLogin }) {
     <>
     <ToastContainer />
     <div className="register-container">
+      {/*con toastify podremos tener notificaciones en estos contenedores */}
 
-
+      {/*textos bonitos para que la pagina se vea mejor y un boton para ir al loging*/}
       <div className="register-left">
         <div className="register-content">
           <h2>Únete a nosotros</h2>
@@ -145,7 +146,7 @@ function Register({ onSwitchToLogin }) {
         </div>
       </div>
 
-   
+      {/*aqui esta el logo, quedo muy bien*/}
       <div className="register-right">
         <div className="register-header">
           <img src="/logo.png" alt="ChambApp" />
@@ -153,8 +154,9 @@ function Register({ onSwitchToLogin }) {
         </div>
 
         <div className="register-form">
-
+          {/*aqui inicia lo que normamente vez en login, inputs*/}
           <div className="form-group">
+            {/*para poner el nombre*/}
             <input
               type="text"
               id="inNombre"
@@ -167,6 +169,7 @@ function Register({ onSwitchToLogin }) {
           </div>
 
           <div className="form-group">
+            {/*para poner el correo*/}
             <input
               type="email"
               id="inCorreo"
@@ -179,6 +182,7 @@ function Register({ onSwitchToLogin }) {
           </div>
 
           <div className="form-group">
+            {/*para poner la contraseña(no la olvides)*/}
             <input
               type="password"
               id="inpassword"
@@ -189,7 +193,7 @@ function Register({ onSwitchToLogin }) {
             />
             <span className="input-icon">🔒</span>
           </div>
-
+          {/*y el boton al final para llamar la fucion que tanto costo hacer arriba */}
           <button className="btn-register-submit" onClick={ManejarRegistros}>
             Registrar
           </button>

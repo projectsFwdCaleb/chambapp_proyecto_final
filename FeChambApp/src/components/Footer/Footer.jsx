@@ -1,8 +1,10 @@
 import React from "react";
+/*trayendo estilos del bootstap y iconos de react-icons/fa */
 import { Container, Row, Col } from "react-bootstrap";
 import { FaWhatsapp } from "react-icons/fa";
 import "./Footer.css";
 function Footer() {
+  /*y este es un componente 100% visual*/
   return (
     <footer className="footer mt-5">
       <Container>
@@ -19,12 +21,13 @@ function Footer() {
             md={6}
             className="d-flex justify-content-center justify-content-md-end align-items-center"
           >
+            {/*link para whatsapp*/}
             <a
               href="https://api.whatsapp.com/send?phone=50662071398&text=Hola!%20Me%20gustaría%20más%20información"
               target="_blank"
               rel="noopener noreferrer"
               className="whatsapp-link"
-            >
+            > {/*el icono de whatsapp*/}
               <FaWhatsapp className="whatsapp-icon" />
               <span className="ms-2">Contáctanos</span>
             </a>

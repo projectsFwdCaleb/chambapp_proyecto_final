@@ -1,3 +1,4 @@
+/*importamos.....muchas cosa la verdad, servicios a componente y asta bootstrap*/
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from "react-router-dom";
 import ServicesServicio from '../../Services/ServicesServicio';
@@ -7,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "../Header/Header.css"
 
 function Header() {
+  /*las constantes, para hoy tenemos constantes para usuarios, servicios,paginas y asta busqueda */
   const [search, setSearch] = useState("");
   const [servicios, setServicios] = useState([]);
   const [page, setPage] = useState(1);
@@ -54,13 +56,14 @@ useEffect(() => {
       {/* Barra de búsqueda */}
       <div className='searchBar'>
         <span className='search-icon'></span>
+        {/*aqui es donde se podran digitar parametros para la busqueda de servisios*/}
         <input 
           type="text" 
           placeholder='Buscar por nombre o servicio' 
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        
+        {/*y aqui se muestran los resultados de la busqueda...si se encuentra algo */}
         {search.trim() && servicios.length > 0 && (
           <ul className='search-results'>
             {servicios.map((servicio) => (
@@ -71,7 +74,7 @@ useEffect(() => {
           </ul>
         )}
       </div>
-
+        {/*basicaminente muesta el perfil logeado o te da la opcion d eloguearte si no lo estas al darte un link al loging*/}
       {/* Usuario */}
       <div className='user-section'>
         {!user ? (
@@ -79,6 +82,7 @@ useEffect(() => {
             <button>Iniciar Sesión</button>
           </Link>
         ) : (
+
           <Dropdown align="end">
             <Dropdown.Toggle variant="dark" id="dropdown-user">
               <div className="dropdownProfileMenu">
@@ -99,7 +103,7 @@ useEffect(() => {
               </Dropdown.Item>
 
               <Dropdown.Divider />
-
+              {/*aqui es donde se borran los tokens del local storage una vez que se cierre secion */}
               <Dropdown.Item href="/perfil">Editar Perfil</Dropdown.Item>
               <Dropdown.Item
                 onClick={() => {
