@@ -1,12 +1,18 @@
+/*el useStete ya es basicamente fijo, pero tambien ocuparemos useRef para el carrusel que haremos 
+y effect es para las peticiones al api*/
 import React, { useEffect, useRef, useState } from "react";
+/*importamos los servisios del portafolio para traer la informacion de la base*/
 import ServicesPortafolio from "../../Services/ServicesPortafolio";
  function CarruselPortafolio() {
+    /*constantes para usar.....esperabas algo difente a este punto :/*/
     const [Portafolio, setPortafolio]=useState([]);
     const sliderRef = useRef(null);
 
+    /*donde se hace la magia, llamamos la informacion de la base con el fetchPortafolio*/
     useEffect(()=>{ 
         const fetchPortafolio = async() =>{
             try{
+                /*m*/
                 const resp = await ServicesPortafolio.getPortafolio();
 
                 const data = Array.isArray(resp) ? resp: [];

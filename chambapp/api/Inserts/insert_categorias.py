@@ -1,6 +1,6 @@
 import requests
 
-URL = "http://127.0.0.1:8000/api/categorias/"
+URL = "http://127.0.0.1:8000/api/categoria/"
 
 categorias = [
     "Construcción",

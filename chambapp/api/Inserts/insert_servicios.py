@@ -1,6 +1,6 @@
 import requests
 
-URL = "http://127.0.0.1:8000/api/servicios/"
+URL = "http://127.0.0.1:8000/api/servicio/"
 
 servicios = [
     {

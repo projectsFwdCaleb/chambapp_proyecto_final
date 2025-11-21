@@ -1,6 +1,6 @@
 import requests
 
-URL = "http://127.0.0.1:8000/api/favoritos/"
+URL = "http://127.0.0.1:8000/api/favorito/"
 
 favoritos = [
     {"usuario": 1, "trabajador": 2},
