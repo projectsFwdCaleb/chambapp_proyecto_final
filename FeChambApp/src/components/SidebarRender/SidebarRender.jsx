@@ -12,21 +12,7 @@ function SidebarRender() {
   // Estado para controlar si el submenú de Categorías está abierto o cerrado
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false) 
   const navigate = useNavigate()
-  const grupo = user.grupos[0] // El primer grupo del usuario
 
-
-  // Obtener usuario en sesión usando el token
-  useEffect(() => {
-      const fetchUser = async () => {
-        try {
-          const data = await ServicesLogin.getUserSession();
-          setUser(data);
-        } catch (err) {
-          console.error("Error al obtener usuario en sesión:", err);
-        }
-      };
-    fetchUser();
-  }, []);
 
   useEffect(() => {
     const getCategories = async () => {
@@ -56,7 +42,7 @@ function SidebarRender() {
         </div>
 
         {/* Opciones de Navegación principales*/}
-        {grupo === "admin" ?(
+    {/*     {grupo === "admin" ?(
             <ul className='nav-list'>
                 <li className='nav-item'>
                     <button className='nav-link'>
@@ -78,7 +64,7 @@ function SidebarRender() {
                 </li>
             </ul>
         ) : ()
-        }
+        } */}
 
         <div className='navOptions'>
             <ul className='nav-list'>
