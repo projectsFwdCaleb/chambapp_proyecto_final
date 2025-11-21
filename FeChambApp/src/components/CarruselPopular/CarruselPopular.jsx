@@ -40,7 +40,7 @@ function CarruselPopular() {
       <Carousel>
          {populares.map((user) => (
         <Carousel.Item key={user.id}b>
-          <div className="slide-wrapper">
+          <div className="slide-wrapper glass-card">
             <div className="slide-img">
               <img
                 src={user.foto_perfil || "/default-profile.png"}
@@ -48,7 +48,7 @@ function CarruselPopular() {
               />
             </div>
 
-            <div className="slide-info">
+            <div className="">
               <h3>{user.first_name} {user.last_name}</h3>
 
               <p className="rating">⭐ {user.promedio_calificacion_7_dias ?? 0} / 5</p>

@@ -53,7 +53,6 @@ export default function UsuariosAdmin() {
 
   // Función auxiliar para obtener el nombre del rol según el group_id
   const obtenerNombreRol = (groupId) => {
-    // Ajusta estos IDs según tu base de datos
     const rolesMap = {
       1: 'cliente',
       2: 'trabajador',

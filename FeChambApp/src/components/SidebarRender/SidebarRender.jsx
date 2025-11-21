@@ -4,7 +4,7 @@ import ServicesCategoria from '../../Services/ServicesCategoria';
 import { useNavigate } from "react-router-dom";
 import "../SidebarRender/SidebarRender.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faHeart, faInbox  } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faHeart, faInbox, faComment, faUser, faGear} from '@fortawesome/free-solid-svg-icons'
 
 
 function SidebarRender() {
@@ -13,18 +13,6 @@ function SidebarRender() {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false) 
   const navigate = useNavigate()
 
-  // Obtener usuario en sesión usando el token
-  useEffect(() => {
-      const fetchUser = async () => {
-        try {
-          const data = await ServicesLogin.getUserSession();
-          setUser(data);
-        } catch (err) {
-          console.error("Error al obtener usuario en sesión:", err);
-        }
-      };
-    fetchUser();
-  }, []);
 
   useEffect(() => {
     const getCategories = async () => {
@@ -45,6 +33,7 @@ function SidebarRender() {
     // navigate(`/categorias/${categoriaNombre}`);
   }
 
+
   return (
     <div className='sidebar-container text-white'>
 
@@ -53,6 +42,30 @@ function SidebarRender() {
         </div>
 
         {/* Opciones de Navegación principales*/}
+    {/*     {grupo === "admin" ?(
+            <ul className='nav-list'>
+                <li className='nav-item'>
+                    <button className='nav-link'>
+                        <h3><FontAwesomeIcon icon={faUser} /> Usuarios</h3>
+                    </button>
+                </li>
+                
+                <li className='nav-item'>
+                    <button className='nav-link'>
+                        
+                        <h3><FontAwesomeIcon icon={faHeart} /> Resenhas</h3>
+                    </button>
+                </li>
+
+                <li className='nav-item'>
+                    <button className='nav-link'>
+                        <h3><FontAwesomeIcon icon={faComment} /> Solicitudes</h3>
+                    </button>
+                </li>
+            </ul>
+        ) : ()
+        } */}
+
         <div className='navOptions'>
             <ul className='nav-list'>
                 <li className='nav-item'>
@@ -110,7 +123,7 @@ function SidebarRender() {
         
         {/* Sección del menú general*/}
         <div className='generalMenu'>
-            <h3 className='text-muted'>General</h3>
+            <h3 className='text-muted'> <FontAwesomeIcon icon={faGear} />General</h3>
             <button>Ajustes</button>
             <button>Sobre nosotros</button>
         </div>
