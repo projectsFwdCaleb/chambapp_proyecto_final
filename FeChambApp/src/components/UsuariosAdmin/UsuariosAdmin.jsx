@@ -5,10 +5,12 @@ import './UsuariosAdmin.css';
 
 export default function UsuariosAdmin() {
   const [usuarios, setUsuarios] = useState([]);
-  const [form, setForm] = useState({ username: '', email: '', rol: '' });
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rol, setRol] = useState('');
   const [editId, setEditId] = useState(null);
   const [usuarioGrupos, setUsuarioGrupos] = useState([]);
-  const [grupos, setGrupos] = useState([]);
 
   // Cargar usuarios y sus grupos
   useEffect(() => {
@@ -19,32 +21,33 @@ export default function UsuariosAdmin() {
     try {
       // Cargar usuarios
       const dataUsuarios = await ServicesUsuarios.getUsuarios();
-      const usuariosArray = Array.isArray(dataUsuarios) 
-        ? dataUsuarios 
+      const usuariosArray = Array.isArray(dataUsuarios)
+        ? dataUsuarios
         : dataUsuarios.results || dataUsuarios.data || [];
-      
+
       // Cargar relación usuario-grupos
       const dataGrupos = await ServicesUsuarioGrupos.getUsuarioGrupos();
-      const gruposArray = Array.isArray(dataGrupos) 
-        ? dataGrupos 
+      const gruposArray = Array.isArray(dataGrupos)
+        ? dataGrupos
         : dataGrupos.results || dataGrupos.data || [];
-      
+
       setUsuarioGrupos(gruposArray);
-      console.log(usuarioGrupos);
-      
-      
+      console.log(gruposArray);
+
+
       // Mapear usuarios con sus roles
       const usuariosConRol = usuariosArray.map(usuario => {
         // Buscar el grupo del usuario
-        const usuarioGrupo = gruposArray.find(ug => ug.usuario_id === usuario.id);
-        
+
+        const usuarioGrupo = gruposArray.find(ug => ug.id === usuario.id);
+
         return {
           ...usuario,
           group_id: usuarioGrupo?.group_id || null,
-          rol: obtenerNombreRol(usuarioGrupo?.group_id)
+          rol: obtenerNombreRol(usuarioGrupo?.groups)
         };
       });
-      
+
       setUsuarios(usuariosConRol);
     } catch (error) {
       console.error('Error al cargar datos:', error);
@@ -53,11 +56,15 @@ export default function UsuariosAdmin() {
 
   // Función auxiliar para obtener el nombre del rol según el group_id
   const obtenerNombreRol = (groupId) => {
+    console.log(groupId);
+
     const rolesMap = {
       1: 'cliente',
       2: 'trabajador',
       3: 'admin'
     };
+    console.log(rolesMap[groupId]);
+
     return rolesMap[groupId] || 'sin rol';
   };
 
@@ -71,25 +78,21 @@ export default function UsuariosAdmin() {
     return rolesMap[rolNombre];
   };
 
-  const manejarCambios = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
   const enviarFormulario = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     try {
-      const groupId = obtenerGroupId(form.rol);
-      
+      const groupId = obtenerGroupId(rol);
+
       if (editId) {
         // Actualizar usuario
         await ServicesUsuarios.putUsuarios(editId, {
-          username: form.username,
-          email: form.email
+          username: username,
+          email: email
         });
-        
+
         // Actualizar o crear relación con grupo
         const usuarioGrupo = usuarioGrupos.find(ug => ug.user_id === editId);
-        
+
         if (usuarioGrupo) {
           // Si existe, actualizar
           await ServicesUsuarioGrupos.putUsuarioGrupos(usuarioGrupo.id, {
@@ -106,10 +109,11 @@ export default function UsuariosAdmin() {
       } else {
         // Crear nuevo usuario
         const nuevoUsuario = await ServicesUsuarios.postUsuarios({
-          username: form.username,
-          email: form.email
+          username: username,
+          email: email,
+          password: password
         });
-        
+
         // Crear relación con grupo
         const userId = nuevoUsuario.id || nuevoUsuario.data?.id;
         if (userId) {
@@ -119,8 +123,10 @@ export default function UsuariosAdmin() {
           });
         }
       }
-      
-      setForm({ username: '', email: '', rol: '' });
+
+      setUsername('');
+      setEmail('');
+      setRol('');
       setEditId(null);
       cargarDatos();
     } catch (error) {
@@ -130,11 +136,9 @@ export default function UsuariosAdmin() {
   };
 
   const editarUsuario = (usuario) => {
-    setForm({ 
-      username: usuario.username, 
-      email: usuario.email, 
-      rol: usuario.rol === 'sin rol' ? '' : usuario.rol
-    });
+    setUsername(usuario.username);
+    setEmail(usuario.email);
+    setRol(usuario.rol === 'sin rol' ? '' : usuario.rol);
     setEditId(usuario.id);
   };
 
@@ -146,7 +150,7 @@ export default function UsuariosAdmin() {
         if (usuarioGrupo) {
           await ServicesUsuarioGrupos.deleteUsuarioGrupos(usuarioGrupo.id);
         }
-        
+
         // Eliminar usuario
         await ServicesUsuarios.deleteUsuarios(id);
         cargarDatos();
@@ -159,72 +163,74 @@ export default function UsuariosAdmin() {
 
   return (
     <div className="container mt-4 usuarios-admin">
+
       <h2 className="titulo-principal mb-4">Administrar Usuarios</h2>
-      
+
+      {/* FORMULARIO */}
       <div className="card shadow-sm mb-4">
         <div className="card-body">
-          <h3 className="card-title mb-3">
-            {editId ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
-          </h3>
+          <h3 className="card-title mb-3">{editId ? 'Editar Usuario' : 'Crear Usuario'}</h3>
+
           <form onSubmit={enviarFormulario}>
-            <div className="row">
-              <div className="col-md-4 mb-3">
-                <label className="form-label">Nombre de Usuario</label>
-                <input 
-                  name="username" 
-                  placeholder="Ingrese nombre" 
-                  className="form-control" 
-                  onChange={manejarCambios} 
-                  value={form.username}
-                  required
-                />
-              </div>
-              
-              <div className="col-md-4 mb-3">
-                <label className="form-label">Email</label>
-                <input 
-                  name="email" 
-                  placeholder="ejemplo@correo.com" 
-                  type="email"
-                  className="form-control" 
-                  onChange={manejarCambios} 
-                  value={form.email}
-                  required
-                />
-              </div>
-              
-              <div className="col-md-4 mb-3">
-                <label className="form-label">Rol</label>
-                <select 
-                  name="rol" 
-                  className="form-select" 
-                  onChange={manejarCambios} 
-                  value={form.rol}
-                  required
-                >
-                  <option value="">Seleccione un rol</option>
-                  <option value="admin">Administrador</option>
-                  <option value="trabajador">Trabajador</option>
-                  <option value="cliente">Cliente</option>
-                </select>
-              </div>
+            <div className="mb-3">
+              <label className="form-label">Usuario</label>
+              <input
+                type="text"
+                className="form-control"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required/>
             </div>
-            
+
+            <div className="mb-3">
+              <label className="form-label">Correo</label>
+              <input
+                type="email"
+                className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required/>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Contraseña</label>
+              <input
+                type="password"
+                className="form-control"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Rol</label>
+              <select
+                className="form-select"
+                value={rol}
+                onChange={(e) => setRol(e.target.value)}>
+                <option value="">Seleccione un rol</option>
+                <option value="cliente">Cliente</option>
+                <option value="trabajador">Trabajador</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+
             <div className="d-flex gap-2">
               <button className="btn btn-primary" type="submit">
-                <i className="bi bi-check-circle me-1"></i>
                 {editId ? 'Actualizar Usuario' : 'Crear Usuario'}
               </button>
+
               {editId && (
-                <button 
-                  className="btn btn-secondary" 
+                <button
+                  className="btn btn-secondary"
                   type="button"
                   onClick={() => {
-                    setForm({ username: '', email: '', rol: '' });
+                    setUsername('');
+                    setEmail('');
+                    setPassword('');
+                    setRol('');
                     setEditId(null);
-                  }}
-                >
-                  <i className="bi bi-x-circle me-1"></i>
+                  }}>
                   Cancelar
                 </button>
               )}
@@ -233,6 +239,7 @@ export default function UsuariosAdmin() {
         </div>
       </div>
 
+      {/* TABLA */}
       <div className="card shadow-sm">
         <div className="card-body">
           <h3 className="card-title mb-3">Lista de Usuarios</h3>
@@ -257,28 +264,22 @@ export default function UsuariosAdmin() {
                 ) : (
                   usuarios.map((u) => (
                     <tr key={u.id}>
-                      <td className="align-middle">{u.id}</td>
-                      <td className="align-middle fw-bold">{u.username}</td>
-                      <td className="align-middle">{u.email}</td>
-                      <td className="align-middle">
-                        <span className={`badge-rol ${u.rol}`}>
-                          {u.rol}
-                        </span>
+                      <td>{u.id}</td>
+                      <td>{u.username}</td>
+                      <td>{u.email}</td>
+                      <td>
+                        <span className={`badge-rol ${u.rol}`}>{u.rol}</span>
                       </td>
-                      <td className="text-center align-middle">
-                        <button 
-                          className="btn btn-warning btn-sm me-2 btn-accion" 
-                          onClick={() => editarUsuario(u)}
-                          title="Editar usuario"
-                        >
-                          <i className="bi bi-pencil-square"></i> Editar
+                      <td className="text-center">
+                        <button
+                          className="btn btn-warning btn-sm me-2"
+                          onClick={() => editarUsuario(u)}>
+                          Editar
                         </button>
-                        <button 
-                          className="btn btn-danger btn-sm btn-accion" 
-                          onClick={() => eliminarUsuario(u.id)}
-                          title="Eliminar usuario"
-                        >
-                          <i className="bi bi-trash"></i> Eliminar
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => eliminarUsuario(u.id)}>
+                          Eliminar
                         </button>
                       </td>
                     </tr>

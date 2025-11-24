@@ -42,7 +42,7 @@
 .tabla-usuarios tbody tr:hover {
   background-color: #f8f9fa;
   transform: scale(1.01);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .btn-accion {
@@ -52,7 +52,7 @@
 
 .btn-accion:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .badge-rol {
@@ -79,14 +79,14 @@
   color: white;
 }
 
-.form-label {
+.label-usuario {
   font-weight: 600;
   color: #495057;
   margin-bottom: 8px;
 }
 
-.form-control:focus,
-.form-select:focus {
+.input-usuario:focus,
+.select-usuario:focus {
   border-color: #667eea;
   box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
@@ -96,11 +96,11 @@
     font-size: 0.8rem;
     padding: 5px 10px;
   }
-  
+
   .btn-accion i {
     display: none;
   }
-  
+
   .tabla-usuarios {
     font-size: 0.85rem;
   }
