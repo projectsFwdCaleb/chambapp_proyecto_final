@@ -39,7 +39,7 @@ function CarruselPopular() {
 
       <Carousel>
          {populares.map((user) => (
-        <Carousel.Item key={user.id}b>
+        <Carousel.Item key={user.id}>
           <div className="slide-wrapper glass-card">
             <div className="slide-img">
               <img

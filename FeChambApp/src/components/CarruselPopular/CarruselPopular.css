@@ -1,5 +1,11 @@
+
+.carrusel-container{
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
 /* Wrapper del slide */
 .slide-wrapper {
+  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,15 +23,79 @@
   box-shadow: 0 5px 20px rgba(0,0,0,0.25);
 }
 
-/* Panel derecho */
-.glass-card {
-  backdrop-filter: blur(15px);
-  background: rgba(118, 176, 194, 0.18); 
-  border-radius: 18px;
-  padding: 22px;
-  border: 1px solid rgba(212, 71, 194, 0.35);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+
+/* PANEL DERECHO - borde rotatorio en anillo */
+.slide-wrapper.glass-card {
+  --radius: 18px;
+  --border-size: 4px;
+
+  position: relative;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  overflow: hidden; /* NECESARIO PARA RECORTAR */
+  z-index: 1;
 }
+
+/* ANILLO ROTATORIO */
+.slide-wrapper.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* ocupa TODO el contenedor */
+  padding: var(--border-size); /* <-- MAGIA: crea el ANILLO */
+  border-radius: inherit;
+  background: conic-gradient(
+    #ff00c8,
+    cyan,
+    #2ecc71,
+    #e74c3c,
+    #ff00c8
+  );
+  -webkit-mask:
+      linear-gradient(#000 0 0) content-box, 
+      linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: rotate-border 6s linear infinite;
+  z-index: 0;
+}
+
+/* CONTENIDO INTERIOR */
+.slide-wrapper.glass-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes rotate-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Resto de estilos */
+.slide-img { 
+  width:96px; 
+  height:96px; 
+  min-width:96px; 
+  border-radius:50%; 
+  overflow:hidden;
+  flex-shrink:0; 
+  border:2px solid rgba(255,255,255,0.14); 
+  box-shadow:0 6px 18px rgba(0,0,0,0.18);
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)); 
+  display:flex; 
+  align-items:center; 
+  justify-content:center;
+}
+
+.slide-img img { 
+  width:100%; 
+  height:100%; 
+  object-fit:cover; 
+  display:block; 
+}
+
 
 /* Nombre */
 .slide-info h3 {
@@ -45,8 +115,7 @@
 .services-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
 }
 
 .service-badge {

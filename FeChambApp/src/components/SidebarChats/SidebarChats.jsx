@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeftCircle, MessageSquare } from "lucide-react";
-// Ajusta la ruta según tu proyecto:
 import ServicesMensajes from "../../Services/ServicesMensajes";
 import "./SidebarChats.css";
 import ServicesLogin from "../../Services/ServicesLogin";

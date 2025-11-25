@@ -3,7 +3,7 @@ import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import ServicesUsuarioGrupos from '../../Services/ServicesUsuarioGrupos';
 import './UsuariosAdmin.css';
 
-export default function UsuariosAdmin() {
+function UsuariosAdmin() {
   const [usuarios, setUsuarios] = useState([]);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -293,3 +293,5 @@ export default function UsuariosAdmin() {
     </div>
   );
 }
+
+export default UsuariosAdmin;

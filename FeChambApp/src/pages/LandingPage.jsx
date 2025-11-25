@@ -7,6 +7,7 @@ import SidebarRender from "../components/SidebarRender/SidebarRender";
 import SidebarChats from "../components/SidebarChats/SidebarChats";
 import ChatBot3D from "../components/Chatbot3D/ChatBot3D";
 import ChatBot from "../components/ChatBot/ChatBot";
+import "../pages/LandingPage.css"
 
 function LandingPage() {
   const [open, setOpen] = useState(false);
@@ -16,28 +17,31 @@ function LandingPage() {
         <SidebarRender/>
       </div>
       
-      <div className="col-7">
+      <div className="col-10">
         <Header/>
-          <div className="mainNav">
-            <CarruselPopular/>
-            <br />
-            <br />
-            <CarruselCercanos/>
+          <div className="d-flex">
+            <div className="mainNav col-8">
+              <CarruselPopular/>
+              <br />
+              <br />
+              <CarruselCercanos/>
+            </div>
+            
+            <div className="col-4 d-flex flex-column columna-derecha-completa">
+
+              <div className="flex-grow-1 sidebar-chats-container">
+                <SidebarChats />
+              </div>
+
+              <div className="">
+                <ChatBot3D onOpenChat={() => setOpen(true)} />
+                {open && <ChatBot onClose={() => setOpen(false)} />}
+              </div>
+           </div>
           </div>
       </div>
-      <div className="col-3 d-flex flex-column columna-derecha-completa">
-
-        <div className="flex-grow-1 sidebar-chats-container">
-          <SidebarChats />
-        </div>
-
-        <div className="">
-          <ChatBot3D onOpenChat={() => setOpen(true)} />
-          {open && <ChatBot onClose={() => setOpen(false)} />}
-        </div>
-
-      </div>
-      <Footer/>
+      
+      {/* <Footer/> */}
      
     </div>
   )

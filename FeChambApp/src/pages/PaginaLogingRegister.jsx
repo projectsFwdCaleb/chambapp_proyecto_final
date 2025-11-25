@@ -16,7 +16,6 @@ function PaginaLogingRegister() {
           <Register onSwitchToLogin={() => setIsLogin(true)} />
         )}
       </div>
-      <Footer/>
     </div>
   )
 }

@@ -26,22 +26,19 @@ function ChatBot({ onClose }) {
     /*try para probar por errores*/
     try {
       /*aqui llamamo a la AI que usaremos para responder los mensajes de los usuarios*/
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        /*post. para darle al AI los mensajes */
+      const response = await fetch("http://localhost:8000/api/chat/", { 
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_KEY}`
+        "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "gpt-4.1-mini",
-          messages: newMessages
+        messages: newMessages
         })
-      });
+    });
       /*aqui vamos a imprimir la respuesta del IA o un mensaje de error en caso de que todo falle */
       const data = await response.json();
 
-      const reply = data.choices?.[0]?.message?.content || "Lo siento, hubo un error.";
+      const reply = data.reply || "Lo siento, hubo un error"
 
       setMessages([...newMessages, { role: "assistant", content: reply }]);
     /*el catch para tomar los errores con un mensaje para saber donde paso*/
@@ -75,7 +72,7 @@ function ChatBot({ onClose }) {
         {/* otra carga */}
         {loading && <div className="msg assistant">Escribiendo...</div>}
       </div>
-        {/* el area del inpu donde se escribiran los mensajes y se mandaran  */}
+        {/* el area del input donde se escribiran los mensajes y se mandaran  */}
       <div className="chatbot-input">
         <input
           type="text"

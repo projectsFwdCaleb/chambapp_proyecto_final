@@ -1,5 +1,6 @@
 /* Contenedor principal */
 .sidebar-chats-container {
+  border-radius: 20px;
 }
 
 /* Panel de conversaciones (izquierda) */
