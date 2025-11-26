@@ -11,7 +11,7 @@ function Footer() {
         <Row className="text-center text-md-start">
           {/* Columna izquierda */}
           <Col md={6} className="mb-3">
-            <h5 className="footer-title">ChambApp</h5>
+            <h3 className="footer-title">ChambApp</h3>
             <p className="footer-text">
               Conectamos a trabajadores con posibles clientes en todo el pais
             </p>

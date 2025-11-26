@@ -1,26 +1,40 @@
 import React, { useState,useEffect  } from 'react'
 import ServicesPortafolio from '../../Services/ServicesPortafolio'
-import { useParams } from 'react-router-dom';
+import BoosiMan from '../../assets/BoosiMan.webp'
 
-function BanerTrabajador() {
+
+/*El parametro id viene de la pagina en la cual pondremos el componente*/
+function BanerTrabajador({id}) {
     const [userStats, setUserStats]=useState(null);
-    const {id} = useParams() /*traese el id, por que parese que lo ocupo  */ 
     
+
     useEffect(()=>{ 
         const fetchEstadisticas = async() =>{
             try{
                 const resp = await ServicesPortafolio.getEstadisticas(id);
 
-                 const data = (resp && typeof resp === "object") ? resp : null;
+                console.log(resp);
+                
+
+                 const data = resp && typeof resp === "object" ? resp : null;
+
+                 console.log(data);
+                 
 
                  setUserStats(data);
+                 
             } catch (error) {
                 console.error("Error cargando El Portafolio:", error);
             }
         };
+        
+        console.log(userStats);
+        console.log(typeof userStats);
+        
 
-        fetchEstadisticas();
-    },[]);
+       if(id) fetchEstadisticas();
+    /*si se cambia el id de la pagina, el ponerlo como parametro useEfect hara que se recargue*/
+    },[id]);
     if (!userStats) {
         return <p>Cargando...</p>;
     }
@@ -29,7 +43,7 @@ function BanerTrabajador() {
     <div>
         <div>
             <img
-                src={userStats.Usuario.foto_perfil || "/default-profile.png"}
+                src={BoosiMan}
                 alt="perfil"
                 className="card-img"
             />    

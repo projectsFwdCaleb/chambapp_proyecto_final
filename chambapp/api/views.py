@@ -102,7 +102,7 @@ class ResenhaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class MensajeListCreateView(generics.ListCreateAPIView):
     queryset = Mensaje.objects.all()
     serializer_class=MensajeSerializer
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
 
 class MensajeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Mensaje.objects.all()

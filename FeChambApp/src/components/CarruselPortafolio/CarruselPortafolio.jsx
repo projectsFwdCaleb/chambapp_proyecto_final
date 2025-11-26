@@ -3,7 +3,7 @@ y effect es para las peticiones al api*/
 import React, { useEffect, useRef, useState } from "react";
 /*importamos los servisios del portafolio para traer la informacion de la base*/
 import ServicesPortafolio from "../../Services/ServicesPortafolio";
- function CarruselPortafolio() {
+ function CarruselPortafolio({id}) {
     /*constantes para usar.....esperabas algo difente a este punto :/*/
     const [Portafolio, setPortafolio]=useState([]);
     const sliderRef = useRef(null);
@@ -14,7 +14,7 @@ import ServicesPortafolio from "../../Services/ServicesPortafolio";
             /*try para probar por errores*/
             try{
                 /*el get para traer la infomacion*/
-                const resp = await ServicesPortafolio.getPortafolio();
+                const resp = await ServicesPortafolio.getPortafolio(id);
                 /*la guardamos en data*/
                 const data = Array.isArray(resp) ? resp: [];
                 /*y luego ponemos data en portafolio(suena redundante pero es necesario)*/
@@ -26,7 +26,7 @@ import ServicesPortafolio from "../../Services/ServicesPortafolio";
         };
         /*ninguna funcion/constante es util si olvidas llamarla*/
         fetchPortafolio();
-    },[]);
+    },[id]);
      /*funciones/constantes para el movimiento, uno para izquierda y otro para derecha*/
   const scrollLeft = () => {
     sliderRef.current.scrollBy({ left: -300, behavior: "smooth" });
