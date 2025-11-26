@@ -13,8 +13,8 @@ function CarruselPopular() {
         const data = Array.isArray(response.data)
           ? response.data
           : Array.isArray(response)
-          ? response
-          : [];
+            ? response
+            : [];
 
         setPopulares(data);
       } catch (error) {
@@ -25,12 +25,14 @@ function CarruselPopular() {
     fetchPopulares();
   }, []);
 
+  // Note: sliderRef was missing in original code, but these functions are unused in JSX anyway.
+  // Keeping them to match original file state, but they would crash if called.
   const scrollLeft = () => {
-    sliderRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    // sliderRef.current.scrollBy({ left: -300, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    sliderRef.current.scrollBy({ left: 300, behavior: "smooth" });
+    // sliderRef.current.scrollBy({ left: 300, behavior: "smooth" });
   };
 
   return (
@@ -38,31 +40,32 @@ function CarruselPopular() {
       <h2 className="titulo-populares">Populares esta semana</h2>
 
       <Carousel>
-         {populares.map((user) => (
-        <Carousel.Item key={user.id}>
-          <div className="slide-wrapper glass-card">
-            <div className="slide-img">
-              <img
-                src={user.foto_perfil || "/default-profile.png"}
-                alt="perfil"
-              />
-            </div>
+        {populares.map((user) => (
+          <Carousel.Item key={user.id}>
+            <div className="slide-wrapper glass-card">
+              <div className="rotating-border"></div>
+              <div className="slide-img">
+                <img
+                  src={user.foto_perfil || "/default-profile.png"}
+                  alt="perfil"
+                />
+              </div>
 
-            <div className="">
-              <h3>{user.first_name} {user.last_name}</h3>
+              <div className="slide-info">
+                <h3>{user.first_name} {user.last_name}</h3>
 
-              <p className="rating">⭐ {user.promedio_calificacion_7_dias ?? 0} / 5</p>
+                <p className="rating">⭐ {user.promedio_calificacion_7_dias ?? 0} / 5</p>
 
-              <div className="services-list">
-                {user.servicios?.map(s => (
-                  <button key={s.id} className="service-badge">
-                    {s.nombre_servicio}
-                  </button>
-                ))}
+                <div className="services-list">
+                  {user.servicios?.map(s => (
+                    <button key={s.id} className="service-badge">
+                      {s.nombre_servicio}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        </Carousel.Item>
+          </Carousel.Item>
 
         ))}
       </Carousel>

@@ -4,7 +4,7 @@ import UsuariosAdmin from '../components/UsuariosAdmin/UsuariosAdmin'
 import Footer from '../components/Footer/Footer'
 import SidebarRender from '../components/SidebarRender/SidebarRender'
 import SidebarChats from '../components/SidebarChats/SidebarChats'
-
+import "../pages/LandingPage.css"
 
 function PaginaAdministrador() {
   return (

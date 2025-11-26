@@ -1,11 +1,9 @@
-
-.carrusel-container{
+.carrusel-container {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 /* Wrapper del slide */
 .slide-wrapper {
-  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,86 +12,91 @@
   padding: 20px;
 }
 
-/* Imagen */
-.slide-img img {
-  width: 350px;
-  height: 350px;
-  border-radius: 20px;
-  object-fit: cover;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.25);
-}
-
-
-/* PANEL DERECHO - borde rotatorio en anillo */
+/* CARD CON BORDE ROTATORIO REAL */
 .slide-wrapper.glass-card {
   --radius: 18px;
   --border-size: 4px;
+  --card-bg: #111;
+  /* Color de fondo para tapar el gradiente central */
 
   position: relative;
-  padding: 20px;
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(10px);
-  overflow: hidden; /* NECESARIO PARA RECORTAR */
+  overflow: hidden;
   z-index: 1;
+  /* Eliminamos padding del wrapper para que el ::after controle el espacio si es necesario, 
+     pero mantenemos el layout flex original. 
+     El padding original era 20px. Lo moveremos al contenido o lo simularemos.
+     Al usar inset en ::after, el contenido sigue estando en el wrapper.
+  */
+  padding: 20px;
+  color: white;
 }
 
-/* ANILLO ROTATORIO */
+/* GRADIENTE ROTATORIO (Fondo animado) */
 .slide-wrapper.glass-card::before {
   content: "";
   position: absolute;
-  inset: 0; /* ocupa TODO el contenedor */
-  padding: var(--border-size); /* <-- MAGIA: crea el ANILLO */
-  border-radius: inherit;
-  background: conic-gradient(
-    #ff00c8,
-    cyan,
-    #2ecc71,
-    #e74c3c,
-    #ff00c8
-  );
-  -webkit-mask:
-      linear-gradient(#000 0 0) content-box, 
-      linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  animation: rotate-border 6s linear infinite;
+  width: 150%;
+  height: 150%;
+  top: 50%;
+  left: 50%;
+  background: conic-gradient(#ff00c8,
+      cyan,
+      #ff00c8);
+  animation: rotate-border 4s linear infinite;
+  transform: translate(-50%, -50%);
   z-index: 0;
 }
 
+/* TAPA DEL CENTRO (El cuerpo de la card) */
+.slide-wrapper.glass-card::after {
+  content: "";
+  position: absolute;
+  inset: var(--border-size);
+  background: rgba(30, 30, 30, 0.95);
+  /* Fondo oscuro semi-transparente */
+  backdrop-filter: blur(10px);
+  border-radius: calc(var(--radius) - var(--border-size));
+  z-index: 1;
+}
+
 /* CONTENIDO INTERIOR */
-.slide-wrapper.glass-card > * {
+.slide-wrapper.glass-card>* {
   position: relative;
   z-index: 2;
 }
 
 @keyframes rotate-border {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
   to {
-    transform: rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 
 /* Resto de estilos */
-.slide-img { 
-  width:96px; 
-  height:96px; 
-  min-width:96px; 
-  border-radius:50%; 
-  overflow:hidden;
-  flex-shrink:0; 
-  border:2px solid rgba(255,255,255,0.14); 
-  box-shadow:0 6px 18px rgba(0,0,0,0.18);
-  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)); 
-  display:flex; 
-  align-items:center; 
-  justify-content:center;
+.slide-img {
+  width: 96px;
+  height: 96px;
+  min-width: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.slide-img img { 
-  width:100%; 
-  height:100%; 
-  object-fit:cover; 
-  display:block; 
+.slide-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 

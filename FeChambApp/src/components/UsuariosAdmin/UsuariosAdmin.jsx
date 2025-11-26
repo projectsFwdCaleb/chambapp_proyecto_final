@@ -32,7 +32,6 @@ function UsuariosAdmin() {
         : dataGrupos.results || dataGrupos.data || [];
 
       setUsuarioGrupos(gruposArray);
-      console.log(gruposArray);
 
 
       // Mapear usuarios con sus roles
@@ -116,11 +115,31 @@ function UsuariosAdmin() {
 
         // Crear relación con grupo
         const userId = nuevoUsuario.id || nuevoUsuario.data?.id;
+        console.log(userId);
+        
+
         if (userId) {
-          await ServicesUsuarioGrupos.postUsuarioGrupos({
-            user_id: userId,
-            group_id: groupId
-          });
+          // Obtener el registro de grupo creado automáticamente por el signal
+          const dataGrupos = await ServicesUsuarioGrupos.getUsuarioGrupos();
+          console.log(dataGrupos);
+          
+          const gruposArray = Array.isArray(dataGrupos)
+            ? dataGrupos
+            : dataGrupos.results || dataGrupos.data || [];
+            console.log(gruposArray);
+            
+
+          const usuarioGrupo = gruposArray.find(ug => ug.id === userId);
+          console.log(usuarioGrupo);
+          
+
+          if (usuarioGrupo) {
+            const nuevoGrupo = await ServicesUsuarioGrupos.putUsuarioGrupos(usuarioGrupo.id, {
+              groups: [groupId]
+            });
+            console.log(nuevoGrupo);
+            
+          }
         }
       }
 
@@ -179,7 +198,7 @@ function UsuariosAdmin() {
                 className="form-control"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                required/>
+                required />
             </div>
 
             <div className="mb-3">
@@ -189,7 +208,7 @@ function UsuariosAdmin() {
                 className="form-control"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required/>
+                required />
             </div>
 
             <div className="mb-3">
