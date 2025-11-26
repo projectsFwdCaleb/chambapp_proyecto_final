@@ -14,6 +14,13 @@ from .permissions import IsTrabajador
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+import os
+import json
+
+
+
+OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 
 # usuario en sesion
 class UserInSession(APIView):
@@ -281,3 +288,52 @@ def usuarios_cercanos(request):
     # Serializar y devolver
     serializer = UsuarioSerializer(usuarios, many=True)
     return Response(serializer.data)
+
+class ChatBotAPIView(APIView):
+    """
+    Endpoint proxy que recibe mensajes del frontend y los reenvía al chatbot de OpenAI.
+    """
+    def post(self, request, *args, **kwargs):
+        #Recibir historial de mensajes desde el frontend
+        messages = request.data.get('messages') 
+        if not messages:
+            # Si no hay mensajes, devolvemos error 400 (petición inválida)
+            return Response(
+                {"error": "No se proporcionaron mensajes."}, 
+                status=status.HTTP_400_BAD_REQUEST)
+        #Preparar cabeceras para la llamada a OpenAI
+        headers = {
+            "Content-Type": "application/json",
+            # Usamos la clave de forma segura (variable de entorno, nunca hardcodeada)
+            "Authorization": f"Bearer {OPENAI_KEY}"}
+        #Construir el payload con modelo y mensajes
+        data = {
+            "model": "gpt-4.1-mini",   # Modelo que queremos usar
+            "messages": messages       # Historial completo de la conversación
+        }
+        try:
+            #Hacer la petición POST a la API de OpenAI
+            openai_response = requests.post(
+                OPENAI_URL, 
+                headers=headers, 
+                json=data)
+            # Si la respuesta es 4xx o 5xx, lanza excepción automáticamente
+            openai_response.raise_for_status()
+            #Parsear la respuesta JSON
+            openai_data = openai_response.json()
+            #Extraer el contenido del mensaje del asistente
+            reply = openai_data['choices'][0]['message']['content']
+            #Devolver solo la respuesta al frontend
+            return Response({"reply": reply})
+        except requests.exceptions.RequestException as e:
+            # Error de conexión con OpenAI (red, timeout, etc.)
+            print(f"Error al llamar a OpenAI: {e}")
+            return Response(
+                {"error": "Error al conectar con el servicio de IA."}, 
+                status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        except (KeyError, IndexError):
+            # Error al procesar la respuesta (estructura inesperada)
+            return Response(
+                {"error": "Respuesta inesperada de OpenAI."}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

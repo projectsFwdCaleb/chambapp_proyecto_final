@@ -16,6 +16,8 @@ import cloudinary.uploader
 import cloudinary.api
 from cryptography.fernet import Fernet
 from datetime import timedelta
+import os
+from dotenv import load_dotenv
 
 AUTH_USER_MODEL = 'api.Usuario'
 
@@ -25,10 +27,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
+load_dotenv()
 # SECURITY WARNING: keep the secret key used in production secret!
+OPENAI_KEY = os.getenv("OPENAI_API_KEY")
 SECRET_KEY = 'django-insecure-m$a_hlokwxoxl_k=-)efuxc(bzgq=7!l)!=*#5r37kypi_3)3e'
 ENCRYPTION_KEY = b'5HqeT3lRK9tMdWIaQW8LtUk9hlJcU_4h5pOe6q04WrA='
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -45,15 +49,13 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,  # ajustar el número de resultados por página
+    ]
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Duración del token de acceso
     'REFRESH_TOKEN_LIFETIME': timedelta(days=3),     # Duración del token de refresco
-    'ROTATE_REFRESH_TOKENS': False,                  # Si True, genera un nuevo refresh al renovar
+    'ROTATE_REFRESH_TOKENS': True,                  # Si True, genera un nuevo refresh al renovar
 }
 
 # Application definition
