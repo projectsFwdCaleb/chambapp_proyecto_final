@@ -1,6 +1,6 @@
 import requests
 
-URL = "http://127.0.0.1:8000/api/mensajes/"
+URL = "http://127.0.0.1:8000/api/'mensaje/"
 
 mensajes = [
     { "remitente": 1, "destinatario": 2, "contenido": "Hola, ¿aún ofreces el servicio?" },

@@ -126,7 +126,7 @@ function Login({ onSwitchToRegister }) {
             <li>✓ Verificación de identidad</li>
             <li>✓ Calificaciones de usuarios</li>
           </ul>
-
+          {/*boton para abrir el complemento de register*/}
           <button className="btn-register" onClick={onSwitchToRegister}>
             Registro
           </button>
@@ -171,13 +171,13 @@ function Login({ onSwitchToRegister }) {
           <a href="#" className="forgot-password">
             Forgot Password?
           </a>
-
+          {/*El boton login para llamar la fucion "verificarU"*/}
           <button className="btn-login" onClick={verificarU}>
             Login
           </button>
 
           <p className="login-social">or login with social platforms</p>
-
+          {/*un divide para guardar varios iconos a usar*/}
           <div className="social-icons">
             <a href="#" className="social-icon fb">f</a>
             <a href="#" className="social-icon google">G</a>
