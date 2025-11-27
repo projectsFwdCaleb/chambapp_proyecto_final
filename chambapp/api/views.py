@@ -47,7 +47,7 @@ class GroupReadOnlyView(generics.ListAPIView):
     permission_classes= [IsAuthenticated, IsAdminUser]
 
 # UsuarioGroup
-class UsuarioGroupListView(generics.ListAPIView):
+class UsuarioGroupListCreateView(generics.ListAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioGroupSerializer
 class UsuarioGroupUpdateView(generics.RetrieveUpdateAPIView):
@@ -156,7 +156,7 @@ def servicios_por_categoria(request, categoria_id):
 # populares hoy (Devuelve los trabajadores más populares (mejor promedio de reseñas)en los últimos 7 días.)
 @api_view(['GET'])
 def populares_hoy(request):
-    hace_7_dias = timezone.now() - timedelta(days=7)
+    hace_7_dias = timezone.now() - timedelta(days=11)
     # Agrupamos reseñas por trabajador y obtenemos promedio
     top_trabajoderes = (
         Resenha.objects

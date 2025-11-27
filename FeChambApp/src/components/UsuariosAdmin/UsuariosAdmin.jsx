@@ -3,6 +3,9 @@ import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import ServicesUsuarioGrupos from '../../Services/ServicesUsuarioGrupos';
 import './UsuariosAdmin.css';
 
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function UsuariosAdmin() {
   const [usuarios, setUsuarios] = useState([]);
   const [username, setUsername] = useState('');
@@ -19,13 +22,11 @@ function UsuariosAdmin() {
 
   const cargarDatos = async () => {
     try {
-      // Cargar usuarios
       const dataUsuarios = await ServicesUsuarios.getUsuarios();
       const usuariosArray = Array.isArray(dataUsuarios)
         ? dataUsuarios
         : dataUsuarios.results || dataUsuarios.data || [];
 
-      // Cargar relación usuario-grupos
       const dataGrupos = await ServicesUsuarioGrupos.getUsuarioGrupos();
       const gruposArray = Array.isArray(dataGrupos)
         ? dataGrupos
@@ -33,11 +34,7 @@ function UsuariosAdmin() {
 
       setUsuarioGrupos(gruposArray);
 
-
-      // Mapear usuarios con sus roles
       const usuariosConRol = usuariosArray.map(usuario => {
-        // Buscar el grupo del usuario
-
         const usuarioGrupo = gruposArray.find(ug => ug.id === usuario.id);
 
         return {
@@ -48,26 +45,22 @@ function UsuariosAdmin() {
       });
 
       setUsuarios(usuariosConRol);
+
     } catch (error) {
       console.error('Error al cargar datos:', error);
+      toast.error("Error cargando datos");
     }
   };
 
-  // Función auxiliar para obtener el nombre del rol según el group_id
   const obtenerNombreRol = (groupId) => {
-    console.log(groupId);
-
     const rolesMap = {
       1: 'cliente',
       2: 'trabajador',
       3: 'admin'
     };
-    console.log(rolesMap[groupId]);
-
     return rolesMap[groupId] || 'sin rol';
   };
 
-  // Función auxiliar para obtener el group_id según el nombre del rol
   const obtenerGroupId = (rolNombre) => {
     const rolesMap = {
       'cliente': 1,
@@ -77,80 +70,96 @@ function UsuariosAdmin() {
     return rolesMap[rolNombre];
   };
 
+  // VALIDACIONES SIMPLES
+  const validarFormulario = () => {
+    if (username.trim().length < 3) {
+      toast.warn("El usuario debe tener al menos 3 caracteres");
+      return false;
+    }
+
+    if (!email.includes("@") || !email.includes(".")) {
+      toast.warn("Ingrese un email válido");
+      return false;
+    }
+
+    if (!rol) {
+      toast.warn("Debe seleccionar un rol");
+      return false;
+    }
+
+    // Contraseña obligatoria solo si es un nuevo usuario
+    if (!editId && password.trim().length < 4) {
+      toast.warn("La contraseña debe tener mínimo 4 caracteres");
+      return false;
+    }
+
+    return true;
+  };
+
   const enviarFormulario = async (e) => {
     if (e) e.preventDefault();
+
+    if (!validarFormulario()) return;
+
     try {
       const groupId = obtenerGroupId(rol);
 
       if (editId) {
         // Actualizar usuario
         await ServicesUsuarios.putUsuarios(editId, {
-          username: username,
-          email: email
+          username,
+          email
         });
 
-        // Actualizar o crear relación con grupo
-        const usuarioGrupo = usuarioGrupos.find(ug => ug.user_id === editId);
+        const usuarioGrupo = usuarioGrupos.find(ug => ug.id === editId);
 
         if (usuarioGrupo) {
-          // Si existe, actualizar
           await ServicesUsuarioGrupos.putUsuarioGrupos(usuarioGrupo.id, {
             user_id: editId,
             group_id: groupId
           });
-        } else {
-          // Si no existe, crear
-          await ServicesUsuarioGrupos.postUsuarioGrupos({
-            user_id: editId,
-            group_id: groupId
-          });
         }
+
+        toast.success("Usuario actualizado correctamente");
+
       } else {
-        // Crear nuevo usuario
+        // Crear usuario
         const nuevoUsuario = await ServicesUsuarios.postUsuarios({
-          username: username,
-          email: email,
-          password: password
+          username,
+          email,
+          password
         });
 
-        // Crear relación con grupo
         const userId = nuevoUsuario.id || nuevoUsuario.data?.id;
-        console.log(userId);
-        
 
         if (userId) {
-          // Obtener el registro de grupo creado automáticamente por el signal
           const dataGrupos = await ServicesUsuarioGrupos.getUsuarioGrupos();
-          console.log(dataGrupos);
-          
           const gruposArray = Array.isArray(dataGrupos)
             ? dataGrupos
             : dataGrupos.results || dataGrupos.data || [];
-            console.log(gruposArray);
-            
 
           const usuarioGrupo = gruposArray.find(ug => ug.id === userId);
-          console.log(usuarioGrupo);
-          
 
           if (usuarioGrupo) {
-            const nuevoGrupo = await ServicesUsuarioGrupos.putUsuarioGrupos(usuarioGrupo.id, {
+            await ServicesUsuarioGrupos.putUsuarioGrupos(usuarioGrupo.id, {
               groups: [groupId]
             });
-            console.log(nuevoGrupo);
-            
           }
         }
+
+        toast.success("Usuario creado correctamente");
       }
 
       setUsername('');
       setEmail('');
+      setPassword('');
       setRol('');
       setEditId(null);
       cargarDatos();
+
     } catch (error) {
       console.error('Error al guardar usuario:', error);
-      alert('Error al guardar el usuario. Por favor, intenta de nuevo.');
+      toast.error('Error al guardar el usuario.');
     }
   };
 
@@ -158,25 +167,30 @@ function UsuariosAdmin() {
     setUsername(usuario.username);
     setEmail(usuario.email);
     setRol(usuario.rol === 'sin rol' ? '' : usuario.rol);
+    setPassword(''); // no se muestra la contraseña
     setEditId(usuario.id);
+
+    toast.info("Editando usuario...");
   };
 
   const eliminarUsuario = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar este usuario?')) {
-      try {
-        // Eliminar relación usuario-grupo
-        const usuarioGrupo = usuarioGrupos.find(ug => ug.user_id === id);
-        if (usuarioGrupo) {
-          await ServicesUsuarioGrupos.deleteUsuarioGrupos(usuarioGrupo.id);
-        }
+    if (!window.confirm('¿Estás seguro de eliminar este usuario?')) return;
 
-        // Eliminar usuario
-        await ServicesUsuarios.deleteUsuarios(id);
-        cargarDatos();
-      } catch (error) {
-        console.error('Error al eliminar usuario:', error);
-        alert('Error al eliminar el usuario.');
+    try {
+      const usuarioGrupo = usuarioGrupos.find(ug => ug.user_id === id);
+      
+      if (usuarioGrupo) {
+        await ServicesUsuarioGrupos.deleteUsuarioGrupos(usuarioGrupo.id);
       }
+
+      await ServicesUsuarios.deleteUsuarios(id);
+
+      toast.success("Usuario eliminado");
+      cargarDatos();
+
+    } catch (error) {
+      console.error('Error al eliminar usuario:', error);
+      toast.error("Error al eliminar el usuario");
     }
   };
 
@@ -212,7 +226,7 @@ function UsuariosAdmin() {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Contraseña</label>
+              <label className="form-label">Contraseña {editId ? "(opcional)" : ""}</label>
               <input
                 type="password"
                 className="form-control"
@@ -249,6 +263,7 @@ function UsuariosAdmin() {
                     setPassword('');
                     setRol('');
                     setEditId(null);
+                    toast.info("Modo creación activado");
                   }}>
                   Cancelar
                 </button>

@@ -40,9 +40,9 @@
   height: 150%;
   top: 50%;
   left: 50%;
-  background: conic-gradient(#ff00c8,
+  background: conic-gradient(#0aa3d1,
       cyan,
-      #ff00c8);
+      #03eeff);
   animation: rotate-border 4s linear infinite;
   transform: translate(-50%, -50%);
   z-index: 0;
@@ -53,7 +53,7 @@
   content: "";
   position: absolute;
   inset: var(--border-size);
-  background: rgba(30, 30, 30, 0.95);
+  background: rgba(76, 75, 75, 0.95);
   /* Fondo oscuro semi-transparente */
   backdrop-filter: blur(10px);
   border-radius: calc(var(--radius) - var(--border-size));
@@ -122,7 +122,7 @@
 }
 
 .service-badge {
-  background: #1f2937;
+  background: #1f3237;
   border: none;
   padding: 10px 15px;
   border-radius: 15px;

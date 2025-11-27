@@ -5,6 +5,7 @@ import PaginaLogingRegister from '../pages/PaginaLogingRegister'
 import PaginaTrabajador from '../pages/PaginaTrabajador'
 import PaginaPerfil from '../pages/PaginaPerfil'
 import PaginaAdministrador from '../pages/PaginaAdministrador'
+import Servicio from '../pages/Servicio'
 export default function Routing() {
   return (
       <Router>
@@ -14,6 +15,7 @@ export default function Routing() {
         <Route path='/Trabajador/:id' element={<PaginaTrabajador/>}/>
         <Route path='/Perfil' element={<PaginaPerfil/>}/>
         <Route path='/Administrador' element={<PaginaAdministrador/>}/>
+        <Route path='/Nuevo-Servicio' element={<Servicio/>}/>
         </Routes>
       </Router>
   );
