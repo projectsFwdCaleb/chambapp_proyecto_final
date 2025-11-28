@@ -3,6 +3,7 @@ import ServicesServicio from '../../Services/ServicesServicio';
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import ServicesLogin from '../../Services/ServicesLogin';
 import ServicesCategoria from '../../Services/ServicesCategoria';
+import ServicesCantones from '../../Services/ServicesCantones';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './ServiciosProfesionales.css';
@@ -11,6 +12,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 function ServiciosProfesionales() {
   const [user, setUser] = useState(null);
   const [categorias, setCategorias] = useState([]);
+  const [cantones, setCantones] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
   // Service Form State
@@ -31,9 +33,12 @@ function ServiciosProfesionales() {
     foto_perfil: null
   });
 
+
+// seccion de gets
   useEffect(() => {
     fetchUserData();
     fetchCategorias();
+    fetchCantones();
   }, []);
 
   const fetchUserData = async () => {
@@ -49,24 +54,37 @@ function ServiciosProfesionales() {
           email: sessionUser.email || '',
           telefono: sessionUser.telefono || '',
           direccion: sessionUser.direccion || '',
+          canton_provincia: sessionUser.canton_provincia || '',
           foto_perfil: sessionUser.foto_perfil || null
         });
       }
     } catch (error) {
-      console.error("Error fetching user session:", error);
+      console.error("Error al obtener sesión de usuario", error);
       toast.error("Error al obtener sesión de usuario");
     }
   };
 
   const fetchCategorias = async () => {
     try {
-      const data = await ServicesCategoria.getCategorias();
+      const data = await ServicesCategoria.getCategoria();
       setCategorias(Array.isArray(data) ? data : data.results || []);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error("Error al obtener categorias", error);
     }
   };
 
+  const fetchCantones = async () => {
+    try {
+      const data = await ServicesCantones.getCanton();
+      setCantones(Array.isArray(data) ? data : data.results || []);
+    } catch (error) {
+      console.error("Error al obtener cantones", error);
+    }
+  };
+  
+
+
+//Validar si el perfil esta completo y luego registrar el servicio
   const isProfileComplete = () => {
     if (!user) return false;
     // Check required fields. Adjust based on actual model requirements.
@@ -76,7 +94,9 @@ function ServiciosProfesionales() {
       user.last_name &&
       user.email &&
       user.telefono &&
-      user.direccion
+      user.direccion &&
+      user.foto_perfil &&
+      user.canton_provincia
     );
   };
 
@@ -107,7 +127,7 @@ function ServiciosProfesionales() {
       });
 
     } catch (error) {
-      console.error("Error creating service:", error);
+      console.error("Error al crear el servicio:", error);
       toast.error("Error al crear el servicio");
     }
   };
@@ -170,7 +190,7 @@ function ServiciosProfesionales() {
               >
                 <option value="">Selecciona una categoría</option>
                 {categorias.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.nombre_categoria}</option>
+                  <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                 ))}
               </Form.Select>
             </div>
@@ -189,14 +209,13 @@ function ServiciosProfesionales() {
             </div>
 
             <div className="col-md-6 mb-3">
-              <Form.Label className="form-label">Precio Estimado ($)</Form.Label>
+              <Form.Label className="form-label">Precio Estimado (₡)</Form.Label>
               <Form.Control
                 type="number"
                 name="precio"
                 value={serviceData.precio}
                 onChange={handleServiceChange}
-                required
-                placeholder="0.00"
+                placeholder="0.00 (opcional)"
               />
             </div>
           </div>
@@ -219,11 +238,11 @@ function ServiciosProfesionales() {
         className="profile-modal"
         contentClassName="dark-modal"
       >
-        <Modal.Header closeButton closeVariant="white">
+        <Modal.Header closeButton closeVariant="dark">
           <Modal.Title>Completa tu Perfil</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className="text-muted mb-4">
+          <p className="text-dark mb-4">
             Para convertirte en trabajador y ofrecer servicios, necesitamos que completes tu información de perfil.
           </p>
           <Form onSubmit={handleProfileUpdate}>
@@ -248,12 +267,26 @@ function ServiciosProfesionales() {
                   required
                 />
               </div>
+              <div className="col-md-6 mb-3">
+                <Form.Label className="form-label">Cantón</Form.Label>
+                <Form.Select
+                  name="canton_provincia"
+                  value={profileData.canton_provincia}
+                  onChange={handleProfileChange}
+                  required
+                >
+                  <option value="">Selecciona un cantón</option>
+                  {cantones.map(can => (
+                    <option key={can.id} value={can.id}>{can.nombre}</option>
+                  ))}
+                </Form.Select>
+              </div>
               <div className="col-md-12 mb-3">
-                <Form.Label>Email</Form.Label>
+                <Form.Label>Foto de perfil</Form.Label>
                 <Form.Control
-                  type="email"
-                  name="email"
-                  value={profileData.email}
+                  type="file"
+                  name="foto_perfil"
+                  value={profileData.foto_perfil}
                   onChange={handleProfileChange}
                   required
                 />

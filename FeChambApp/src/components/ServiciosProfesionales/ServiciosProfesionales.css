@@ -44,8 +44,8 @@
 
 /* Modal Styles */
 .modal-content.dark-modal {
-    background-color: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .modal-header {

@@ -20,7 +20,9 @@ class UserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'foto_perfil',
-            'grupos',  
+            'grupos',
+            'direccion', 
+            'canton_provincia'
         ]
 
     def get_grupos(self, obj):

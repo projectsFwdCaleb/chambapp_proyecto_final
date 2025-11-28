@@ -1,25 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import ServicesUsuarioGrupos from '../../Services/ServicesUsuarioGrupos';
+import { toast, ToastContainer } from 'react-toastify';
 import './UsuariosAdmin.css';
-
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import * as bootstrap from 'bootstrap'
 
 function UsuariosAdmin() {
+
+  // Lista de usuarios
   const [usuarios, setUsuarios] = useState([]);
+
+  // Campos del formulario
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rol, setRol] = useState('');
+
+  // Usuario en edición
   const [editId, setEditId] = useState(null);
+
+  // Datos tabla usuario_groups
   const [usuarioGrupos, setUsuarioGrupos] = useState([]);
 
-  // Cargar usuarios y sus grupos
+  // ID a eliminar
+  const [idAEliminar, setIdAEliminar] = useState(null);
+
+  // Cargar al iniciar
   useEffect(() => {
     cargarDatos();
   }, []);
 
+  // Carga usuarios y grupos
   const cargarDatos = async () => {
     try {
       const dataUsuarios = await ServicesUsuarios.getUsuarios();
@@ -34,9 +45,9 @@ function UsuariosAdmin() {
 
       setUsuarioGrupos(gruposArray);
 
+      // Une usuario con su rol
       const usuariosConRol = usuariosArray.map(usuario => {
         const usuarioGrupo = gruposArray.find(ug => ug.id === usuario.id);
-
         return {
           ...usuario,
           group_id: usuarioGrupo?.group_id || null,
@@ -47,87 +58,67 @@ function UsuariosAdmin() {
       setUsuarios(usuariosConRol);
 
     } catch (error) {
-      console.error('Error al cargar datos:', error);
       toast.error("Error cargando datos");
     }
   };
 
+  // Traduce id → nombre
   const obtenerNombreRol = (groupId) => {
-    const rolesMap = {
-      1: 'cliente',
-      2: 'trabajador',
-      3: 'admin'
-    };
+    const rolesMap = { 1: 'cliente', 2: 'trabajador', 3: 'admin' };
     return rolesMap[groupId] || 'sin rol';
   };
 
+  // Traduce nombre → id
   const obtenerGroupId = (rolNombre) => {
-    const rolesMap = {
-      'cliente': 1,
-      'trabajador': 2,
-      'admin': 3
-    };
+    const rolesMap = { cliente: 1, trabajador: 2, admin: 3 };
     return rolesMap[rolNombre];
   };
 
-  // VALIDACIONES SIMPLES
+  // Validación simple
   const validarFormulario = () => {
-    if (username.trim().length < 3) {
-      toast.warn("El usuario debe tener al menos 3 caracteres");
-      return false;
+    if (!username.trim()) { toast.warning("Usuario obligatorio"); return false; }
+    if (!email.trim()) { toast.warning("Correo obligatorio"); return false; }
+    if (!/^\S+@\S+\.\S+$/.test(email)) { toast.warning("Correo inválido"); return false; }
+    // Solo validar contraseña al CREAR (cuando NO hay editId)
+    if (!editId) {
+      if (!password.trim()) { 
+        toast.warning("Contraseña obligatoria"); 
+        return false; 
+      }
+      if (password.length < 8) { 
+        toast.warning("La contraseña debe tener 8 caracteres o más"); 
+        return false; 
+      }
     }
+      if (!rol) { toast.warning("Seleccione un rol"); return false; }
+      return true;
+    };
 
-    if (!email.includes("@") || !email.includes(".")) {
-      toast.warn("Ingrese un email válido");
-      return false;
-    }
-
-    if (!rol) {
-      toast.warn("Debe seleccionar un rol");
-      return false;
-    }
-
-    // Contraseña obligatoria solo si es un nuevo usuario
-    if (!editId && password.trim().length < 4) {
-      toast.warn("La contraseña debe tener mínimo 4 caracteres");
-      return false;
-    }
-
-    return true;
-  };
-
+  // Guardar o actualizar usuario
   const enviarFormulario = async (e) => {
-    if (e) e.preventDefault();
-
+    e.preventDefault();
     if (!validarFormulario()) return;
 
     try {
       const groupId = obtenerGroupId(rol);
 
+      // Actualizar
       if (editId) {
-        // Actualizar usuario
-        await ServicesUsuarios.putUsuarios(editId, {
-          username,
-          email
-        });
+        await ServicesUsuarios.putUsuarios(editId, { username, email });
 
         const usuarioGrupo = usuarioGrupos.find(ug => ug.id === editId);
-
         if (usuarioGrupo) {
           await ServicesUsuarioGrupos.putUsuarioGrupos(usuarioGrupo.id, {
-            user_id: editId,
-            group_id: groupId
+              groups: [groupId]
           });
         }
 
-        toast.success("Usuario actualizado correctamente");
+        toast.success("Usuario actualizado");
 
       } else {
-        // Crear usuario
+        // Crear
         const nuevoUsuario = await ServicesUsuarios.postUsuarios({
-          username,
-          email,
-          password
+          username, email, password
         });
 
         const userId = nuevoUsuario.id || nuevoUsuario.data?.id;
@@ -147,38 +138,45 @@ function UsuariosAdmin() {
           }
         }
 
-        toast.success("Usuario creado correctamente");
+        toast.success("Usuario creado");
       }
 
+      // Limpieza del formulario
       setUsername('');
       setEmail('');
       setPassword('');
       setRol('');
       setEditId(null);
+
       cargarDatos();
 
     } catch (error) {
-      console.error('Error al guardar usuario:', error);
-      toast.error('Error al guardar el usuario.');
+      toast.error("Error al guardar");
     }
   };
 
+  // Cargar usuario al formulario
   const editarUsuario = (usuario) => {
     setUsername(usuario.username);
     setEmail(usuario.email);
+    setPassword('');
     setRol(usuario.rol === 'sin rol' ? '' : usuario.rol);
-    setPassword(''); // no se muestra la contraseña
     setEditId(usuario.id);
-
-    toast.info("Editando usuario...");
   };
 
-  const eliminarUsuario = async (id) => {
-    if (!window.confirm('¿Estás seguro de eliminar este usuario?')) return;
+  // Abre modal con ID
+  const abrirModalEliminar = (id) => {
+    setIdAEliminar(id);
+    const modal = new bootstrap.Modal(document.getElementById("modalEliminar"));
+    modal.show();
+  };
 
+  // Elimina usuario
+  const confirmarEliminar = async () => {
     try {
+      const id = idAEliminar;
+
       const usuarioGrupo = usuarioGrupos.find(ug => ug.user_id === id);
-      
       if (usuarioGrupo) {
         await ServicesUsuarioGrupos.deleteUsuarioGrupos(usuarioGrupo.id);
       }
@@ -186,61 +184,56 @@ function UsuariosAdmin() {
       await ServicesUsuarios.deleteUsuarios(id);
 
       toast.success("Usuario eliminado");
+
       cargarDatos();
 
-    } catch (error) {
-      console.error('Error al eliminar usuario:', error);
-      toast.error("Error al eliminar el usuario");
+    } catch {
+      toast.error("Error eliminando");
     }
   };
 
   return (
+    <>
+    <ToastContainer />
     <div className="container mt-4 usuarios-admin">
 
+      {/* Título */}
       <h2 className="titulo-principal mb-4">Administrar Usuarios</h2>
 
-      {/* FORMULARIO */}
+      {/* Formulario */}
       <div className="card shadow-sm mb-4">
         <div className="card-body">
           <h3 className="card-title mb-3">{editId ? 'Editar Usuario' : 'Crear Usuario'}</h3>
 
           <form onSubmit={enviarFormulario}>
+
+            {/* Usuario */}
             <div className="mb-3">
               <label className="form-label">Usuario</label>
-              <input
-                type="text"
-                className="form-control"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required />
+              <input type="text" className="form-control"
+                value={username} onChange={e => setUsername(e.target.value)} />
             </div>
 
+            {/* Correo */}
             <div className="mb-3">
               <label className="form-label">Correo</label>
-              <input
-                type="email"
-                className="form-control"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required />
+              <input type="email" className="form-control"
+                value={email} onChange={e => setEmail(e.target.value)} />
             </div>
 
-            <div className="mb-3">
-              <label className="form-label">Contraseña {editId ? "(opcional)" : ""}</label>
-              <input
-                type="password"
-                className="form-control"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            {/* Contraseña solo al crear */}
+            {!editId && (
+              <div className="mb-3">
+                <label className="form-label">Contraseña</label>
+                <input type="password" className="form-control"
+                  value={password} onChange={e => setPassword(e.target.value)} />
+              </div>
+            )}
 
+            {/* Rol */}
             <div className="mb-3">
               <label className="form-label">Rol</label>
-              <select
-                className="form-select"
-                value={rol}
-                onChange={(e) => setRol(e.target.value)}>
+              <select className="form-select" value={rol} onChange={e => setRol(e.target.value)}>
                 <option value="">Seleccione un rol</option>
                 <option value="cliente">Cliente</option>
                 <option value="trabajador">Trabajador</option>
@@ -248,35 +241,29 @@ function UsuariosAdmin() {
               </select>
             </div>
 
+            {/* Botones */}
             <div className="d-flex gap-2">
               <button className="btn btn-primary" type="submit">
                 {editId ? 'Actualizar Usuario' : 'Crear Usuario'}
               </button>
 
               {editId && (
-                <button
-                  className="btn btn-secondary"
-                  type="button"
-                  onClick={() => {
-                    setUsername('');
-                    setEmail('');
-                    setPassword('');
-                    setRol('');
-                    setEditId(null);
-                    toast.info("Modo creación activado");
-                  }}>
+                <button className="btn btn-secondary" type="button"
+                  onClick={() => { setEditId(null); setUsername(''); setEmail(''); setPassword(''); setRol(''); }}>
                   Cancelar
                 </button>
               )}
             </div>
+
           </form>
         </div>
       </div>
 
-      {/* TABLA */}
+      {/* Tabla */}
       <div className="card shadow-sm">
         <div className="card-body">
           <h3 className="card-title mb-3">Lista de Usuarios</h3>
+
           <div className="table-responsive">
             <table className="table table-hover tabla-usuarios">
               <thead>
@@ -288,43 +275,69 @@ function UsuariosAdmin() {
                   <th className="text-center">Acciones</th>
                 </tr>
               </thead>
+
               <tbody>
-                {usuarios.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="text-center text-muted">
-                      No hay usuarios registrados
+                {usuarios.map(u => (
+                  <tr key={u.id}>
+                    <td>{u.id}</td>
+                    <td>{u.username}</td>
+                    <td>{u.email}</td>
+
+                    <td>
+                      <span className={`badge-rol ${u.rol}`}>{u.rol}</span>
+                    </td>
+
+                    <td className="text-center">
+
+                      <button className="btn btn-warning btn-sm me-2"
+                        onClick={() => editarUsuario(u)}>
+                        Editar
+                      </button>
+
+                      <button className="btn btn-danger btn-sm"
+                        onClick={() => abrirModalEliminar(u.id)}>
+                        Eliminar
+                      </button>
+
                     </td>
                   </tr>
-                ) : (
-                  usuarios.map((u) => (
-                    <tr key={u.id}>
-                      <td>{u.id}</td>
-                      <td>{u.username}</td>
-                      <td>{u.email}</td>
-                      <td>
-                        <span className={`badge-rol ${u.rol}`}>{u.rol}</span>
-                      </td>
-                      <td className="text-center">
-                        <button
-                          className="btn btn-warning btn-sm me-2"
-                          onClick={() => editarUsuario(u)}>
-                          Editar
-                        </button>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => eliminarUsuario(u.id)}>
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                ))}
               </tbody>
+
             </table>
           </div>
         </div>
       </div>
+
+      {/* Modal eliminar */}
+      <div className="modal fade" id="modalEliminar" tabIndex="-1">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+
+            <div className="modal-header">
+              <h5 className="modal-title">Confirmar eliminación</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div className="modal-body">
+              ¿Seguro que deseas eliminar este usuario?
+            </div>
+
+            <div className="modal-footer">
+              <button className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+              <button className="btn btn-danger" data-bs-dismiss="modal"
+                onClick={confirmarEliminar}>
+                Eliminar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </div>
+    </>
   );
 }
 

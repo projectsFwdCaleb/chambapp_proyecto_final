@@ -69,7 +69,7 @@ async function putUsuarios (id, consulta) {
     try {
         
         const response =await fetch("http://localhost:8000/api/usuario/"+ id,{
-        method:'PUT',
+        method:'PATCH',
         headers : {
             'Content-Type': 'application/json'
         },
