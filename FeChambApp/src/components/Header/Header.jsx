@@ -74,7 +74,7 @@ useEffect(() => {
           </ul>
         )}
       </div>
-        {/*basicaminente muesta el perfil logeado o te da la opcion d eloguearte si no lo estas al darte un link al loging*/}
+        {/*basicaminente muesta el perfil logeado o te da la opcion de loguearte si no lo estas al darte un link al loging*/}
       {/* Usuario */}
       <div className='user-section'>
         {!user ? (
