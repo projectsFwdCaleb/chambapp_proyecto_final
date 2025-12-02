@@ -74,55 +74,71 @@ function AreaSolicitudes({usuarioId}) {
             </button>
             {/* Formulario/Modal */}
             {mostrarModal && (
-                
+                <div className='modal fade show d-block' tabIndex={"-1"}>
+                    <div className='modal-dialog'>
+                        <div className='modal-content'>
+                            <div className='modal-header'>
+                                <h1 className='modal-title'>Nueva Solicitud</h1>
+                                <button type='button'
+                                className='btn-close'
+                                onClick={()=> setMostrarModal(false)}
+                                ></button>
+                            </div>
+                            <div className='modal-body'>
+                                <form onSubmit={enviar}>
+                                    <input
+                                        type="text"
+                                        name="titulo"
+                                        placeholder="Título"
+                                        value={formData.titulo}
+                                        onChange={Datos}
+                                        className="form-control mb-2"
+                                        required
+                                    />
+
+                                    <textarea
+                                        name="descripcion"
+                                        placeholder="Descripción"
+                                        value={formData.descripcion}
+                                        onChange={Datos}
+                                        className="form-control mb-2"
+                                        required
+                                    />
+
+                                    <input
+                                        type="number"
+                                        name="latitud"
+                                        placeholder="Latitud"
+                                        value={formData.latitud}
+                                        onChange={Datos}
+                                        className="form-control mb-2"
+                                    />
+
+                                    <input
+                                        type="number"
+                                        name="longitud"
+                                        placeholder="Longitud"
+                                        value={formData.longitud}
+                                        onChange={Datos}
+                                        className="form-control mb-2"
+                                    />
+
+                                    <button type="submit" className="btn btn-primary w-100">
+                                        Guardar Solicitud
+                                    </button>
+                                </form>
+
+
+                            </div>
+                        </div> 
+                    </div> 
+                </div>  
             )}
-
-            <form onSubmit={enviar} className="form-solicitud">
-                <input
-                    type="text"
-                    name="titulo"
-                    placeholder="Título"
-                    value={formData.titulo}
-                    onChange={Datos}
-                    className="form-control mb-2"
-                    required
-                />
-
-                <textarea
-                    name="descripcion"
-                    placeholder="Descripción"
-                    value={formData.descripcion}
-                    onChange={Datos}
-                    className="form-control mb-2"
-                    required
-                />
-
-                <input
-                    type="number"
-                    name="latitud"
-                    placeholder="Latitud"
-                    value={formData.latitud}
-                    onChange={Datos}
-                    className="form-control mb-2"
-                />
-
-                <input
-                    type="number"
-                    name="longitud"
-                    placeholder="Longitud"
-                    value={formData.longitud}
-                    onChange={Datos}
-                    className="form-control mb-2"
-                />
-
-                <button type="submit" className="btn btn-primary w-100">
-                    Guardar Solicitud
-                </button>
-            </form>
-
+            {/*  */}
+           
             <hr />
 
-            {/* LISTA DE SOLICITUDES */}
+            {/* Lista de solisitudes hechas */}
             <h2>Solicitudes Registradas</h2>
 
             {solicitud.length === 0 ? (
