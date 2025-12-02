@@ -8,7 +8,7 @@ from datetime import timedelta # tiempo que se resta y se obtiene por ejemplo lo
 from rest_framework.decorators import api_view, permission_classes # permite que una funcion de python se com´porte como un endpoint
 from rest_framework.response import Response # necesario para api view
 from rest_framework.views import APIView
-from django.db.models import Avg, Q, Count
+from django.db.models import Avg, Q, Count, Min
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .permissions import IsTrabajador
 from django_filters.rest_framework import DjangoFilterBackend
@@ -185,7 +185,7 @@ def trabajadores_por_categoria(request, categoria_id):
     if ordenar in ["precio", "-precio"]:
         # se ordena por el precio mínimo disponible del trabajador
         trabajadores_qs = trabajadores_qs.annotate(
-            min_precio=Min("servicios__precio")
+            min_precio=Min("servicios__precio_referencial")
         ).order_by("min_precio" if ordenar == "precio" else "-min_precio")
     # mapear para rendimiento
     trabajadores_map = {u.id: u for u in trabajadores_qs}
