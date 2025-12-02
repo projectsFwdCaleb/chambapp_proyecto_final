@@ -6,6 +6,7 @@ import PaginaTrabajador from '../pages/PaginaTrabajador'
 import PaginaPerfil from '../pages/PaginaPerfil'
 import PaginaAdministrador from '../pages/PaginaAdministrador'
 import Servicio from '../pages/Servicio'
+import PaginaSolicitudes from '../pages/PaginaSolicitudes'
 export default function Routing() {
   return (
       <Router>
@@ -16,6 +17,7 @@ export default function Routing() {
         <Route path='/Perfil' element={<PaginaPerfil/>}/>
         <Route path='/Administrador' element={<PaginaAdministrador/>}/>
         <Route path='/Nuevo-Servicio' element={<Servicio/>}/>
+        <Route path='/Solicitudes' element={<PaginaSolicitudes/>}/>
         </Routes>
       </Router>
   );
