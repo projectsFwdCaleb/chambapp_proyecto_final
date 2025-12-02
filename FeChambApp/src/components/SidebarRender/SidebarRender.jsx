@@ -29,9 +29,9 @@ function SidebarRender() {
   }
 
   // Define una función para manejar la navegación o acciones de la categoría
-  const handleCategoryClick = (categoriaNombre) => {
-    console.log(`Navegando a: ${categoriaNombre}`);
-    // navigate(`/categorias/${categoriaNombre}`);
+  const handleCategoryClick = (categoriaId) => {
+    console.log(`Navegando a: ${categoriaId}`);
+    navigate(`/categoria/${categoriaId}`);
   }
 
 
@@ -111,7 +111,7 @@ function SidebarRender() {
                                     className='submenu-item'>
                                     <button 
                                         className='submenu-link'
-                                        onClick={() => handleCategoryClick(categoria.nombre)}>
+                                        onClick={() => handleCategoryClick(categoria.id)}>
                                         {categoria.nombre}
                                     </button>
                                 </li>
