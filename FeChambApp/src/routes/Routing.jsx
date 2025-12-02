@@ -6,6 +6,7 @@ import PaginaTrabajador from '../pages/PaginaTrabajador'
 import Profile from '../pages/Profile'
 import PaginaAdministrador from '../pages/PaginaAdministrador'
 import Servicio from '../pages/Servicio'
+import PaginaSolicitudes from '../pages/PaginaSolicitudes'
 import Categorias from '../pages/Categorias'
 import Favorite from '../pages/Favorite'
 export default function Routing() {
@@ -18,6 +19,7 @@ export default function Routing() {
         <Route path='/Perfil' element={<Profile/>}/>
         <Route path='/Administrador' element={<PaginaAdministrador/>}/>
         <Route path='/Nuevo-Servicio' element={<Servicio/>}/>
+        <Route path='/Solicitudes' element={<PaginaSolicitudes/>}/>
         <Route path='/categoria/:id' element={<Categorias/>}/>
         <Route path='/favoritos' element={<Favorite/>}/>
         </Routes>

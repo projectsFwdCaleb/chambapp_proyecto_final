@@ -3,13 +3,15 @@ import React, {useState,useEffect}from 'react'
 import AreaSolicitudes from "../AreaSolicitudes/AreaSolicitudes.css"
 /*se trae el services*/
 import ServicesSolicitudes from "../../Services/ServicesSolicitudes"
-function AreaSolicitudes({usuarioId }) {
+function AreaSolicitudes({usuarioId}) {
     /*la constante que tendra las solicitudes*/
     const [solicitud , setSolicitud ]=useState([]);
+    /*aqui manejamos el estado del modal*/
+    const [mostrarModal, setMostrarModal] = useState(false);
     /*constante para las nuevas solicitudes */
     const [nuevaSolicitud, setNuevaSolicitud] = useState({
         titulo: "",
-        decripcion:"",
+        descripcion:"",
         latitud: "",
         longitud: "",
         usuario: usuarioId,
@@ -46,13 +48,15 @@ function AreaSolicitudes({usuarioId }) {
             /*para que se vuelva a guardar vacio*/
             setNuevaSolicitud({
                 titulo: "",
-                decripcion:"",
+                descripcion:"",
                 latitud: "",
                 longitud: "",
                 usuario: usuarioId,
                 estado: true
             })
             cargarSolicitudes();
+            /*tras completar una solicitud steamos falso pafra serrar el modal*/
+            setMostrarModal(false);
         }catch(error){
            console.error("Error al crear la solicitud:", error)
         }
@@ -62,8 +66,16 @@ function AreaSolicitudes({usuarioId }) {
   return (
 <div className="area-solicitudes-container">
 
-            {/* FORMULARIO */}
-            <h2>Crear Solicitud</h2>
+            
+            {/* El boton para abrir el modal donde van las solicitudes */}
+            <button class name="btn btn-success mb-3"
+                onClick={()=> setMostrarModal(true)}>
+                Crear Solicitud
+            </button>
+            {/* Formulario/Modal */}
+            {mostrarModal && (
+                
+            )}
 
             <form onSubmit={enviar} className="form-solicitud">
                 <input
