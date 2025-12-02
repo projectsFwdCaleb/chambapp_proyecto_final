@@ -29,6 +29,12 @@ class UserSerializer(serializers.ModelSerializer):
         # Esto lee los grupos desde la tabla usuario_groups
         return list(obj.groups.values_list("name", flat=True))
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.foto_perfil:
+            representation['foto_perfil'] = instance.foto_perfil.url
+        return representation
+
 
 # canton_provincia
 class canton_provinciaSerializer(serializers.ModelSerializer):
@@ -80,8 +86,15 @@ class UsuarioSerializer(serializers.ModelSerializer):
         }
 
     def validate_email(self, value):
-        # Verifica que el email no esté repetido
-        if Usuario.objects.filter(email=value).exists():
+        user = self.instance
+        if user and user.email == value:
+            return value
+        
+        qs = Usuario.objects.filter(email=value)
+        if user:
+            qs = qs.exclude(id=user.id)
+            
+        if qs.exists():
             raise serializers.ValidationError("El correo electrónico ya está registrado.")
         return value
 
@@ -95,6 +108,12 @@ class UsuarioSerializer(serializers.ModelSerializer):
         # Encripta la contraseña antes de guardar el usuario
         validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.foto_perfil:
+            representation['foto_perfil'] = instance.foto_perfil.url
+        return representation
 
 
 # Categoria

@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser
 from cryptography.fernet import Fernet
 from django.conf import settings
@@ -19,7 +20,7 @@ class canton_provincia(models.Model):
 # 2️ USUARIO
 # ============================================================
 class Usuario(AbstractUser):
-    foto_perfil = models.TextField(blank=True, null=True)
+    foto_perfil = CloudinaryField('image', blank=True, null=True)
     verificado = models.BooleanField(default=False)
     email = models.EmailField(unique=True, blank=False)
     canton_provincia = models.ForeignKey(canton_provincia, on_delete=models.SET_NULL, null=True, related_name='usuarios')
@@ -38,7 +39,7 @@ class Usuario(AbstractUser):
         'auth.Permission',
         related_name='api_usuarios_permisos',
         blank=True
-    )    
+    )
 
     def __str__(self):
         return f"{self.username} registrado el {self.fecha_registro}"

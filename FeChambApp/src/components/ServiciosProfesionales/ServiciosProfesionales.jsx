@@ -15,7 +15,7 @@ function ServiciosProfesionales() {
   const [cantones, setCantones] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
-  // Service Form State
+  // Estado del formulario de servicios
   const [serviceData, setServiceData] = useState({
     nombre_servicio: '',
     descripcion: '',
@@ -23,36 +23,33 @@ function ServiciosProfesionales() {
     categoria: ''
   });
 
-  // Profile Form State
+  // Estado del formulario de perfil
   const [profileData, setProfileData] = useState({
     first_name: '',
     last_name: '',
-    email: '',
-    telefono: '',
     direccion: '',
     foto_perfil: null
   });
 
 
-// seccion de gets
+  // Cargar usuario, categorías y cantones
   useEffect(() => {
     fetchUserData();
     fetchCategorias();
     fetchCantones();
   }, []);
 
+  // Obtener datos del usuario en sesión
   const fetchUserData = async () => {
     try {
       const sessionUser = await ServicesLogin.getUserSession();
       if (sessionUser) {
         setUser(sessionUser);
 
-        // Pre-fill profile form
+        // Rellenar el formulario de perfil
         setProfileData({
           first_name: sessionUser.first_name || '',
           last_name: sessionUser.last_name || '',
-          email: sessionUser.email || '',
-          telefono: sessionUser.telefono || '',
           direccion: sessionUser.direccion || '',
           canton_provincia: sessionUser.canton_provincia || '',
           foto_perfil: sessionUser.foto_perfil || null
@@ -64,6 +61,7 @@ function ServiciosProfesionales() {
     }
   };
 
+  // Obtener lista de categorías
   const fetchCategorias = async () => {
     try {
       const data = await ServicesCategoria.getCategoria();
@@ -73,6 +71,7 @@ function ServiciosProfesionales() {
     }
   };
 
+  // Obtener lista de cantones
   const fetchCantones = async () => {
     try {
       const data = await ServicesCantones.getCanton();
@@ -83,26 +82,24 @@ function ServiciosProfesionales() {
   };
   
 
-
-//Validar si el perfil esta completo y luego registrar el servicio
+  // Validar que el perfil esté completo
   const isProfileComplete = () => {
     if (!user) return false;
-    // Check required fields. Adjust based on actual model requirements.
-    // The user mentioned "first_name" specifically caused the error.
+
     return (
       user.first_name &&
       user.last_name &&
-      user.email &&
-      user.telefono &&
       user.direccion &&
       user.foto_perfil &&
       user.canton_provincia
     );
   };
 
+  // Registrar un nuevo servicio
   const handleServiceSubmit = async (e) => {
     e.preventDefault();
 
+    // Evita crear servicio si el perfil está incompleto
     if (!isProfileComplete()) {
       setShowProfileModal(true);
       toast.info("Por favor completa tu perfil antes de agregar un servicio.");
@@ -112,13 +109,13 @@ function ServiciosProfesionales() {
     try {
       const payload = {
         ...serviceData,
-        usuario: user.id // Associate service with current user
+        usuario: user.id // Asignar servicio al usuario actual
       };
 
       await ServicesServicio.postServicio(payload);
       toast.success("Servicio creado exitosamente!");
 
-      // Reset form
+      // Reiniciar formulario
       setServiceData({
         nombre_servicio: '',
         descripcion: '',
@@ -132,13 +129,13 @@ function ServiciosProfesionales() {
     }
   };
 
+  // Guardar cambios en el perfil
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     try {
-      // Update user profile
       await ServicesUsuarios.putUsuarios(user.id, profileData);
 
-      // Update local user state
+      // Actualizar estado local del usuario
       setUser({ ...user, ...profileData });
 
       setShowProfileModal(false);
@@ -150,10 +147,12 @@ function ServiciosProfesionales() {
     }
   };
 
+  // Manejar cambios del formulario de servicio
   const handleServiceChange = (e) => {
     setServiceData({ ...serviceData, [e.target.name]: e.target.value });
   };
 
+  // Manejar cambios del formulario de perfil
   const handleProfileChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
@@ -287,16 +286,6 @@ function ServiciosProfesionales() {
                   type="file"
                   name="foto_perfil"
                   value={profileData.foto_perfil}
-                  onChange={handleProfileChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <Form.Label>Teléfono</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="telefono"
-                  value={profileData.telefono}
                   onChange={handleProfileChange}
                   required
                 />

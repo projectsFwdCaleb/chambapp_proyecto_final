@@ -25,15 +25,7 @@ function CarruselPopular() {
     fetchPopulares();
   }, []);
 
-  // Note: sliderRef was missing in original code, but these functions are unused in JSX anyway.
-  // Keeping them to match original file state, but they would crash if called.
-  const scrollLeft = () => {
-    // sliderRef.current.scrollBy({ left: -300, behavior: "smooth" });
-  };
 
-  const scrollRight = () => {
-    // sliderRef.current.scrollBy({ left: 300, behavior: "smooth" });
-  };
 
   return (
     <div className="container mt-4 carrusel-container">

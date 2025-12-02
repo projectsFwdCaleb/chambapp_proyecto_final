@@ -3,10 +3,11 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
 import LandingPage from '../pages/LandingPage'
 import PaginaLogingRegister from '../pages/PaginaLogingRegister'
 import PaginaTrabajador from '../pages/PaginaTrabajador'
-import PaginaPerfil from '../pages/PaginaPerfil'
+import Profile from '../pages/Profile'
 import PaginaAdministrador from '../pages/PaginaAdministrador'
 import Servicio from '../pages/Servicio'
 import PaginaSolicitudes from '../pages/PaginaSolicitudes'
+import Categorias from '../pages/Categorias'
 export default function Routing() {
   return (
       <Router>
@@ -14,10 +15,11 @@ export default function Routing() {
         <Route path='/' element={<LandingPage/>} />
         <Route path='/Loging' element={<PaginaLogingRegister/>}/>
         <Route path='/Trabajador/:id' element={<PaginaTrabajador/>}/>
-        <Route path='/Perfil' element={<PaginaPerfil/>}/>
+        <Route path='/Perfil' element={<Profile/>}/>
         <Route path='/Administrador' element={<PaginaAdministrador/>}/>
         <Route path='/Nuevo-Servicio' element={<Servicio/>}/>
         <Route path='/Solicitudes' element={<PaginaSolicitudes/>}/>
+        <Route path='/categoria/:id' element={<Categorias/>}/>
         </Routes>
       </Router>
   );

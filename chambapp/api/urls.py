@@ -10,7 +10,7 @@ urlpatterns = [
     path('canton_provincia/<int:pk>', canton_provinciaRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById canton_provincias'),
     # Usuario
     path('usuario/', UsuarioListCreateView.as_view(), name='get y post Usuarios'),
-    path('usuario/<int:pk>', UsuarioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Usuarios'),
+    path('usuario/<int:pk>/', UsuarioRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Usuarios'),
     # UsuarioGroup
     path('usuario_group/', UsuarioGroupListCreateView.as_view(), name='get y post Usuarios'),
     path('usuario_group/<int:pk>', UsuarioGroupUpdateView.as_view(), name='Put,Delete y ById Usuarios'),
@@ -45,7 +45,7 @@ urlpatterns = [
 
     # ------------------------ CUSTOM ENDPOINTS ------------------------
     # Servicios por categoría
-    path('servicios/categoria/<int:categoria_id>/', servicios_por_categoria, name='servicios_por_categoria'),
+    path('trabajadores/categoria/<int:categoria_id>/', trabajadores_por_categoria, name='trabajadores-por-categoria'),
     # Solicitudes por categoría
     path('solicitudes/categoria/<int:categoria_id>/', solicitudes_por_categoria, name='solicitudes_por_categoria'),
     # Populares en los últimos 7 días

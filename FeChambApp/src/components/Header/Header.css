@@ -19,7 +19,7 @@
 .user-section {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
+
   margin-bottom: 1rem;
   order: -1;
 }
@@ -30,7 +30,7 @@
   border: none;
   padding: 0.6rem 1.8rem;
   border-radius: 50px;
-  font-weight: 600;
+  
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -202,7 +202,7 @@
 }
 
 .search-results li:hover {
-  background: linear-gradient(135deg, #4b4a48 0%, #807c7e 100%);
+  background: linear-gradient(135deg, #4b4a48 0%, #667eea 100%);
   color: white;
   transform: translateX(5px);
 }

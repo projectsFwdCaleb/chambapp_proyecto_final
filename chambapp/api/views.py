@@ -8,7 +8,7 @@ from datetime import timedelta # tiempo que se resta y se obtiene por ejemplo lo
 from rest_framework.decorators import api_view, permission_classes # permite que una funcion de python se com´porte como un endpoint
 from rest_framework.response import Response # necesario para api view
 from rest_framework.views import APIView
-from django.db.models import Avg, Q, Count
+from django.db.models import Avg, Q, Count, Min
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .permissions import IsTrabajador
 from django_filters.rest_framework import DjangoFilterBackend
@@ -16,6 +16,9 @@ from .serializers import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 import os
 import json
+import requests
+from rest_framework.parsers import MultiPartParser, FormParser
+
 
 
 
@@ -61,7 +64,12 @@ class UsuarioListCreateView(generics.ListCreateAPIView):
     serializer_class=UsuarioSerializer
 class UsuarioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
-    serializer_class=UsuarioSerializer
+    serializer_class = UsuarioSerializer
+    parser_classes = [MultiPartParser, FormParser]
+
+    def update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return super().update(request, *args, **kwargs)
     #permission_classes = [IsAuthenticated]  
 
 # Categoria
@@ -148,15 +156,57 @@ class FavoritoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 # Obtener servicios por categoría
 @api_view(['GET'])
-def servicios_por_categoria(request, categoria_id):
-    servicios = Servicio.objects.filter(categoria_id=categoria_id, disponibilidad=True)
-    serializer = ServicioSerializer(servicios, many=True)
-    return Response(serializer.data)
+def trabajadores_por_categoria(request, categoria_id):
+    # Filtros opcionales
+    canton = request.query_params.get("canton")
+    min_precio = request.query_params.get("min")
+    max_precio = request.query_params.get("max")
+    ordenar = request.query_params.get("ordenar")  # ejemplo: "precio", "-precio"
+    # buscar servicios disponibles dentro de la categoría
+    servicios = Servicio.objects.filter(
+        categoria_id=categoria_id,
+        disponibilidad=True
+    ).select_related("usuario", "categoria")
+    # aplicar filtros de precio a nivel de servicio
+    if min_precio:
+        servicios = servicios.filter(precio__gte=min_precio)
+    if max_precio:
+        servicios = servicios.filter(precio__lte=max_precio)
+    # obtener IDs de trabajadores sin repetir
+    ids_trabajadores = servicios.values_list("usuario_id", flat=True).distinct()
+    # obtener usuarios con prefetch
+    trabajadores_qs = Usuario.objects.filter(
+        id__in=ids_trabajadores
+    ).prefetch_related("servicios")
+    # filtro por cantón
+    if canton:
+        trabajadores_qs = trabajadores_qs.filter(canton_provincia=canton)
+    # ordenamiento opcional
+    if ordenar in ["precio", "-precio"]:
+        # se ordena por el precio mínimo disponible del trabajador
+        trabajadores_qs = trabajadores_qs.annotate(
+            min_precio=Min("servicios__precio_referencial")
+        ).order_by("min_precio" if ordenar == "precio" else "-min_precio")
+    # mapear para rendimiento
+    trabajadores_map = {u.id: u for u in trabajadores_qs}
+    resultados = []
+    for trabajador_id in ids_trabajadores:
+        user = trabajadores_map.get(trabajador_id)
+        if not user:
+            continue
+        user_data = UserSerializer(user).data
+        servicios_user = user.servicios.filter(
+            categoria_id=categoria_id,
+            disponibilidad=True
+        )
+        user_data["servicios"] = ServicioSerializer(servicios_user, many=True).data
+        resultados.append(user_data)
+    return Response(resultados)
 
 # populares hoy (Devuelve los trabajadores más populares (mejor promedio de reseñas)en los últimos 7 días.)
 @api_view(['GET'])
 def populares_hoy(request):
-    hace_7_dias = timezone.now() - timedelta(days=11)
+    hace_7_dias = timezone.now() - timedelta(days=15)
     # Agrupamos reseñas por trabajador y obtenemos promedio
     top_trabajoderes = (
         Resenha.objects
@@ -290,50 +340,45 @@ def usuarios_cercanos(request):
     return Response(serializer.data)
 
 class ChatBotAPIView(APIView):
-    """
-    Endpoint proxy que recibe mensajes del frontend y los reenvía al chatbot de OpenAI.
-    """
     def post(self, request, *args, **kwargs):
-        #Recibir historial de mensajes desde el frontend
-        messages = request.data.get('messages') 
+        messages = request.data.get('messages')
         if not messages:
-            # Si no hay mensajes, devolvemos error 400 (petición inválida)
-            return Response(
-                {"error": "No se proporcionaron mensajes."}, 
-                status=status.HTTP_400_BAD_REQUEST)
-        #Preparar cabeceras para la llamada a OpenAI
+            return Response({"error": "No se proporcionaron mensajes."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # ---- DIAGNÓSTICO ----
+        print("=== DIAGNOSTICO OPENAI ===")
+        print("OPENAI_KEY cargada?", bool(OPENAI_KEY))
+        if OPENAI_KEY:
+            print("Primeros 8 caracteres:", OPENAI_KEY[:8])
+        else:
+            print("OPENAI_KEY es None")
+        print("===========================")
+
         headers = {
             "Content-Type": "application/json",
-            # Usamos la clave de forma segura (variable de entorno, nunca hardcodeada)
-            "Authorization": f"Bearer {OPENAI_KEY}"}
-        #Construir el payload con modelo y mensajes
-        data = {
-            "model": "gpt-4.1-mini",   # Modelo que queremos usar
-            "messages": messages       # Historial completo de la conversación
+            "Authorization": f"Bearer {OPENAI_KEY}"
         }
+
+        data = {
+            "model": "gpt-4o-mini",
+            "messages": messages
+        }
+
         try:
-            #Hacer la petición POST a la API de OpenAI
-            openai_response = requests.post(
-                OPENAI_URL, 
-                headers=headers, 
-                json=data)
-            # Si la respuesta es 4xx o 5xx, lanza excepción automáticamente
-            openai_response.raise_for_status()
-            #Parsear la respuesta JSON
-            openai_data = openai_response.json()
-            #Extraer el contenido del mensaje del asistente
-            reply = openai_data['choices'][0]['message']['content']
-            #Devolver solo la respuesta al frontend
+            response = requests.post(OPENAI_URL, headers=headers, json=data)
+
+            print("STATUS CODE:", response.status_code)
+            print("RESPUESTA RAW:", response.text[:300], "...")
+            
+            response.raise_for_status()
+
+            reply = response.json()['choices'][0]['message']['content']
             return Response({"reply": reply})
-        except requests.exceptions.RequestException as e:
-            # Error de conexión con OpenAI (red, timeout, etc.)
-            print(f"Error al llamar a OpenAI: {e}")
+
+        except Exception as e:
+            print("ERROR REAl:", e)
             return Response(
-                {"error": "Error al conectar con el servicio de IA."}, 
-                status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        except (KeyError, IndexError):
-            # Error al procesar la respuesta (estructura inesperada)
-            return Response(
-                {"error": "Respuesta inesperada de OpenAI."}, 
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"error": "Error interno en el servidor."},
+                status=500
             )

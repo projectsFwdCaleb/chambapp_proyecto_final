@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 // import Dropdown from 'react-bootstrap/Dropdown';
 import ServicesCategoria from '../../Services/ServicesCategoria';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../SidebarRender/SidebarRender.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faHeart, faInbox, faComment, faUser, faGear} from '@fortawesome/free-solid-svg-icons'
@@ -29,9 +29,9 @@ function SidebarRender() {
   }
 
   // Define una función para manejar la navegación o acciones de la categoría
-  const handleCategoryClick = (categoriaNombre) => {
-    console.log(`Navegando a: ${categoriaNombre}`);
-    // navigate(`/categorias/${categoriaNombre}`);
+  const handleCategoryClick = (categoriaId) => {
+    console.log(`Navegando a: ${categoriaId}`);
+    navigate(`/categoria/${categoriaId}`);
   }
 
 
@@ -39,7 +39,9 @@ function SidebarRender() {
     <div className='sidebar-container text-white'>
 
         <div className='logo-section'>
+            <Link to="/">
             <img src="/logo.png" alt="ChambApp" />
+            </Link> 
         </div>
 
         {/* Opciones de Navegación principales*/}
@@ -111,7 +113,7 @@ function SidebarRender() {
                                     className='submenu-item'>
                                     <button 
                                         className='submenu-link'
-                                        onClick={() => handleCategoryClick(categoria.nombre)}>
+                                        onClick={() => handleCategoryClick(categoria.id)}>
                                         {categoria.nombre}
                                     </button>
                                 </li>
