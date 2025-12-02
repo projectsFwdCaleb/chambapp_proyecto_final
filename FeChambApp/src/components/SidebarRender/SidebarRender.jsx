@@ -34,6 +34,17 @@ function SidebarRender() {
     navigate(`/categoria/${categoriaId}`);
   }
 
+  const handleExploreClick = () => {
+    navigate('/')
+  }
+
+  const handleFavoriteClick = () => {
+    navigate('/favoritos')
+  }
+
+  const handleRequestClick = () => {
+    navigate('/favoritos')
+  }
 
   return (
     <div className='sidebar-container text-white'>
@@ -72,14 +83,13 @@ function SidebarRender() {
         <div className='navOptions'>
             <ul className='nav-list'>
                 <li className='nav-item'>
-                    <button className='nav-link'>
+                    <button className='nav-link' onClick={() => handleExploreClick()}>
                         <h3><FontAwesomeIcon icon={faEye} /> Explorar</h3>
                     </button>
                 </li>
                 
                 <li className='nav-item'>
-                    <button className='nav-link'>
-                        
+                    <button className='nav-link' onClick={() => handleFavoriteClick()}>
                         <h3><FontAwesomeIcon icon={faHeart} /> Favoritos</h3>
                     </button>
                 </li>

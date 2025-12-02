@@ -7,6 +7,7 @@ import Profile from '../pages/Profile'
 import PaginaAdministrador from '../pages/PaginaAdministrador'
 import Servicio from '../pages/Servicio'
 import Categorias from '../pages/Categorias'
+import Favorite from '../pages/Favorite'
 export default function Routing() {
   return (
       <Router>
@@ -18,6 +19,7 @@ export default function Routing() {
         <Route path='/Administrador' element={<PaginaAdministrador/>}/>
         <Route path='/Nuevo-Servicio' element={<Servicio/>}/>
         <Route path='/categoria/:id' element={<Categorias/>}/>
+        <Route path='/favoritos' element={<Favorite/>}/>
         </Routes>
       </Router>
   );
