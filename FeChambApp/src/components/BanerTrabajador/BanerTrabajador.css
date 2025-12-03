@@ -1,8 +1,39 @@
-.card-img {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.baner-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+}
+
+.baner-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #f1f1f1;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+    margin-bottom: 15px;
+}
+
+.card-nombre {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.card-rating {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ff9800;
+    margin-bottom: 10px;
+}
+
+.card-servicios {
+    font-size: 1.1rem;
+    color: #555;
 }

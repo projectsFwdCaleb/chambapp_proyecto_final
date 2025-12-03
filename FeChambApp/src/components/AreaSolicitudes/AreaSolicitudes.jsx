@@ -210,7 +210,7 @@ function AreaSolicitudes() {
             <h2>Solicitudes Registradas</h2>
 
             {solicitud.length === 0 ? (
-                <p>No hay solicitudes aún.</p>
+                <p>No hay solicitudes en estos momentos.</p>
             ) : (
                 <ul className="lista-solicitudes">
                     {solicitud.map((sol) => (
