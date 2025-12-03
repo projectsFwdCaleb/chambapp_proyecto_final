@@ -200,7 +200,7 @@ console.log("Usuario ID recibido por Sidebar:", user?.id);
               onChange={(e) => setNuevoMensaje(e.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <button className="btn btn-primary" onClick={enviarMensaje}>
+            <button className="btn-save" onClick={enviarMensaje}>
               Enviar
             </button>
           </div>

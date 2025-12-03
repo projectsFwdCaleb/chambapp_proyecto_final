@@ -9,6 +9,7 @@ import Servicio from '../pages/Servicio'
 import PaginaSolicitudes from '../pages/PaginaSolicitudes'
 import Categorias from '../pages/Categorias'
 import Favorite from '../pages/Favorite'
+import About from '../pages/About'
 export default function Routing() {
   return (
       <Router>
@@ -22,6 +23,7 @@ export default function Routing() {
         <Route path='/Solicitudes' element={<PaginaSolicitudes/>}/>
         <Route path='/categoria/:id' element={<Categorias/>}/>
         <Route path='/favoritos' element={<Favorite/>}/>
+        <Route path='/acerca-de' element={<About/>}/>
         </Routes>
       </Router>
   );

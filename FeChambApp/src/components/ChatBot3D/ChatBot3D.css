@@ -39,17 +39,16 @@
   opacity: 0.9;
 }
 
-.chatbot-btn {
-  margin-top: 22px;
-  padding: 12px 22px;
-  font-size: 14px;
-  border: none;
-  border-radius: 50px;
-  background: #00b3ff;
-  color: white;
-  cursor: pointer;
-  transition: 0.2s ease;
-  box-shadow: 0 4px 14px rgba(0, 179, 255, 0.45);
+.btn-save {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin-top: 22px;
+    padding: 12px 22px;
+    font-size: 14px;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s ease;
 }
 
 .chatbot-btn:hover {

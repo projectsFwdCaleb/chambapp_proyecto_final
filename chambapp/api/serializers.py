@@ -130,9 +130,22 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
 # Servicio
 class ServicioSerializer(serializers.ModelSerializer):
+    nombre = serializers.CharField(source='nombre_servicio', read_only=True)
+
     class Meta:
         model = Servicio
-        fields = '__all__'
+        # incluimos explicitamente los campos que necesitamos (evita confusiones)
+        fields = [
+            'id',
+            'usuario',
+            'categoria',
+            'nombre_servicio',
+            'nombre',  # alias práctico para frontend
+            'descripcion',
+            'precio_referencial',
+            'disponibilidad',
+            'whatsapp_contacto'
+        ]
 
     def validate_precio_referencial(self, value):
         # El precio no puede ser negativo

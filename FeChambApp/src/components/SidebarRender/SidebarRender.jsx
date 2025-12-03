@@ -43,7 +43,11 @@ function SidebarRender() {
   }
 
   const handleRequestClick = () => {
-    navigate('/favoritos')
+    navigate('/Solicitudes')
+  }
+
+  const handleAboutButton = () => {
+    navigate('/acerca-de')
   }
 
   return (
@@ -95,7 +99,7 @@ function SidebarRender() {
                 </li>
 
                 <li className='nav-item'>
-                    <button className='nav-link'>
+                    <button className='nav-link' onClick={() => handleRequestClick()}>
                         <h3><FontAwesomeIcon icon={faInbox} /> Solicitudes</h3>
                     </button>
                 </li>
@@ -136,9 +140,9 @@ function SidebarRender() {
         
         {/* Sección del menú general*/}
         <div className='generalMenu'>
-            <h3 className='text-muted'> <FontAwesomeIcon icon={faGear} />General</h3>
-            <button>Ajustes</button>
-            <button>Sobre nosotros</button>
+            <h3 className='text-muted'> General</h3>
+            <button><FontAwesomeIcon icon={faGear} />Ajustes</button>
+            <button onClick={() => handleAboutButton()}>Sobre nosotros</button>
         </div>
     </div>
   )

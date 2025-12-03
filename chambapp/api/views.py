@@ -169,9 +169,9 @@ def trabajadores_por_categoria(request, categoria_id):
     ).select_related("usuario", "categoria")
     # aplicar filtros de precio a nivel de servicio
     if min_precio:
-        servicios = servicios.filter(precio__gte=min_precio)
+        servicios = servicios.filter(precio_referencial__gte=min_precio)
     if max_precio:
-        servicios = servicios.filter(precio__lte=max_precio)
+        servicios = servicios.filter(precio_referencial__lte=max_precio)
     # obtener IDs de trabajadores sin repetir
     ids_trabajadores = servicios.values_list("usuario_id", flat=True).distinct()
     # obtener usuarios con prefetch

@@ -220,7 +220,7 @@ function ServiciosProfesionales() {
           </div>
 
           <div className="text-end mt-3">
-            <Button variant="primary" type="submit" size="lg">
+            <Button className='btn-save'>
               Publicar Servicio
             </Button>
           </div>

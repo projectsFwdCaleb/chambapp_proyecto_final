@@ -95,12 +95,15 @@
 }
 
 .btn-save {
-    padding: 0.8rem 2.5rem;
-    font-weight: 600;
-    border-radius: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin-top: 22px;
+    padding: 12px 22px;
+    font-size: 14px;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s ease;
 }
 
 .btn-save:hover {

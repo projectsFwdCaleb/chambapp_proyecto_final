@@ -43,6 +43,10 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.menu{
+  max-height: 50px
+}
+
 /* Dropdown Profile Menu */
 .dropdownProfileMenu {
   display: flex;
@@ -202,7 +206,7 @@
 }
 
 .search-results li:hover {
-  background: linear-gradient(135deg, #4b4a48 0%, #667eea 100%);
+  background: rgb(102, 102, 101);
   color: white;
   transform: translateX(5px);
 }

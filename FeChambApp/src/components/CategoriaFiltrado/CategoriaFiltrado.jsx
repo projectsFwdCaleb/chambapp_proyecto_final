@@ -3,6 +3,7 @@ import ServicesTop from '../../Services/ServicesTop';
 import ServicesCantones from '../../Services/ServicesCantones';
 import './CategoriaFiltrado.css';
 import BoosiMan from '../../assets/BoosiMan.webp'; // Imagen por defecto
+import { useNavigate } from 'react-router-dom';
 
 function CategoriaFiltrado({ idCategoria}) {
   // Estados principales
@@ -12,6 +13,7 @@ function CategoriaFiltrado({ idCategoria}) {
   const [minPrecio, setMinPrecio] = useState("");
   const [maxPrecio, setMaxPrecio] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Cargar cantones al iniciar el componente
   useEffect(() => {
@@ -43,7 +45,7 @@ function CategoriaFiltrado({ idCategoria}) {
         if (canton) filtros.canton = canton;
         if (minPrecio) filtros.min = minPrecio;
         if (maxPrecio) filtros.max = maxPrecio;
-        filtros.ordenar = "-precio"; // Orden por precio descendente
+        /* filtros.ordenar = "-precio"; */ // Orden por precio descendente
 
         const response = await ServicesTop.getTrabajadoresPorCategoria(idCategoria, filtros);
 
@@ -65,6 +67,10 @@ function CategoriaFiltrado({ idCategoria}) {
     fetchTrabajadores();
   }, [canton, minPrecio, maxPrecio, idCategoria]);
 
+  const handleContactButton = (id) => {
+      navigate(`/trabajador/${id}`);
+  }
+
   return (
     <div className="categoria-filtrado-container">
 
@@ -76,7 +82,7 @@ function CategoriaFiltrado({ idCategoria}) {
             id="canton"
             className="filtro-select"
             value={canton}
-            onChange={(e) => setCanton(e.target.value)}
+            onChange={(e) => setCanton(e.target.value === "" ? "" : Number(e.target.value))}
           >
             <option value="">Todos</option>
             {cantones.map((c) => (
@@ -160,8 +166,10 @@ function CategoriaFiltrado({ idCategoria}) {
                   }
                 </p>
 
-                <button className="card-button">
-                  Ver Perfil
+                <button 
+                className="btn-save" 
+                onClick={() => handleContactButton(trabajador.id)}>
+                  Contactar
                 </button>
               </div>
             </div>

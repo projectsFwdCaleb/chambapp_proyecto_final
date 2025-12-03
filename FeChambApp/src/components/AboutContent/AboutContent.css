@@ -1,0 +1,242 @@
+:root {
+  --page-bg: #fffdf8;
+  --cover-bg: #e8d9c5;
+  --page-width: 450px;
+  --page-height: 580px;
+  --anim-duration: 1.2s;
+  /* Slower, more elegant */
+}
+
+.dark {
+  --page-bg: #1a1a1a;
+  --text-color: #f2f2f2;
+  --cover-bg: #2a2a2a;
+}
+
+/* MAIN WRAPPER */
+.book-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: 700px;
+  /* Ensure space for the book */
+  justify-content: center;
+}
+
+/* CONTAINER */
+.book-container {
+  perspective: 2500px;
+  /* Stronger perspective for depth */
+  width: calc(var(--page-width) * 2);
+  height: var(--page-height);
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* THE BOOK ITSELF */
+.book-3d {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* COMMON PAGE STYLES */
+.page {
+  width: var(--page-width);
+  height: 100%;
+  background: var(--page-bg);
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  /* Slight rounding */
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.05);
+  /* Paper texture feel */
+}
+
+/* CONTENT INSIDE PAGES */
+.page-inner {
+  height: 100%;
+  padding: 40px;
+  overflow-y: auto;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-color);
+  /* Scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.page-inner::-webkit-scrollbar {
+  width: 6px;
+}
+
+.page-inner::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.page-inner h1,
+.page-inner h2,
+.page-inner h3 {
+  margin-top: 0;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.page-inner p {
+  margin-bottom: 1rem;
+  text-align: justify;
+}
+
+/* STATIC PAGES (The ones sitting on the table) */
+.page.static-left {
+  left: 0;
+  z-index: 1;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.1);
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.page.static-right {
+  right: 0;
+  z-index: 1;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* FLIPPING PAGE (The one moving) */
+.page-flipper {
+  position: absolute;
+  right: 0;
+  /* Starts on the right side */
+  width: var(--page-width);
+  height: 100%;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  /* Hinge on the spine */
+  z-index: 10;
+  transition: transform var(--anim-duration) cubic-bezier(0.645, 0.045, 0.355, 1.000);
+  /* ease-in-out-cubic */
+}
+
+/* When flipping to next page (Right -> Left) */
+.page-flipper.flipping-forward {
+  transform: rotateY(-180deg);
+}
+
+/* When flipping to prev page (Left -> Right) */
+/* We need a different strategy for prev: 
+   The flipper starts at -180deg (Left) and goes to 0deg (Right) */
+.page-flipper.start-left {
+  transform: rotateY(-180deg);
+}
+
+.page-flipper.flipping-backward {
+  transform: rotateY(0deg);
+}
+
+
+/* FRONT AND BACK OF THE FLIPPING PAGE */
+.flipper-front,
+.flipper-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--page-bg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.flipper-front {
+  z-index: 2;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  /* Gradient for spine depth */
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 10%, var(--page-bg) 100%);
+}
+
+.flipper-back {
+  transform: rotateY(180deg);
+  z-index: 1;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  /* Gradient for spine depth */
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 10%, var(--page-bg) 100%);
+}
+
+/* SHADOWS DURING FLIP (Optional polish) */
+/* We can add pseudo-elements to simulate shadow casting, but keeping it simple for now */
+
+/* CONTROLS */
+.controls {
+  margin-top: 30px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  z-index: 100;
+}
+
+.controls button {
+  padding: 10px 24px;
+  background: #2c3e50;
+  color: white;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.controls button:hover:not(:disabled) {
+  background: #34495e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.controls button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.page-indicator {
+  font-family: monospace;
+  font-size: 16px;
+  color: var(--text-color);
+  background: rgba(0, 0, 0, 0.05);
+  padding: 6px 12px;
+  border-radius: 12px;
+}
+
+/* DARK MODE BTN */
+.dark-toggle {
+  margin-top: 20px;
+  padding: 8px 16px;
+  background: transparent;
+  color: var(--text-color);
+  border: 2px solid var(--text-color);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.dark-toggle:hover {
+  background: var(--text-color);
+  color: var(--page-bg);
+}

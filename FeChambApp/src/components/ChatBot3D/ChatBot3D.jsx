@@ -19,7 +19,7 @@ function ChatBot3D({ onOpenChat }) {
 
       {/* Overlay con texto arriba del modelo 3d(con un boton) */}
       <div className="showcase-overlay">
-        <button className="chatbot-btn" onClick={onOpenChat}>
+        <button className="btn-save" onClick={onOpenChat}>
           <small>💬 Abrir Chat Asistente</small>
         </button>
       </div>

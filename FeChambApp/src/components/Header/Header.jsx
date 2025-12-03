@@ -13,6 +13,7 @@ function Header() {
   const [servicios, setServicios] = useState([]);
   const [page, setPage] = useState(1);
   const [user, setUser] = useState(null);
+  const navigate= useNavigate()
 
 
 // Obtener usuario en sesión usando el token
@@ -48,7 +49,9 @@ useEffect(() => {
   return () => clearTimeout(delay);
 }, [search, page]);
 
-
+const handleResultClick = (id) => {
+      navigate(`/trabajador/${id}`);
+  }
 
 
   return (
@@ -67,8 +70,8 @@ useEffect(() => {
         {search.trim() && servicios.length > 0 && (
           <ul className='search-results'>
             {servicios.map((servicio) => (
-              <li key={servicio.id}>
-                <strong>{servicio.nombre_servicio}</strong> – {servicio.descripcion}
+              <li key={servicio.id} onClick={() => handleResultClick(servicio.usuario)}>
+                <strong>{servicio.nombre_servicio}</strong> {servicio.descripcion}
               </li>
             ))}
           </ul>
@@ -83,7 +86,7 @@ useEffect(() => {
           </Link>
         ) : (
 
-          <Dropdown align="end">
+          <Dropdown align="end" className='menu'>
             <Dropdown.Toggle variant="dark" id="dropdown-user">
               <div className="dropdownProfileMenu">
                 <img

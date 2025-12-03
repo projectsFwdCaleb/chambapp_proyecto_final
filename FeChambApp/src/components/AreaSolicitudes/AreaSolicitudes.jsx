@@ -1,6 +1,6 @@
 import React, {useState,useEffect}from 'react'
 /*se trae la hoja de estilos*/
-import AreaSolicitudes from "../AreaSolicitudes/AreaSolicitudes.css"
+import "../AreaSolicitudes/AreaSolicitudes.css"
 /*se trae el services*/
 import ServicesSolicitudes from "../../Services/ServicesSolicitudes"
 function AreaSolicitudes({usuarioId}) {
@@ -74,7 +74,7 @@ function AreaSolicitudes({usuarioId}) {
             </button>
             {/* Formulario/Modal */}
             {mostrarModal && (
-                
+                g
             )}
 
             <form onSubmit={enviar} className="form-solicitud">
