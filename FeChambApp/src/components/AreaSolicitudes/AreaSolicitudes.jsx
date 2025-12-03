@@ -1,27 +1,60 @@
 import React, {useState,useEffect}from 'react'
 /*se trae la hoja de estilos*/
-import AreaSolicitudes from "../AreaSolicitudes/AreaSolicitudes.css"
-/*se trae el services*/
+import "../AreaSolicitudes/AreaSolicitudes.css"
+/*se trae los services*/
 import ServicesSolicitudes from "../../Services/ServicesSolicitudes"
-function AreaSolicitudes({usuarioId}) {
+import ServicesCategoria from '../../Services/ServicesCategoria';
+import ServicesCantones from '../../Services/ServicesCantones';
+import ServicesLogin from '../../Services/ServicesLogin';
+import { Prev } from 'react-bootstrap/esm/PageItem';
+function AreaSolicitudes() {
     /*la constante que tendra las solicitudes*/
     const [solicitud , setSolicitud ]=useState([]);
+    /*las constante para traer los cantones y categorias*/
+    const [categorias, setCategorias] = useState([]);
+    const [cantones, setCantones] = useState([]);
     /*aqui manejamos el estado del modal*/
     const [mostrarModal, setMostrarModal] = useState(false);
+    const [user, setUser]  = useState("");
     /*constante para las nuevas solicitudes */
     const [nuevaSolicitud, setNuevaSolicitud] = useState({
         titulo: "",
         descripcion:"",
-        latitud: "",
-        longitud: "",
-        usuario: usuarioId,
+        categoria: "",
+        canton_provincia: "",
+        usuario: "",
         estado: true
-
-    })
-    /*este useEffect cargara las solicitudes al entrar a la pagina */
+        })
+    
+    /*este useEffect cargara las funciones necesarias al entrar a la pagina
+    (solicitudes,categorias,provincias y usuarios) */
      useEffect(() => {
         cargarSolicitudes();
+        fetchCategorias()
+        fetchCantones()
+        fetchUser()
      },[])
+
+     useEffect(() => {
+        if (user && user.id) {
+        setNuevaSolicitud(prev => ({
+            ...prev,
+            usuario: user.id
+        }));
+         }
+    }, [user]);
+
+     const fetchUser = async () => {
+           try {
+             const data = await ServicesLogin.getUserSession();
+             
+             setUser(data);
+             
+           } catch (err) {
+             console.error("Error al obtener usuario en sesión:", err);
+           }
+         };
+
 
      const cargarSolicitudes = async () =>{
         try {
@@ -32,28 +65,57 @@ function AreaSolicitudes({usuarioId}) {
             }
         }
 
-        /*aqui manejamos el cambio */
+     const fetchCategorias = async () => {
+         try {
+           const data = await ServicesCategoria.getCategoria();
+           setCategorias(Array.isArray(data) ? data : data.results || []);
+         } catch (error) {
+           console.error("Error al obtener categorias", error);
+         }
+       };
+     
+       // Obtener lista de cantones
+       const fetchCantones = async () => {
+         try {
+           const data = await ServicesCantones.getCanton();
+           setCantones(Array.isArray(data) ? data : data.results || []);
+         } catch (error) {
+           console.error("Error al obtener cantones", error);
+         }
+       };   
+
+     /*aqui manejamos el cambio */
     const Datos = (e) => {
-        setNuevaSolicitud({
-            ...nuevaSolicitud,
-            [e.Target.name]: e.target.value,
-        })
+        const{name, value} = e.target;
+        setNuevaSolicitud((prev) => ({
+            ...prev,
+            [name]:value,
+        }))
     }
 
     const enviar = async (e) => {
         e.preventDefault()
 
+        if (!nuevaSolicitud.usuario) {
+        console.error("El usuario aún no está cargado");
+        return;
+        }
+
         try{
+            
             await ServicesSolicitudes.postSolicitud(nuevaSolicitud)
+
             /*para que se vuelva a guardar vacio*/
             setNuevaSolicitud({
                 titulo: "",
                 descripcion:"",
-                latitud: "",
-                longitud: "",
-                usuario: usuarioId,
+                categoria: "",
+                canton_provincia: "",
+                usuario: user.id,
                 estado: true
             })
+            
+            
             cargarSolicitudes();
             /*tras completar una solicitud steamos falso pafra serrar el modal*/
             setMostrarModal(false);
@@ -68,7 +130,7 @@ function AreaSolicitudes({usuarioId}) {
 
             
             {/* El boton para abrir el modal donde van las solicitudes */}
-            <button class name="btn btn-success mb-3"
+            <button className="btn btn-success mb-3"
                 onClick={()=> setMostrarModal(true)}>
                 Crear Solicitud
             </button>
@@ -90,7 +152,7 @@ function AreaSolicitudes({usuarioId}) {
                                         type="text"
                                         name="titulo"
                                         placeholder="Título"
-                                        value={formData.titulo}
+                                        value={nuevaSolicitud.titulo}
                                         onChange={Datos}
                                         className="form-control mb-2"
                                         required
@@ -99,42 +161,48 @@ function AreaSolicitudes({usuarioId}) {
                                     <textarea
                                         name="descripcion"
                                         placeholder="Descripción"
-                                        value={formData.descripcion}
+                                        value={nuevaSolicitud.descripcion}
                                         onChange={Datos}
                                         className="form-control mb-2"
                                         required
                                     />
 
-                                    <input
-                                        type="number"
-                                        name="latitud"
-                                        placeholder="Latitud"
-                                        value={formData.latitud}
+                                    <label className="form-label">Categoría</label>
+                                    <select
+                                        name="categoria"
+                                        value={nuevaSolicitud.categoria}
                                         onChange={Datos}
-                                        className="form-control mb-2"
-                                    />
+                                        required
+                                    >
+                                        <option value="">Selecciona una categoría</option>
+                                        {categorias.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                                        ))}
+                                    </select>
 
-                                    <input
-                                        type="number"
-                                        name="longitud"
-                                        placeholder="Longitud"
-                                        value={formData.longitud}
+                                    <label className="form-label">Cantón</label>
+                                    <select
+                                        name="canton_provincia"
+                                        value={nuevaSolicitud.canton_provincia}
                                         onChange={Datos}
-                                        className="form-control mb-2"
-                                    />
+                                        required
+                                    >
+                                    <option value="">Selecciona un cantón</option>
+                                        {cantones.map(can => (
+                                            <option key={can.id} value={can.id}>{can.nombre}</option>
+                                        ))} 
+                                    </select>
 
                                     <button type="submit" className="btn btn-primary w-100">
                                         Guardar Solicitud
-                                    </button>
-                                </form>
-
-
-                            </div>
+                                    </button> {/* comienso de de la bajada */}
+                                </form> {/* ya vamos en cammino */}
+                            </div> {/* 4 divides segudis :( */}
                         </div> 
-                    </div> 
+                    </div> {/* esto es demaciado */}
                 </div>  
-            )}
-            {/*  */}
+            )} {/* solo un poco mas..... */}
+            {/* Aqui termina el modal y si que fue un lago camino */}
            
             <hr />
 

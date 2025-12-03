@@ -11,6 +11,8 @@ function PaginaTrabajador() {
   /*aqui es donde se hace la constante id que tomara el valor del useParams..el cual ya tiene el valor
    del id en la pagina....es un poco enredado pero funciona ;)*/
   const { id } = useParams();
+  console.log(id);
+  
   return (
     <div>
       <Header/> 
