@@ -6,7 +6,7 @@ function BanerTrabajador({ id }) {
   const [userStats, setUserStats] = useState(null);
   const [user, setUser] = useState(null);
 
-  // --- Obtener estadísticas ---
+  /* llamar las estadísticas */
   const fetchEstadisticas = async () => {
     try {
       const resp = await ServicesPortafolio.getEstadisticas(id);
@@ -16,7 +16,7 @@ function BanerTrabajador({ id }) {
     }
   };
 
-  // --- Obtener usuario en sesión ---
+  /* llamar a los usuarios */
   const fetchUser = async () => {
     try {
       const data = await ServicesLogin.getUserSession();
@@ -26,14 +26,14 @@ function BanerTrabajador({ id }) {
     }
   };
 
-  // --- Efecto principal ---
+  /* El useEffect que llamara las funciones/constantes */
   useEffect(() => {
     if (!id) return;
     fetchEstadisticas();
     fetchUser();
   }, [id]);
 
-  // --- Loading ---
+  /* Para que de un mensaje de cargando, es solo un detallito */
   if (!userStats || !user) {
     return <p>Cargando...</p>;
   }
@@ -50,7 +50,7 @@ function BanerTrabajador({ id }) {
                 {userStats?.Usuario?.first_name || "Usuario"}{" "}
                 {userStats?.Usuario?.last_name || ""}
             </h3>
-            
+
             <p className="card-rating">
                 ⭐ {userStats?.promedio ?? 0} / 5
             </p>
