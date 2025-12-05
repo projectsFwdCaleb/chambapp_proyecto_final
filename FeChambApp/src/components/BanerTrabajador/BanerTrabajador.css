@@ -1,15 +1,14 @@
 .baner-container {
     width: 100%;
-    max-width: 450px;
+    min-width: 580px;
     margin: 0 auto;
     padding: 20px;
     text-align: center;
     background: #ffffff;
-    border-radius: 18px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
 }
 
-.baner-img {
+.baner-container img {
     width: 120px;
     height: 120px;
     object-fit: cover;

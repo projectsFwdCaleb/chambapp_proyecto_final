@@ -13,8 +13,11 @@ function AreaSolicitudes() {
     /*las constante para traer los cantones y categorias*/
     const [categorias, setCategorias] = useState([]);
     const [cantones, setCantones] = useState([]);
-    /*aqui manejamos el estado del modal*/
+    /*aqui manejamos el estado del modal (mostrar,editar y eliminar)*/
     const [mostrarModal, setMostrarModal] = useState(false);
+    const [modoEdicion, setModoEdicion] = useState(false);
+    const [solicitudEditando, setSolicitudEditando] = useState(null);
+    /*y esta constante es traer la in fomacion d elos usuarios(Muy nesesaria)*/
     const [user, setUser]  = useState("");
     /*constante para las nuevas solicitudes */
     const [nuevaSolicitud, setNuevaSolicitud] = useState({
@@ -28,61 +31,60 @@ function AreaSolicitudes() {
     
     /*este useEffect cargara las funciones necesarias al entrar a la pagina
     (solicitudes,categorias,provincias y usuarios) */
-     useEffect(() => {
+    useEffect(() => {
         cargarSolicitudes();
         fetchCategorias()
         fetchCantones()
         fetchUser()
-     },[])
+    },[])
 
-     useEffect(() => {
+    useEffect(() => {
         if (user && user.id) {
-        setNuevaSolicitud(prev => ({
-            ...prev,
-            usuario: user.id
-        }));
+            setNuevaSolicitud(prev => ({
+                ...prev,
+                usuario: user.id
+            }));
          }
     }, [user]);
 
-     const fetchUser = async () => {
-           try {
-             const data = await ServicesLogin.getUserSession();
+    const fetchUser = async () => {
+        try {
+            const data = await ServicesLogin.getUserSession();
+            setUser(data);
              
-             setUser(data);
-             
-           } catch (err) {
-             console.error("Error al obtener usuario en sesión:", err);
-           }
-         };
+        } catch (error) {
+            console.error("Error al obtener usuario en sesión:", err);
+        }
+    };
 
 
-     const cargarSolicitudes = async () =>{
+    const cargarSolicitudes = async () =>{
         try {
             const resp = await ServicesSolicitudes.getSolicitud();
             setSolicitud(resp);
-            }catch (error){
-                console.error("Error al obtener las solicitudes:", error);
-            }
+        }catch (error){
+            console.error("Error al obtener las solicitudes:", error);
         }
+    }
 
-     const fetchCategorias = async () => {
-         try {
+    const fetchCategorias = async () => {
+        try {
            const data = await ServicesCategoria.getCategoria();
            setCategorias(Array.isArray(data) ? data : data.results || []);
-         } catch (error) {
+        } catch (error) {
            console.error("Error al obtener categorias", error);
-         }
-       };
+        }
+    };
      
-       // Obtener lista de cantones
-       const fetchCantones = async () => {
-         try {
+        /*Obtener lista de cantones*/ 
+    const fetchCantones = async () => {
+        try {
            const data = await ServicesCantones.getCanton();
            setCantones(Array.isArray(data) ? data : data.results || []);
-         } catch (error) {
+        } catch (error) {
            console.error("Error al obtener cantones", error);
-         }
-       };   
+        }
+    };   
 
      /*aqui manejamos el cambio */
     const Datos = (e) => {
@@ -97,13 +99,22 @@ function AreaSolicitudes() {
         e.preventDefault()
 
         if (!nuevaSolicitud.usuario) {
-        console.error("El usuario aún no está cargado");
-        return;
+            console.error("El usuario aún no está cargado");
+            return;
         }
 
-        try{
-            
-            await ServicesSolicitudes.postSolicitud(nuevaSolicitud)
+        try {
+
+            if (modoEdicion){
+                await ServicesSolicitudes.putSolicitud(
+                    solicitudEditando.id,
+                    nuevaSolicitud
+                )
+            } else {
+                await ServicesSolicitudes.postSolicitud(nuevaSolicitud)
+            }
+            /*tras completar la edicion o posteo cargamos las solicitudes */
+            cargarSolicitudes();
 
             /*para que se vuelva a guardar vacio*/
             setNuevaSolicitud({
@@ -115,23 +126,62 @@ function AreaSolicitudes() {
                 estado: true
             })
             
-            
-            cargarSolicitudes();
-            /*tras completar una solicitud steamos falso pafra serrar el modal*/
-            setMostrarModal(false);
+            setModoEdicion(false);
+            setSolicitudEditando(null);
+            setMostrarModal(false)
+
         }catch(error){
            console.error("Error al crear la solicitud:", error)
         }
     }
 
+    /*usaremos un modal para la edicion y posteo, en esta funcion 
+    definimos que se abra en modo edicion*/
+    const abrirModalEditar = (sol) => {
+        setModoEdicion(true)
+        setSolicitudEditando(sol)
+        /*para setear los datos que editaremos*/
+        setNuevaSolicitud({
+            titulo: sol.titulo,
+            descripcion: sol.descripcion,
+            categoria: sol.categoria,
+            canton_provincia: sol.canton_provincia,
+            usuario: sol.usuario,
+            estado: sol.estado
+        })
+        setMostrarModal(true);
+    }
 
-  return (
-<div className="area-solicitudes-container">
+    /*Una funcion que se llamara para borrar solicitudes*/
+    const eliminarSolicitud = async (id) => {
+        const confirmar = window.confirm("¿Seguro que deseas eliminar esta solicitud?")
+        if (!confirmar) return;
 
-            
-            {/* El boton para abrir el modal donde van las solicitudes */}
+        try {
+            await ServicesSolicitudes.deleteSolicitud(id)
+            cargarSolicitudes()
+        }catch (error) {
+            console.error("Error al eliminar solicitud:", error);
+        }
+    }
+    
+    return (
+        <div className="area-solicitudes-container">
+
+            {/* El boton para abrir el modal de las solicitudes */}
             <button className="btn btn-success mb-3"
-                onClick={()=> setMostrarModal(true)}>
+                onClick={()=> {
+                    setModoEdicion(false)
+                    setNuevaSolicitud({
+                         titulo: "",
+                        descripcion:"",
+                        categoria: "",
+                        canton_provincia: "",
+                        usuario: user.id,
+                        estado: true
+                    })
+                    setMostrarModal(true)
+                    }}>
                 Crear Solicitud
             </button>
             {/* Formulario/Modal */}
@@ -140,7 +190,8 @@ function AreaSolicitudes() {
                     <div className='modal-dialog'>
                         <div className='modal-content'>
                             <div className='modal-header'>
-                                <h1 className='modal-title'>Nueva Solicitud</h1>
+                                <h1 className='modal-title'>{modoEdicion ? "Editar Solicitud":
+                                "Nueva Solicitud"}</h1>
                                 <button type='button'
                                 className='btn-close'
                                 onClick={()=> setMostrarModal(false)}
@@ -193,8 +244,8 @@ function AreaSolicitudes() {
                                         ))} 
                                     </select>
 
-                                    <button type="submit" className="btn btn-primary w-100">
-                                        Guardar Solicitud
+                                    <button type="submit" className="btn btn-primary w-100 mt-3">
+                                        {modoEdicion ? "Guardar Cambios" : "Guardar Solicitud"}
                                     </button> {/* comienso de de la bajada */}
                                 </form> {/* ya vamos en cammino */}
                             </div> {/* 4 divides segudis :( */}
@@ -215,16 +266,31 @@ function AreaSolicitudes() {
                 <ul className="lista-solicitudes">
                     {solicitud.map((sol) => (
                         <li key={sol.id} className="solicitud-item">
+                            <p>{sol.usuario}</p>
                             <strong>{sol.titulo}</strong>
                             <br />
                             {sol.descripcion}
+
+                            {/*Botones para abrir modal y borrar solicitudes*/}
+                            <div className='mt-2 d-flex gap-2'>
+                                <button className='btn btn-warning btn-sm'
+                                onClick={() => abrirModalEditar(sol)}
+                                >
+                                    Editar
+                                </button>
+
+                                <button className='btn btn-danger btn-sm'
+                                onClick={()=> eliminarSolicitud(sol.id)}
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
                         </li>
                     ))}
                 </ul>
             )}
-
         </div>
-  )
+    )
 }
 
 export default AreaSolicitudes

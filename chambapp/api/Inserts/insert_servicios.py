@@ -4,7 +4,7 @@ URL = "http://127.0.0.1:8000/api/servicio/"
 
 servicios = [
     {
-        "usuario": 1,
+        "usuario": 2,
         "categoria": 1,
         "nombre_servicio": "Reparación de paredes",
         "descripcion": "Arreglo de grietas, acabados y repello.",
@@ -12,7 +12,7 @@ servicios = [
         "whatsapp_contacto": "88881234"
     },
     {
-        "usuario": 2,
+        "usuario": 4,
         "categoria": 4,
         "nombre_servicio": "Corte de césped",
         "descripcion": "Servicio de corte y limpieza.",
@@ -20,7 +20,7 @@ servicios = [
         "whatsapp_contacto": "88884567"
     },
     {
-        "usuario": 3,
+        "usuario": 1,
         "categoria": 10,
         "nombre_servicio": "Desarrollo web",
         "descripcion": "Páginas web modernas y responsivas.",
