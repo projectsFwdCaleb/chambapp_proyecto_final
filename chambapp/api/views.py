@@ -311,6 +311,7 @@ def estadisticas_trabajador(request, trabajador_id):
     resenhas_positivas = Resenha.objects.filter(trabajador_id=trabajador_id, puntuacion__gte=4).count()
     tasa_satisfaccion = (resenhas_positivas / trabajos_completados * 100) if trabajos_completados > 0 else 0
     return Response({
+        'trabajador_id': trabajador.id,
         'trabajos_completados': trabajos_completados,
         'promedio_calificacion': round(promedio['puntuacion__avg'] or 0, 2),
         'servicios_ofrecidos': servicios,
