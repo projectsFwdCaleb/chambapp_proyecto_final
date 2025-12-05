@@ -206,7 +206,7 @@ def trabajadores_por_categoria(request, categoria_id):
 # populares hoy (Devuelve los trabajadores más populares (mejor promedio de reseñas)en los últimos 7 días.)
 @api_view(['GET'])
 def populares_hoy(request):
-    hace_7_dias = timezone.now() - timedelta(days=15)
+    hace_7_dias = timezone.now() - timedelta(days=17)
     # Agrupamos reseñas por trabajador y obtenemos promedio
     top_trabajoderes = (
         Resenha.objects

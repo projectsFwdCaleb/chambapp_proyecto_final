@@ -178,7 +178,7 @@ function AboutContent() {
 
   return (
     <div className="book-wrapper">
-      <div className="book-container">
+      <div className="book-container"> {/* tampoco funciono */}
         <div className="book-3d">
 
           {/* STATIC LEFT PAGE */}
@@ -233,12 +233,6 @@ function AboutContent() {
         </button>
       </div>
 
-      <button
-        onClick={() => document.body.classList.toggle("dark")}
-        className="dark-toggle"
-      >
-        Modo oscuro
-      </button>
     </div>
   );
 }

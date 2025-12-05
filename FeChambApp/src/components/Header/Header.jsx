@@ -1,11 +1,12 @@
 /*importamos.....muchas cosa la verdad, servicios a componente y asta bootstrap*/
 import React, { useState, useEffect } from 'react'
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import ServicesServicio from '../../Services/ServicesServicio';
 import ServicesLogin from "../../Services/ServicesLogin";
 import Dropdown from 'react-bootstrap/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../Header/Header.css"
+import { toast, ToastContainer } from 'react-toastify';
 
 function Header() {
   /*las constantes, para hoy tenemos constantes para usuarios, servicios,paginas y asta busqueda */
@@ -14,6 +15,7 @@ function Header() {
   const [page, setPage] = useState(1);
   const [user, setUser] = useState(null);
   const navigate= useNavigate()
+  const location = useLocation();
 
 
 // Obtener usuario en sesión usando el token
@@ -53,9 +55,19 @@ const handleResultClick = (id) => {
       navigate(`/trabajador/${id}`);
   }
 
+const handleServiceButton = () => {
+  if (user) {
+    return navigate('/nuevo-servicio');
+  }
+  toast.error('Necesitas iniciar sesión para agregar un servicio');
+  setTimeout(() => {
+    navigate('/loging');
+  }, 1200); // 1.2s para que sí se vea el toast
+};
 
   return (
     <div className='header-container'>
+      <ToastContainer position="top-right" theme="dark" />
       {/* Barra de búsqueda */}
       <div className='searchBar'>
         <span className='search-icon'></span>
@@ -79,10 +91,18 @@ const handleResultClick = (id) => {
       </div>
         {/*basicaminente muesta el perfil logeado o te da la opcion de loguearte si no lo estas al darte un link al loging*/}
       {/* Usuario */}
+    {location.pathname !== "/nuevo-servicio" ? (
+    <div className='service-section'>
+      <button className='btn-user' onClick={handleServiceButton}>
+          Ofrecer un servicio
+      </button>
+    </div>
+    ) : null}
+
       <div className='user-section'>
         {!user ? (
           <Link to="/Loging">
-            <button>Iniciar Sesión</button>
+            <button className='btn-user'>Iniciar Sesión</button>
           </Link>
         ) : (
 

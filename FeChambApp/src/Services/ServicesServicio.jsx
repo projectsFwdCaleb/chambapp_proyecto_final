@@ -26,6 +26,8 @@ async function getServicio(search = "", page = 1) {
 }
 
 async function postServicio(consulta) {
+  console.log(consulta);
+  
   try {
     const response = await fetch(API_URL, {
       method: "POST",

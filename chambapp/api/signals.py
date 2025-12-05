@@ -20,12 +20,11 @@ def add_user_to_workers_group(sender, instance, created, **kwargs):
     if created:
         user = instance.usuario
         # Obtener el grupo "trabajadores"
-        grupo_trabajadores, created_group = Group.objects.get(name="trabajadores")
+        grupo_trabajadores = Group.objects.get(name="trabajadores")
         # Agregar al usuario si no estaba
         if not user.groups.filter(name="trabajadores").exists():
             user.groups.add(grupo_trabajadores)
             user.save()
-
 
 # Enviar notificación al usuario cuando se publica una notificación en su canton y con una categoria asociada
 @receiver(post_save, sender=Solicitud)

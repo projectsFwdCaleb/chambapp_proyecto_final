@@ -60,7 +60,7 @@ function Login({ onSwitchToRegister }) {
 
       /*guardando los datos en laugh tale*/
       const grupo = user.grupos[0] // El primer grupo del usuario
-      localStorage.setItem("grupo", JSON.stringify(grupo));
+      localStorage.setItem("grupos", JSON.stringify(grupo));
 
       toast.success('¡Login exitoso! Bienvenido', {
         position: "top-right",
@@ -127,6 +127,7 @@ function Login({ onSwitchToRegister }) {
             <li>✓ Calificaciones de usuarios</li>
           </ul>
           {/*boton para abrir el complemento de register*/}
+          <br />
           <button className="btn-register" onClick={onSwitchToRegister}>
             Registro
           </button>
@@ -136,7 +137,7 @@ function Login({ onSwitchToRegister }) {
       <div className="login-right">
 
         <div className="login-header">
-          <img src="/logo.png" alt="ChambApp" />
+          <img src="/logo.png" alt="ChambApp" className='logo' />
           <h2>Login</h2>
         </div>
 
@@ -152,7 +153,6 @@ function Login({ onSwitchToRegister }) {
               onChange={(e) => SetNombreU(e.target.value)}
               className="form-control"
             />
-            <span className="input-icon">👤</span>
           </div>
 
           {/* InCon = ingresar contraseña */}
@@ -165,23 +165,20 @@ function Login({ onSwitchToRegister }) {
               onChange={(e) => setContraseña(e.target.value)}
               className="form-control"
             />
-            <span className="input-icon">🔒</span>
           </div>
 
           <a href="#" className="forgot-password">
-            Forgot Password?
+            Olvidó su contraseña?
           </a>
           {/*El boton login para llamar la fucion "verificarU"*/}
           <button className="btn-login" onClick={verificarU}>
             Login
           </button>
 
-          <p className="login-social">or login with social platforms</p>
+          <p className="login-social">O inicia sesión con Google</p>
           {/*un divide para guardar varios iconos a usar*/}
           <div className="social-icons">
-            <a href="#" className="social-icon fb">f</a>
             <a href="#" className="social-icon google">G</a>
-            <a href="#" className="social-icon twitter">𝕏</a>
           </div>
         </div>
 

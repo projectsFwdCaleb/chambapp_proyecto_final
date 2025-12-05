@@ -1,10 +1,9 @@
 :root {
   --page-bg: #fffdf8;
   --cover-bg: #e8d9c5;
-  --page-width: 450px;
-  --page-height: 580px;
+  --page-width: 650px;
+  --page-height: 540px;
   --anim-duration: 1.2s;
-  /* Slower, more elegant */
 }
 
 .dark {
@@ -13,21 +12,21 @@
   --cover-bg: #2a2a2a;
 }
 
-/* MAIN WRAPPER */
+
 .book-wrapper {
+  --text-color: #1a1a1a;  /* ← Negro por defecto */
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 40px 20px;
   min-height: 700px;
-  /* Ensure space for the book */
   justify-content: center;
 }
 
 /* CONTAINER */
 .book-container {
   perspective: 2500px;
-  /* Stronger perspective for depth */
   width: calc(var(--page-width) * 2);
   height: var(--page-height);
   position: relative;
@@ -35,7 +34,7 @@
   justify-content: center;
 }
 
-/* THE BOOK ITSELF */
+
 .book-3d {
   width: 100%;
   height: 100%;
@@ -43,7 +42,7 @@
   transform-style: preserve-3d;
 }
 
-/* COMMON PAGE STYLES */
+
 .page {
   width: var(--page-width);
   height: 100%;
@@ -52,12 +51,11 @@
   top: 0;
   overflow: hidden;
   border-radius: 4px;
-  /* Slight rounding */
   box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.05);
-  /* Paper texture feel */
+
 }
 
-/* CONTENT INSIDE PAGES */
+
 .page-inner {
   height: 100%;
   padding: 40px;
@@ -65,7 +63,6 @@
   font-size: 17px;
   line-height: 1.6;
   color: var(--text-color);
-  /* Scrollbar styling */
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
@@ -93,7 +90,7 @@
   text-align: justify;
 }
 
-/* STATIC PAGES (The ones sitting on the table) */
+
 .page.static-left {
   left: 0;
   z-index: 1;
@@ -112,29 +109,22 @@
   border-bottom-right-radius: 8px;
 }
 
-/* FLIPPING PAGE (The one moving) */
 .page-flipper {
   position: absolute;
   right: 0;
-  /* Starts on the right side */
   width: var(--page-width);
   height: 100%;
   transform-style: preserve-3d;
   transform-origin: left center;
-  /* Hinge on the spine */
   z-index: 10;
   transition: transform var(--anim-duration) cubic-bezier(0.645, 0.045, 0.355, 1.000);
-  /* ease-in-out-cubic */
 }
 
-/* When flipping to next page (Right -> Left) */
+/* intento numero 456 */
 .page-flipper.flipping-forward {
   transform: rotateY(-180deg);
 }
 
-/* When flipping to prev page (Left -> Right) */
-/* We need a different strategy for prev: 
-   The flipper starts at -180deg (Left) and goes to 0deg (Right) */
 .page-flipper.start-left {
   transform: rotateY(-180deg);
 }
@@ -144,7 +134,6 @@
 }
 
 
-/* FRONT AND BACK OF THE FLIPPING PAGE */
 .flipper-front,
 .flipper-back {
   position: absolute;
@@ -163,7 +152,6 @@
   border-left: 1px solid rgba(0, 0, 0, 0.1);
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
-  /* Gradient for spine depth */
   background: linear-gradient(to right, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 10%, var(--page-bg) 100%);
 }
 
@@ -173,14 +161,9 @@
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
-  /* Gradient for spine depth */
   background: linear-gradient(to left, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 10%, var(--page-bg) 100%);
 }
 
-/* SHADOWS DURING FLIP (Optional polish) */
-/* We can add pseudo-elements to simulate shadow casting, but keeping it simple for now */
-
-/* CONTROLS */
 .controls {
   margin-top: 30px;
   display: flex;
@@ -223,7 +206,7 @@
   border-radius: 12px;
 }
 
-/* DARK MODE BTN */
+
 .dark-toggle {
   margin-top: 20px;
   padding: 8px 16px;

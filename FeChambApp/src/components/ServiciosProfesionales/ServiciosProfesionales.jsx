@@ -19,8 +19,8 @@ function ServiciosProfesionales() {
   const [serviceData, setServiceData] = useState({
     nombre_servicio: '',
     descripcion: '',
-    precio: '',
-    categoria: ''
+    precio_referencial: null,
+    categoria: null
   });
 
   // Estado del formulario de perfil
@@ -108,10 +108,19 @@ function ServiciosProfesionales() {
 
     try {
       const payload = {
-        ...serviceData,
-        usuario: user.id // Asignar servicio al usuario actual
+        nombre_servicio: serviceData.nombre_servicio,
+        descripcion: serviceData.descripcion,
+        categoria: serviceData.categoria ? parseInt(serviceData.categoria, 10) : null,
+        precio_referencial: serviceData.precio_referencial !== '' 
+          ? parseFloat(serviceData.precio_referencial) 
+          : null,
+        usuario: user.id
       };
 
+      console.log(payload);
+      
+
+      //post
       await ServicesServicio.postServicio(payload);
       toast.success("Servicio creado exitosamente!");
 
@@ -119,7 +128,7 @@ function ServiciosProfesionales() {
       setServiceData({
         nombre_servicio: '',
         descripcion: '',
-        precio: '',
+        precio_referencial: '',
         categoria: ''
       });
 
@@ -208,11 +217,11 @@ function ServiciosProfesionales() {
             </div>
 
             <div className="col-md-6 mb-3">
-              <Form.Label className="form-label">Precio Estimado (₡)</Form.Label>
+              <Form.Label className="form-label">precio_referencial Estimado (₡)</Form.Label>
               <Form.Control
                 type="number"
-                name="precio"
-                value={serviceData.precio}
+                name="precio_referencial"
+                value={serviceData.precio_referencial}
                 onChange={handleServiceChange}
                 placeholder="0.00 (opcional)"
               />
@@ -220,7 +229,7 @@ function ServiciosProfesionales() {
           </div>
 
           <div className="text-end mt-3">
-            <Button className='btn-save'>
+            <Button className='btn-save' type="submit">
               Publicar Servicio
             </Button>
           </div>

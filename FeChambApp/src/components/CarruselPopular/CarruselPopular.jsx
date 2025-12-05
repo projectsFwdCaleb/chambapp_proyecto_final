@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import ServicesTop from "../../Services/ServicesTop";
 import "./CarruselPopular.css";
+import { Navigate, useNavigate } from "react-router-dom";
 import Carousel from 'react-bootstrap/Carousel';
 
 function CarruselPopular() {
   const [populares, setPopulares] = useState([]);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchPopulares = async () => {
@@ -25,6 +27,10 @@ function CarruselPopular() {
     fetchPopulares();
   }, []);
 
+  const handleTopClick = (id) => {
+    navigate(`/trabajador/${id}`);
+  }
+
 
 
   return (
@@ -33,24 +39,24 @@ function CarruselPopular() {
 
       <Carousel>
         {populares.map((user) => (
-          <Carousel.Item key={user.id}>
-            <div className="slide-wrapper glass-card">
+          <Carousel.Item key={user.id}  >
+            <div className="slide-wrapper glass-card" >
               <div className="rotating-border"></div>
-              <div className="slide-img">
+              <div className="slide-img" >
                 <img
                   src={user.foto_perfil || "/default-profile.png"}
                   alt="perfil"
                 />
               </div>
 
-              <div className="slide-info">
-                <h3>{user.first_name} {user.last_name}</h3>
+              <div className="slide-info" >
+                <h3 >{user.first_name} {user.last_name} </h3>
 
                 <p className="rating">⭐ {user.promedio_calificacion_7_dias ?? 0} / 5</p>
 
                 <div className="services-list">
                   {user.servicios?.map(s => (
-                    <button key={s.id} className="service-badge">
+                    <button key={s.id} className="service-badge" onClick={() => handleTopClick(user.id)}>
                       {s.nombre_servicio}
                     </button>
                   ))}

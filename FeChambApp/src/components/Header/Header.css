@@ -15,6 +15,13 @@
   height: 180px;
 }
 
+.service-section {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: -1.2rem;
+  order: -1;
+}
+
 /* User Section - Arriba a la derecha */
 .user-section {
   display: flex;
@@ -24,7 +31,7 @@
   order: -1;
 }
 
-.user-section button {
+.btn-user {
   background: rgba(255, 255, 255, 0.95);
   color: #667eea;
   border: none;
@@ -37,7 +44,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.user-section button:hover {
+.btn-user:hover {
   background: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -125,7 +132,7 @@
   position: relative;
   width: 100%;
   max-width: 60%;
-  margin-top: 1rem;
+  margin-bottom: -1.5rem;
 }
 
 .searchBar input {
@@ -258,6 +265,12 @@
   .img-perfil {
     width: 30px;
     height: 30px;
+  }
+
+  .service-section{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: -0.5rem;
   }
 
   .dropdown-menu {

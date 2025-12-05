@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './Register.css'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ServicesUsuarios from '../../Services/ServicesUsuarios'
 import ServicesLogin from '../../Services/ServicesLogin';
 import { toast, ToastContainer } from 'react-toastify'
@@ -138,10 +138,9 @@ function Register({ onSwitchToLogin }) {
           <ul className="register-features">
             <li>✓ Acceso completo a servicios</li>
             <li>✓ Comunidad profesional</li>
-            <li>✓ Soporte 24/7</li>
           </ul>
           <button className="btn-login-switch" onClick={onSwitchToLogin}>
-            ¿Ya tienes cuenta? Login
+            ¿Ya tienes cuenta? Iniciar sesión
           </button>
         </div>
       </div>
@@ -149,7 +148,7 @@ function Register({ onSwitchToLogin }) {
       {/*aqui esta el logo, quedo muy bien*/}
       <div className="register-right">
         <div className="register-header">
-          <img src="/logo.png" alt="ChambApp" />
+          <img src="/logo.png" alt="ChambApp" className='logo'/>
           <h2>Registro</h2>
         </div>
 
@@ -165,7 +164,6 @@ function Register({ onSwitchToLogin }) {
               onChange={(e) => Setusername(e.target.value)}
               className="form-control"
             />
-            <span className="input-icon">👤</span>
           </div>
 
           <div className="form-group">
@@ -178,7 +176,6 @@ function Register({ onSwitchToLogin }) {
               onChange={(e) => setCorreo(e.target.value)}
               className="form-control"
             />
-            <span className="input-icon">✉️</span>
           </div>
 
           <div className="form-group">
@@ -191,12 +188,13 @@ function Register({ onSwitchToLogin }) {
               onChange={(e) => setpassword(e.target.value)}
               className="form-control"
             />
-            <span className="input-icon">🔒</span>
           </div>
+          <br />
           {/*y el boton al final para llamar la fucion que tanto costo hacer arriba */}
           <button className="btn-register-submit" onClick={ManejarRegistros}>
             Registrar
           </button>
+          <Link to='/acerca-de'><small className='text-muted'>*Al usar Chambapp aceptas los terminos y condiciones*</small></Link>
         </div>
       </div>
     </div>
