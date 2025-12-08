@@ -3,7 +3,10 @@ import React from 'react'
 /*private routes, donde validamos si puedes proseguir o si te tiramos al login*/
 function PrivateRoutes({ children, allowedRoles }) {
   const token = localStorage.getItem("access_token");
-  const grupos = JSON.parse(localStorage.getItem("grupos")) || [];
+  let grupos = JSON.parse(localStorage.getItem("grupo"));
+  if (!Array.isArray(grupos)) {
+    grupos = grupos ? [grupos] : [];
+  }
     /*Validacion de usuario*/
     if(!token ) {
         return <Navigate to="/Loging" replace />;
