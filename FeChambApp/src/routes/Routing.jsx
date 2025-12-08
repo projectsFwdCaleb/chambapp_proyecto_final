@@ -10,6 +10,7 @@ import PaginaSolicitudes from '../pages/PaginaSolicitudes'
 import Categorias from '../pages/Categorias'
 import Favorite from '../pages/Favorite'
 import About from '../pages/About'
+import PrivateRoutes from '../routes/PrivateRoutes'
 export default function Routing() {
   return (
       <Router>
@@ -17,12 +18,12 @@ export default function Routing() {
         <Route path='/' element={<LandingPage/>} />
         <Route path='/Loging' element={<PaginaLogingRegister/>}/>
         <Route path='/Trabajador/:id' element={<PaginaTrabajador/>}/>
-        <Route path='/Perfil' element={<Profile/>}/>
-        <Route path='/Administrador' element={<PaginaAdministrador/>}/>
-        <Route path='/Nuevo-Servicio' element={<Servicio/>}/>
-        <Route path='/Solicitudes' element={<PaginaSolicitudes/>}/>
+        <Route path='/Perfil' element={<PrivateRoutes> <Profile/> </PrivateRoutes>}/>
+        <Route path='/Administrador' element={<PrivateRoutes allowedRoles={["admin"]}> <PaginaAdministrador /> </PrivateRoutes>}/>
+        <Route path='/Nuevo-Servicio' element={<PrivateRoutes> <Servicio/> </PrivateRoutes>}/>
+        <Route path='/Solicitudes' element={<PrivateRoutes> <PaginaSolicitudes/> </PrivateRoutes>}/>
         <Route path='/categoria/:id' element={<Categorias/>}/>
-        <Route path='/favoritos' element={<Favorite/>}/>
+        <Route path='/favoritos' element={<PrivateRoutes> <Favorite/> </PrivateRoutes>}/>
         <Route path='/acerca-de' element={<About/>}/>
         </Routes>
       </Router>

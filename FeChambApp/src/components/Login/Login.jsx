@@ -59,8 +59,8 @@ function Login({ onSwitchToRegister }) {
       const user = await ServicesLogin.getUserSession()
 
       /*guardando los datos en laugh tale*/
-      const grupo = user.grupos[0] // El primer grupo del usuario
-      localStorage.setItem("grupos", JSON.stringify(grupo));
+       const grupo = user.grupos[0] // El primer grupo del usuario
+      localStorage.setItem("grupo", JSON.stringify(grupo)); 
 
       toast.success('¡Login exitoso! Bienvenido', {
         position: "top-right",

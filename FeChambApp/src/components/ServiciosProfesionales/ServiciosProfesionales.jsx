@@ -19,8 +19,8 @@ function ServiciosProfesionales() {
   const [serviceData, setServiceData] = useState({
     nombre_servicio: '',
     descripcion: '',
-    precio_referencial: null,
-    categoria: null
+    precio_referencial: '',
+    categoria: ''
   });
 
   // Estado del formulario de perfil
@@ -28,9 +28,12 @@ function ServiciosProfesionales() {
     first_name: '',
     last_name: '',
     direccion: '',
-    foto_perfil: null
+    foto_perfil: null,
+    canton_provincia: ''
   });
 
+  // Vista previa de la imagen (misma lógica que en VerPerfil)
+  const [imagePreview, setImagePreview] = useState(null);
 
   // Cargar usuario, categorías y cantones
   useEffect(() => {
@@ -54,6 +57,9 @@ function ServiciosProfesionales() {
           canton_provincia: sessionUser.canton_provincia || '',
           foto_perfil: sessionUser.foto_perfil || null
         });
+
+        // Usar la URL existente como preview (puede ser string)
+        setImagePreview(sessionUser.foto_perfil || null);
       }
     } catch (error) {
       console.error("Error al obtener sesión de usuario", error);
@@ -119,7 +125,6 @@ function ServiciosProfesionales() {
 
       console.log(payload);
       
-
       //post
       await ServicesServicio.postServicio(payload);
       toast.success("Servicio creado exitosamente!");
@@ -142,10 +147,29 @@ function ServiciosProfesionales() {
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     try {
-      await ServicesUsuarios.putUsuarios(user.id, profileData);
+      const dataToSend = {
+        first_name: profileData.first_name,
+        last_name: profileData.last_name,
+        direccion: profileData.direccion,
+        canton_provincia: profileData.canton_provincia
+      };
+
+      // Enviar foto solo si es un File (nueva seleccionada)
+      if (profileData.foto_perfil instanceof File) {
+        dataToSend.foto_perfil = profileData.foto_perfil;
+      }
+
+      await ServicesUsuarios.putUsuarios(user.id, dataToSend);
 
       // Actualizar estado local del usuario
-      setUser({ ...user, ...profileData });
+      setUser({ ...user, ...dataToSend });
+
+      // Si subieron una nueva foto, actualizar preview y user.foto_perfil con la URL temporal
+      if (profileData.foto_perfil instanceof File) {
+        const newPreview = URL.createObjectURL(profileData.foto_perfil);
+        setImagePreview(newPreview);
+        setUser(prev => ({ ...prev, foto_perfil: newPreview }));
+      }
 
       setShowProfileModal(false);
       toast.success("Perfil actualizado correctamente. Ahora puedes agregar tu servicio.");
@@ -161,9 +185,18 @@ function ServiciosProfesionales() {
     setServiceData({ ...serviceData, [e.target.name]: e.target.value });
   };
 
-  // Manejar cambios del formulario de perfil
+  // Manejar cambios del formulario de perfil (no incluye la foto)
   const handleProfileChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
+  };
+
+  // Manejar cambio de foto para el perfil (misma lógica que VerPerfil)
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      setProfileData(prev => ({ ...prev, foto_perfil: file }));
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
   return (
@@ -291,13 +324,20 @@ function ServiciosProfesionales() {
               </div>
               <div className="col-md-12 mb-3">
                 <Form.Label>Foto de perfil</Form.Label>
+                {/* No usar value en input type=file; usar el mismo manejo que VerPerfil */}
                 <Form.Control
                   type="file"
                   name="foto_perfil"
-                  value={profileData.foto_perfil}
-                  onChange={handleProfileChange}
+                  accept="image/*"
+                  onChange={handleProfileImageChange}
                   required
                 />
+                {/* Mostrar preview si existe */}
+                {imagePreview && (
+                  <div className="mt-2">
+                    <img src={imagePreview} alt="Preview" style={{ maxWidth: '120px', borderRadius: '6px' }} />
+                  </div>
+                )}
               </div>
               <div className="col-md-6 mb-3">
                 <Form.Label>Dirección</Form.Label>
