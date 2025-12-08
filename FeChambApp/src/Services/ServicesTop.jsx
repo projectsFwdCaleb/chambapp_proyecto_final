@@ -84,32 +84,6 @@ async function getTrabajadoresPorCategoria(categoria_id, filtros = {}) {
     }
 }
 
-async function getFavoritos() {
-    // No se obtiene ni se usa el token, ya que no se necesita autenticación.
 
-    try {
-        const response = await fetch("http://localhost:8000/api/favorito/", {
-            method: 'GET',
-            headers: {
-                // Solo se incluye la cabecera necesaria para el contenido.
-                'Content-Type': 'application/json'
-            }
-        });
 
-        if (!response.ok) {
-            // Manejo de errores estándar para cualquier problema que no sea 401
-            const errorText = await response.text();
-            throw new Error(`Error ${response.status}: ${errorText}`);
-        }
-
-        const favoritos = await response.json();
-
-        return { data: favoritos };
-
-    } catch (error) {
-        console.error("Error al obtener la respuesta de favoritos", error);
-        throw error;
-    }
-}
-
-export default { getPopulares, getCercanos, getTrabajadoresPorCategoria, getFavoritos };
+export default { getPopulares, getCercanos, getTrabajadoresPorCategoria};

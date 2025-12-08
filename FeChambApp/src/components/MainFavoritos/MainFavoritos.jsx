@@ -1,34 +1,100 @@
 import React, { useState, useEffect } from 'react';
-import ServicesTop from '../../Services/ServicesTop';
+import ServicesFav from '../../Services/ServicesFav';
 import './MainFavoritos.css';
+import ServicesUsuarios from '../../Services/ServicesUsuarios';
+import ServicesServicio from '../../Services/ServicesServicio';
+import ServicesLogin from '../../Services/ServicesLogin'
 import BoosiMan from '../../assets/BoosiMan.webp';
 import { useNavigate } from 'react-router-dom';
 
 function MainFavoritos() {
     const [favoritos, setFavoritos] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState([])
+    const [userInSession, setUserInSession] = useState([])
+    const [services, SetServices] = useState([])
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchFavoritos = async () => {
-            setLoading(true);
-            try {
-                const response = await ServicesTop.getFavoritos();
-                if (response && response.data) {
-                    setFavoritos(response.data);
-                } else {
-                    setFavoritos([]);
-                }
-            } catch (error) {
-                console.error("Error cargando favoritos:", error);
-                setFavoritos([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchFavoritos();
+        fetchUserInSession()
+        fetchUsuarios()
+        fetchFavoritos()
+        fetchServices()
     }, []);
+
+    const fetchUserInSession = async () => {
+            try {
+              const data = await ServicesLogin.getUserSession();
+              setUserInSession(data);
+            } catch (err) {
+              console.error("Error al obtener usuario en sesión:", err);
+            }
+          };
+
+    const fetchServices = async () => {
+        const response = await ServicesServicio.getServicio();
+        const data = Array.isArray(response.data)
+            ? response.data
+            : Array.isArray(response)
+            ? response
+            : [];
+            SetServices(data)
+    }
+
+    const fetchUsuarios = async () => {
+        const response = await ServicesUsuarios.getUsuarios();
+        const data = Array.isArray(response.data)
+            ? response.data
+            : Array.isArray(response)
+            ? response
+            : [];
+            setUser(data)
+    }
+
+    const fetchFavoritos = async () => {
+        setLoading(true);
+        try {
+            const response = await ServicesFav.getFavoritos();
+            const data = Array.isArray(response.data)
+            ? response.data
+            : Array.isArray(response)
+            ? response
+            : [];
+            setFavoritos(data)
+            console.log(favoritos);
+                
+        } catch (error) {
+            console.error("Error cargando favoritos:", error);
+            setFavoritos([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    
+
+    const agregarServiciosATrabajadores = (trabajadores, services) => {
+    return trabajadores.map(trabajador => {
+        // servicios que pertenece a este trabajador
+        const serviciosTrabajador = services.filter(
+            serv => serv.trabajador === trabajador
+        );
+        console.log(serviciosTrabajador);
+        
+        return {
+            ...trabajador,
+            servicios: serviciosTrabajador
+        };
+    });
+    };
+    
+    const favoritosDelUsuario = favoritos.filter(f => f.usuario === userInSession.id);
+    const favoritosIDs = favoritosDelUsuario.map(f => f.trabajador);
+    const trabajadoresSinServicio = user.filter(u => favoritosIDs.includes(u.id));
+    const trabajadores = agregarServiciosATrabajadores(trabajadoresSinServicio, services);
+    console.log(trabajadores);
+
+        
 
     const handleContactButton = (id) => {
         navigate(`/trabajador/${id}`);
@@ -40,8 +106,8 @@ function MainFavoritos() {
             <div className="trabajadores-grid">
                 {loading ? (
                     <p>Cargando favoritos...</p>
-                ) : favoritos.length > 0 ? (
-                    favoritos.map((trabajador) => (
+                ) : trabajadores.length > 0 ? (
+                    trabajadores.map((trabajador) => (
                         <div key={trabajador.id} className="trabajador-card">
                             <div className="card-header">
                                 <div className="card-avatar-container">
@@ -60,7 +126,7 @@ function MainFavoritos() {
 
                                 <p className="card-profession">
                                     {trabajador.servicios && trabajador.servicios.length > 0
-                                        ? trabajador.servicios.map((s) => s.nombre).join(', ')
+                                        ? trabajador.servicios.map((s) => s.nombre_servicio).join(', ')
                                         : "Sin servicios registrados"}
                                 </p>
 
@@ -79,7 +145,7 @@ function MainFavoritos() {
                                 </p>
 
                                 <button
-                                    className="card-button"
+                                    className="btn-save"
                                     onClick={() => handleContactButton(trabajador.id)}>
                                     Contactar
                                 </button>

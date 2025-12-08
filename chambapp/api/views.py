@@ -56,7 +56,7 @@ class UsuarioGroupListCreateView(generics.ListAPIView):
 class UsuarioGroupUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioGroupSerializer
-    #permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
 # Usuario
 class UsuarioListCreateView(generics.ListCreateAPIView):
@@ -70,7 +70,7 @@ class UsuarioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return super().update(request, *args, **kwargs)
-    #permission_classes = [IsAuthenticated]  
+    permission_classes = [IsAuthenticated]  
 
 # Categoria
 class CategoriaListCreateView(generics.ListCreateAPIView):
@@ -206,7 +206,7 @@ def trabajadores_por_categoria(request, categoria_id):
 # populares hoy (Devuelve los trabajadores más populares (mejor promedio de reseñas)en los últimos 7 días.)
 @api_view(['GET'])
 def populares_hoy(request):
-    hace_7_dias = timezone.now() - timedelta(days=17)
+    hace_7_dias = timezone.now() - timedelta(days=23)
     # Agrupamos reseñas por trabajador y obtenemos promedio
     top_trabajoderes = (
         Resenha.objects
@@ -229,7 +229,7 @@ def populares_hoy(request):
         # Serializamos usuario (campos básicos)
         usuario_data = UsuarioSerializer(usuario_obj).data
         # Tomamos servicios disponibles del usuario (podemos limitar el número si queremos)
-        servicios_qs = usuario_obj.servicios.filter(disponibilidad=True).select_related('categoria')  # si quieres categoria incluida
+        servicios_qs = usuario_obj.servicios.filter(disponibilidad=True).select_related('categoria')  # categoria incluida
         servicios_ser = ServicioSerializer(servicios_qs, many=True).data
         usuario_data['servicios'] = servicios_ser
         usuario_data['promedio_calificacion_7_dias'] = round(item.get('promedio') or 0, 2)
@@ -346,7 +346,6 @@ class ChatBotAPIView(APIView):
         if not messages:
             return Response({"error": "No se proporcionaron mensajes."},
                             status=status.HTTP_400_BAD_REQUEST)
-
         # ---- DIAGNÓSTICO ----
         print("=== DIAGNOSTICO OPENAI ===")
         print("OPENAI_KEY cargada?", bool(OPENAI_KEY))
