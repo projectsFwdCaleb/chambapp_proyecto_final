@@ -3,7 +3,7 @@ import ServicesFav from '../../Services/ServicesFav';
 import './MainFavoritos.css';
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import ServicesServicio from '../../Services/ServicesServicio';
-import ServicesLogin from '../../Services/ServicesLogin'
+import ServicesLogin from '../../Services/ServicesLogin';
 import BoosiMan from '../../assets/BoosiMan.webp';
 import { useNavigate } from 'react-router-dom';
 
@@ -100,6 +100,24 @@ function MainFavoritos() {
         navigate(`/trabajador/${id}`);
     }
 
+    const handleDeleteButton = async (trabajadorId) => {
+        try {
+            const favorito = favoritos.find(f => f.trabajador === trabajadorId);
+
+            if (!favorito) {
+                console.warn("No se encontró el favorito");
+                return;
+            }
+
+            await ServicesFav.deleteFavorito(favorito.id);
+
+            // actualizar lista
+            fetchFavoritos();
+        } catch (error) {
+            console.error("Error eliminando favorito:", error);
+        }
+    };
+
     return (
         <div className="categoria-filtrado-container">
             <h2>Mis Favoritos</h2>
@@ -110,6 +128,7 @@ function MainFavoritos() {
                     trabajadores.map((trabajador) => (
                         <div key={trabajador.id} className="trabajador-card">
                             <div className="card-header">
+                                <button onClick={() => handleDeleteButton(trabajador.id)}><h3>X</h3></button>
                                 <div className="card-avatar-container">
                                     <img
                                         src={trabajador.foto_perfil || BoosiMan}

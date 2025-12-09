@@ -194,9 +194,13 @@ class SolicitudSerializer(serializers.ModelSerializer):
 
 # Resenha
 class ResenhaSerializer(serializers.ModelSerializer):
+    autor_detalle = UserSerializer(source='autor', read_only=True)
     class Meta:
         model = Resenha
-        fields = '__all__'
+        fields = [
+            'id', 'autor', 'autor_detalle', 'trabajador',
+            'puntuacion', 'comentario', 'fecha', 'servicio'
+        ]
     
     def validate_puntuacion(self, value):
         # La puntuación debe estar entre 1 y 5

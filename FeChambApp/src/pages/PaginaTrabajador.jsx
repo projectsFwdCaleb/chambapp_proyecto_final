@@ -8,6 +8,7 @@ import ChatBot3D from "../components/Chatbot3D/ChatBot3D";
 import ChatBot from "../components/ChatBot/ChatBot";
 import CarruselPortafolio from '../components/CarruselPortafolio/CarruselPortafolio'
 import BanerTrabajador from '../components/BanerTrabajador/BanerTrabajador'
+import BuzonComentarios from "../components/BuzonComentarios/BuzonComentarios";
 /*Impor muy nesesario, esto toma id de en la pagina 
 para usarlo en los componentes del baner y el carrusel */
 
@@ -30,6 +31,7 @@ function PaginaTrabajador() {
             <div className="mainNav col-8">
               <BanerTrabajador id={id} />
               <CarruselPortafolio id={id} />
+              <BuzonComentarios id={id}/>
             </div>
             
             <div className="col-4 d-flex flex-column columna-derecha-completa">

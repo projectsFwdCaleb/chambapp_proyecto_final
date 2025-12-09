@@ -107,7 +107,6 @@ class SolicitudRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class ResenhaListCreateView(generics.ListCreateAPIView):
     queryset = Resenha.objects.all()
     serializer_class=ResenhaSerializer
-    permission_classes = [IsAuthenticated]
 class ResenhaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Resenha.objects.all()
     serializer_class=ResenhaSerializer
