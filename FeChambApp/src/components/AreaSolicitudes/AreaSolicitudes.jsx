@@ -272,19 +272,21 @@ function AreaSolicitudes() {
                             {sol.descripcion}
 
                             {/*Botones para abrir modal y borrar solicitudes*/}
-                            <div className='mt-2 d-flex gap-2'>
-                                <button className='btn btn-warning btn-sm'
-                                onClick={() => abrirModalEditar(sol)}
-                                >
-                                    Editar
-                                </button>
+                            {sol.usuario === user.id && (
+                                <div className='mt-2 d-flex gap-2'>
+                                    <button className='btn btn-warning btn-sm'
+                                    onClick={() => abrirModalEditar(sol)}
+                                    >
+                                        Editar
+                                    </button>
 
-                                <button className='btn btn-danger btn-sm'
-                                onClick={()=> eliminarSolicitud(sol.id)}
-                                >
-                                    Eliminar
-                                </button>
-                            </div>
+                                    <button className='btn btn-danger btn-sm'
+                                    onClick={()=> eliminarSolicitud(sol.id)}
+                                    >
+                                        Eliminar
+                                    </button>
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>
