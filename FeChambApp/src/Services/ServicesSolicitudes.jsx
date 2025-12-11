@@ -15,7 +15,7 @@ function getAuthHeaders() {
 // ============================
 // GET: Obtener todas las solicitudes
 // ============================
-async function getSolicitud() {    
+async function getSolicitudes() {    
     try {
         const response = await fetch(API_URL, {
             method: 'GET',
@@ -95,4 +95,4 @@ async function putSolicitud(id, consulta) {
 }
 
 
-export default { getSolicitud, postSolicitud, deleteSolicitud, putSolicitud };
+export default { getSolicitudes, postSolicitud, deleteSolicitud, putSolicitud };
