@@ -49,6 +49,7 @@ function AreaSolicitudes() {
         fetchUsuarios()
     }, []);
 
+    /*Para las nuevas solicitudes */
     useEffect(() => {
         if (user && user.id) {
             setNuevaSolicitud(prev => ({
@@ -58,6 +59,23 @@ function AreaSolicitudes() {
         }
     }, [user]);
 
+    /*Para evitar que se pueda mover la pagina al abrir el modadal,
+     es por estilo y ya */
+    useEffect(() => {
+        if (mostrarModalA || mostrarModalB) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [mostrarModalA, mostrarModalB]);
+
+    
+    /*el fetch para traer los usuarios, es importante tenerlos
+     para saber de quien es cada solicitud */
     const fetchUser = async () => {
         try {
             const data = await ServicesLogin.getUserSession();
@@ -66,7 +84,8 @@ function AreaSolicitudes() {
             console.error("Error al obtener usuario en sesión:", error);
         }
     };
-
+    /*la funcion que carga las solicides en la pagia, 
+    la llamaremos por ahi de la linea 165 y la 217 */
     const cargarSolicitudes = async () => {
         try {
             const resp = await ServicesSolicitudes.getSolicitudes();
@@ -137,16 +156,20 @@ function AreaSolicitudes() {
             [name]: value
         }));
     };
-
+    /*La constante/funcion se llama ENVIAR.....no creo que tenga que explicar que hace en el componete
+    que te deja hacer solicitudes y ENVIARLAS a la base*/
     const enviar = async (e) => {
         e.preventDefault();
-
+        /*tecnicamente nucan deveria entrar un usuario sin estar logeado por 
+        el ajuste en privateRoute...pero dejo esto aqui por si acaso*/
         if (!nuevaSolicitud.usuario) {
             console.error("El usuario aún no está cargado");
             return;
         }
 
         try {
+            /*vienbenido al modo edicion, aqui te dejamos arreglar
+            los horores ortograficos que hiciste en tu solicitud*/
             if (modoEdicion) {
                 await ServicesSolicitudes.putSolicitud(
                     solicitudEditando.id,
@@ -168,7 +191,7 @@ function AreaSolicitudes() {
                 usuario: user.id,
                 estado: true
             });
-
+            /*poniendo falsos para que nada se active asntes de tiempo */
             setModoEdicion(false);
             setSolicitudEditando(null);
             setMostrarModalA(false);
@@ -241,7 +264,7 @@ function AreaSolicitudes() {
             {mostrarModalA && (
                 <div className='modal fade show d-block' tabIndex="-1">
                     <div className='modal-dialog'>
-                        <div className='modal-content'>
+                        <div className='modal-content modal-custom'>
 
                             <div className='modal-header'>
                                 <h1 className='modal-title'>
@@ -395,7 +418,7 @@ function AreaSolicitudes() {
             {mostrarModalB && solicitudSeleccionada && (
                 <div className="modal fade show d-block" tabIndex="-1">
                     <div className="modal-dialog modal-lg">
-                        <div className="modal-content">
+                        <div className="modal-content modal-custom">
 
                             <div className="modal-header">
                                 <h1 className="modal-title">
