@@ -9,6 +9,7 @@ import ChatBot from "../components/ChatBot/ChatBot";
 import CarruselPortafolio from '../components/CarruselPortafolio/CarruselPortafolio'
 import BanerTrabajador from '../components/BanerTrabajador/BanerTrabajador'
 import BuzonComentarios from "../components/BuzonComentarios/BuzonComentarios";
+import '../pages/PaginaTrabajador.css'
 /*Impor muy nesesario, esto toma id de en la pagina 
 para usarlo en los componentes del baner y el carrusel */
 

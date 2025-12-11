@@ -1,0 +1,96 @@
+.titulo-principal {
+    color: #2c3e50;
+    font-weight: 700;
+    border-bottom: 3px solid #3498db;
+    display: inline-block;
+}
+
+.card {
+    border-radius: 10px;
+    border: none;
+}
+
+.card-title {
+    color: #34495e;
+    font-weight: 600;
+}
+
+.tabla-solicitudes thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.tabla-solicitudes thead th {
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 15px;
+}
+
+.tabla-solicitudes tbody tr {
+    transition: all 0.3s ease;
+}
+
+.tabla-solicitudes tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.01);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-accion {
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-accion:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.badge-estado {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.badge-estado.activa {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.badge-estado.cerrada {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.label-solicitud {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.input-solicitud:focus,
+.select-solicitud:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+@media (max-width: 768px) {
+    .btn-accion {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+
+    .btn-accion i {
+        display: none;
+    }
+
+    .tabla-solicitudes {
+        font-size: 0.85rem;
+    }
+}

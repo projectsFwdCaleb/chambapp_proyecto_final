@@ -61,4 +61,6 @@ urlpatterns = [
     path('usuarios/cercanos/', usuarios_cercanos, name='usuarios_cercanos'),
     #chatbot
     path('chat/', ChatBotAPIView.as_view(), name='chatbot-api'),
+    # Admin Dashboard Stats
+    path('admin/dashboard-stats/', admin_dashboard_stats, name='admin_dashboard_stats'),
 ]

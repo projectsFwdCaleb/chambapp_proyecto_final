@@ -8,9 +8,10 @@ from datetime import timedelta # tiempo que se resta y se obtiene por ejemplo lo
 from rest_framework.decorators import api_view, permission_classes # permite que una funcion de python se com´porte como un endpoint
 from rest_framework.response import Response # necesario para api view
 from rest_framework.views import APIView
-from django.db.models import Avg, Q, Count, Min
+from django.db.models import Avg, Q, Count, Min, F
+from django.db.models.functions import TruncMonth
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from .permissions import IsTrabajador
+from .permissions import IsTrabajador, IsAdmin
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -305,7 +306,7 @@ def estadisticas_trabajador(request, trabajador_id):
     # Promedio de calificación
     promedio = Resenha.objects.filter(trabajador_id=trabajador_id).aggregate(Avg('puntuacion'))
     # Servicios ofrecidos
-    servicios = Servicio.objects.filter(usuario_id=trabajador_id).count()
+    servicios =list(Servicio.objects.filter(usuario_id=trabajador_id).values_list('nombre_servicio', flat=True))
     # Tasa de satisfacción (reseñas >= 4)
     resenhas_positivas = Resenha.objects.filter(trabajador_id=trabajador_id, puntuacion__gte=4).count()
     tasa_satisfaccion = (resenhas_positivas / trabajos_completados * 100) if trabajos_completados > 0 else 0
@@ -381,3 +382,45 @@ class ChatBotAPIView(APIView):
                 {"error": "Error interno en el servidor."},
                 status=500
             )
+# Admin Dashboard Stats
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_dashboard_stats(request):
+    # 1. KPIs
+    total_usuarios = Usuario.objects.count()
+    solicitudes_activas = Solicitud.objects.filter(estado=True).count()
+    total_servicios = Servicio.objects.count()
+    total_resenhas = Resenha.objects.count()
+
+    # 2. Gráficos
+    # Demanda por Categoría (Solicitudes)
+    demanda_categoria = Solicitud.objects.values('categoria__nombre').annotate(total=Count('id')).order_by('-total')
+    
+    # Oferta por Categoría (Servicios)
+    oferta_categoria = Servicio.objects.values(name=F('categoria__nombre')).annotate(total=Count('id')).order_by('-total')
+    
+    # Crecimiento de Usuarios (Registros por mes)
+    # Nota: TruncMonth requiere que fecha_registro sea DateTimeField
+    crecimiento_usuarios = Usuario.objects.annotate(
+        mes=TruncMonth('fecha_registro')
+    ).values('mes').annotate(total=Count('id')).order_by('mes')
+
+    # 3. Geo (Top Cantones con más solicitudes)
+    top_cantones = Solicitud.objects.values('canton_provincia__nombre').annotate(total=Count('id')).order_by('-total')[:5]
+
+    return Response({
+        "kpis": {
+            "total_usuarios": total_usuarios,
+            "solicitudes_activas": solicitudes_activas,
+            "total_servicios": total_servicios,
+            "total_resenhas": total_resenhas
+        },
+        "graficos": {
+            "demanda_categoria": list(demanda_categoria),
+            "oferta_categoria": list(oferta_categoria),
+            "crecimiento_usuarios": list(crecimiento_usuarios)
+        },
+        "geo": {
+            "top_cantones": list(top_cantones)
+        }
+    })

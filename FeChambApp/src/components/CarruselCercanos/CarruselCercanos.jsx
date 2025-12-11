@@ -45,10 +45,23 @@ function CarruselCercanos() {
           {cercanos.length === 0 && <p className="text-center w-100">No se encontraron usuarios en tu cantón.</p>}
 
           {cercanos.map(user => (
-            <div className="card-popular" key={user.id} onClick={() => {/* navega a perfil si quieres */}}>
-              <img src={user.foto_perfil || "/default-profile.png"} alt="perfil" className="card-img" onClick={() => handleCloseClick(user.id)}/>
-              <h3 className="card-nombre">{user.first_name} {user.last_name}</h3>
-              <p className="card-rating">⭐ {user.promedio_calificacion ?? (user.promedio_calificacion_7_dias ?? '—')} / 5</p>
+            <div className="card-popular" key={user.id} onClick={() => handleCloseClick(user.id)}>
+              <div className="card-image-container">
+                <img src={user.foto_perfil || "/default-profile.png"} alt="perfil" className="card-img" />
+                <div className="card-overlay">
+                  <span className="view-profile-text">Contactar</span>
+                </div>
+                <div className="card-rating-badge">
+                  <span className="star-icon">⭐</span>
+                  <span className="rating-value">{user.promedio_calificacion ?? (user.promedio_calificacion_7_dias ?? '—')}</span>
+                </div>
+              </div>
+              <div className="card-info">
+                <h3 className="card-nombre">{user.first_name} {user.last_name}</h3>
+                {user.servicios && user.servicios.length > 0 && (
+                  <p className="card-servicio">{user.servicios[0]}</p>
+                )}
+              </div>
             </div>
           ))}
         </div>

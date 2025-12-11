@@ -1,14 +1,14 @@
-
-
 .carrusel-container {
   position: relative;
- 
+  padding: 20px 0;
 }
 
 .titulo-populares {
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 15px;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #333;
+  padding-left: 10px;
 }
 
 /* ----- SLIDER PRINCIPAL ----- */
@@ -20,99 +20,195 @@
 
 .slider {
   display: flex;
-  gap: 18px;
+  gap: 30px;
+  /* Increased gap for circular layout */
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 10px 5px;
+  padding: 20px 10px;
+  scrollbar-width: none;
 }
 
 .slider::-webkit-scrollbar {
-  height: 8px;
-}
-
-.slider::-webkit-scrollbar-thumb {
-  background: #cccccc;
-  border-radius: 10px;
+  display: none;
 }
 
 /* ----- CARD ----- */
 .card-popular {
   min-width: 180px;
   max-width: 180px;
-  background: white;
-  border-radius: 12px;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  transition: transform 0.25s ease;
+  /* Removed background and border for cleaner circular look */
+  background: transparent;
+  box-shadow: none;
+  border: none;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Center everything */
+  transition: transform 0.3s ease;
 }
 
 .card-popular:hover {
-  transform: scale(1.05);
+  transform: translateY(-5px);
+}
+
+/* Image Container - CIRCULAR */
+.card-image-container {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  /* Circular */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  /* Shadow on the circle */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  background: white;
+  /* Fallback */
+}
+
+.card-popular:hover .card-image-container {
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
 }
 
 .card-img {
   width: 100%;
-  height: 140px;
-  border-radius: 8px;
+  height: 100%;
   object-fit: cover;
+  border-radius: 50%;
+  /* Circular image */
+  display: block;
+}
+
+/* Overlay - Circular */
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  /* Match container */
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-popular:hover .card-overlay {
+  opacity: 1;
+}
+
+.view-profile-text {
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Rating Badge - Floating inside image */
+.card-rating-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  z-index: 2;
+  /* Above overlay */
+}
+
+.star-icon {
+  color: #f1c40f;
+  font-size: 12px;
+}
+
+.rating-value {
+  font-weight: 700;
+  color: #333;
+}
+
+/* Info Section */
+.card-info {
+  padding-top: 12px;
+  text-align: center;
+  width: 100%;
 }
 
 .card-nombre {
-  margin-top: 10px;
-  font-size: 17px;
+  margin: 0;
+  font-size: 16px;
   font-weight: 600;
+  color: #2c3e50;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
-.card-rating {
-  margin-top: 5px;
-  color: #444;
-  font-size: 15px;
+.card-servicio {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
+
 
 /* ----- BOTONES ----- */
 .slider-btn {
   position: absolute;
-  background: rgba(0,0,0,0.55);
-  color: white;
-  border: none;
-  font-size: 32px;
+  background: white;
+  color: #333;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
   cursor: pointer;
-  padding: 5px 12px;
-  border-radius: 8px;
-  z-index: 5;
-  transition: 0.2s;
+  z-index: 10;
+  transition: all 0.2s ease;
 }
 
 .slider-btn:hover {
-  background: rgba(0,0,0,0.75);
+  background: #f8f9fa;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: scale(1.1);
 }
 
 .slider-btn.left {
-  left: -5px;
+  left: -10px;
 }
 
 .slider-btn.right {
-  right: -5px;
+  right: -10px;
 }
 
-.services-list {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
+@media (max-width: 768px) {
+  .slider-btn.left {
+    left: 0;
+  }
 
-.service-badge {
-  background: #58c7f3; /* color ejemplo */
-  color: #fff;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 18px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-.service-badge:hover {
-  opacity: 0.9;
+  .slider-btn.right {
+    right: 0;
+  }
 }

@@ -1,3 +1,11 @@
+function getAuthHeaders() {
+    const token = localStorage.getItem("access_token");
+
+    return {
+        "Authorization": token ? `Bearer ${token}` : ""
+    };
+}
+
 async function getUsuarios() {
 
     try {
@@ -50,9 +58,7 @@ async function deleteUsuarios(id) {
 
         const response = await fetch("http://localhost:8000/api/usuario/" + id, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: getAuthHeaders()
         })
         /* const products = await response.json()
         
@@ -68,7 +74,7 @@ async function deleteUsuarios(id) {
 async function putUsuarios(id, consulta) {
     try {
         let bodyToSend;
-        let headers = {};
+        let headers = { ...getAuthHeaders() };
 
         // Si viene un archivo ⇒ usar FormData
         if (consulta.foto_perfil instanceof File) {
@@ -76,10 +82,10 @@ async function putUsuarios(id, consulta) {
             Object.keys(consulta).forEach(key => {
                 bodyToSend.append(key, consulta[key]);
             });
-        }
-        // Si NO viene archivo ⇒ JSON normal
+        } 
         else {
-            headers['Content-Type'] = 'application/json';
+            // JSON normal
+            headers["Content-Type"] = "application/json";
             bodyToSend = JSON.stringify(consulta);
         }
 

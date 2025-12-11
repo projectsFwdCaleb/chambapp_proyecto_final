@@ -203,9 +203,14 @@ function BuzonComentarios({ id }) {
               <div className="card h-100 shadow-sm border-0 comentario_card">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start mb-2">
-                    <img
-                       src={comentario.autor_detalle?.foto_perfil || BoosiMan}
-                       className="card-avatar-comentario" />
+                    
+                    <div className="dropdownProfileMenu">
+                      <img
+                        src={comentario.autor_detalle?.foto_perfil || BoosiMan} 
+                        alt={comentario.autor_detalle?.usermane}
+                        className="img-perfil"
+                      />
+                    </div>
                     <strong className="card-title fw-bold text-primary">
                       {comentario.autor_detalle?.username || `Usuario #${comentario.autor}`}
                     </strong>
@@ -248,8 +253,8 @@ function BuzonComentarios({ id }) {
         )}
       </div>
 
-      <div className="row justify-content-center mt-5">
-        <div className="col-md-8 col-lg-6">
+      <div className="row justify-content-center mt-3">
+        <div className="col-md-12">
           <div className="card shadow buzon_form p-4">
             <strong className="text-center mb-4">
               {editingId ? "Editar tu comentario" : "Deja tu comentario"}

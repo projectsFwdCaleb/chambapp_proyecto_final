@@ -1,11 +1,13 @@
 import React from 'react'
 import Header from '../components/Header/Header'
-import Footer from '../components/Footer/Footer'
 import SidebarRender from '../components/SidebarRender/SidebarRender'
 import "../pages/LandingPage.css"
-import AdminDashboard from '../components/AdminDashboard/AdminDashboard'
+import CategoriasAdmin from '../components/CategoriasAdmin/CategoriasAdmin'
+import Footer from '../components/Footer/Footer'
+function PanelCategorias() {
 
-function PaginaAdministrador() {
+
+
   return (
     <div className='d-flex'>
       <div className='col-2'>
@@ -13,13 +15,12 @@ function PaginaAdministrador() {
       </div>
 
       <div className='col-10'>
-        <AdminDashboard/>
+        <CategoriasAdmin/>
         <Footer/>
       </div>  
-    
+
     </div>
   )
 }
 
-export default PaginaAdministrador
- /* </> */
+export default PanelCategorias

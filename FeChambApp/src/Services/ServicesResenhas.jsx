@@ -36,7 +36,9 @@ async function getResenhaByTrabajador(trabajadorId) {
     try {
         const response = await fetch(`http://localhost:8000/api/resenhas/trabajador/${trabajadorId}/`, {
             method: 'GET',
-            headers: getAuthHeaders()
+            headers : {
+            'Content-Type': 'application/json'
+            }
         });
 
         if (!response.ok) throw new Error("Error al obtener reseñas del trabajador");

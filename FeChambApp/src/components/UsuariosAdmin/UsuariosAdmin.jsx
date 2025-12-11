@@ -289,12 +289,12 @@ function UsuariosAdmin() {
 
                     <td className="text-center">
 
-                      <button className="btn btn-warning btn-sm me-2"
+                      <button className="btn btn-outline-primary btn-sm me-2"
                         onClick={() => editarUsuario(u)}>
                         Editar
                       </button>
 
-                      <button className="btn btn-danger btn-sm"
+                      <button className="btn btn-outline-danger btn-sm"
                         onClick={() => abrirModalEliminar(u.id)}>
                         Eliminar
                       </button>

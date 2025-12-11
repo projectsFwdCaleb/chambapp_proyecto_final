@@ -10,7 +10,7 @@ User = get_user_model()
 # Usuario en sesión
 class UserSerializer(serializers.ModelSerializer):
     grupos = serializers.SerializerMethodField()
-
+    servicios = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = [
@@ -21,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'foto_perfil',
             'grupos',
+            'servicios',
             'direccion', 
             'canton_provincia'
         ]
@@ -28,6 +29,9 @@ class UserSerializer(serializers.ModelSerializer):
     def get_grupos(self, obj):
         # Esto lee los grupos desde la tabla usuario_groups
         return list(obj.groups.values_list("name", flat=True))
+    
+    def get_servicios(self, obj):
+        return list(obj.servicios.values_list("nombre_servicio", flat=True))
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -72,18 +76,23 @@ class GroupSerializer(serializers.ModelSerializer):
 
 # Usuario
 class UsuarioSerializer(serializers.ModelSerializer):
+    servicios = serializers.SerializerMethodField()
     class Meta:
         model = Usuario
         fields = [
             'id', 'username', 'password', 'email', 'first_name', 'last_name',
             'foto_perfil', 'verificado', 'canton_provincia', 'direccion',
-            'latitud', 'longitud', 'calificacion_promedio', 'fecha_registro'
+            'latitud', 'longitud', 'calificacion_promedio', 'fecha_registro',
+            'servicios'
         ]
         extra_kwargs = {
             'password': {'write_only': True},  # La contraseña solo se usa al crear o actualizar
             'email': {'required': True},       # El email debe ser obligatorio
             'username': {'required': True},    # El username también
         }
+
+    def get_servicios(self, obj):
+        return list(obj.servicios.values_list("nombre_servicio", flat=True))
 
     def validate_email(self, value):
         user = self.instance

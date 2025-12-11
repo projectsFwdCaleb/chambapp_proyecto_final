@@ -1,5 +1,13 @@
 const API_URL = "http://localhost:8000/api/servicio/";
 
+function getAuthHeaders() {
+  const token = localStorage.getItem("access_token");
+  return {
+    "Content-Type": "application/json",
+    "Authorization": token ? `Bearer ${token}` : ""
+  };
+}
+
 async function getServicio(search = "", page = 1) {
   try {
     // Construimos la URL dinámicamente con los parámetros opcionales
@@ -27,11 +35,11 @@ async function getServicio(search = "", page = 1) {
 
 async function postServicio(consulta) {
   console.log(consulta);
-  
+
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeaders(),
       body: JSON.stringify(consulta),
     });
 
@@ -47,7 +55,7 @@ async function deleteServicio(id) {
   try {
     const response = await fetch(`${API_URL}${id}/`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) throw new Error("Error al eliminar servicio");
@@ -60,8 +68,8 @@ async function deleteServicio(id) {
 async function putServicio(id, consulta) {
   try {
     const response = await fetch(`${API_URL}${id}/`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method: "PATCH",
+      headers: getAuthHeaders(),
       body: JSON.stringify(consulta),
     });
 

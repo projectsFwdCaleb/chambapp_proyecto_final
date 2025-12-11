@@ -42,7 +42,7 @@
   left: 50%;
   background: conic-gradient(#0aa3d1,
       cyan,
-      #03eeff);
+      #951d99);
   animation: rotate-border 4s linear infinite;
   transform: translate(-50%, -50%);
   z-index: 0;
