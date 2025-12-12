@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from 'react'
 // import Dropdown from 'react-bootstrap/Dropdown';
 import ServicesCategoria from '../../Services/ServicesCategoria';
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import "../SidebarRender/SidebarRender.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faHeart, faInbox, faComment, faUser, faGear, faFilter, faArrowAltCircleRight, faChartBar} from '@fortawesome/free-solid-svg-icons'
-import ServicesLogin from '../../Services/ServicesLogin';
 
 function SidebarRender() {
   const [categorias, setCategorias] = useState([])
-  const [user, setUser] = useState(null)
   // Estado para controlar si el submenú de Categorías está abierto o cerrado
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false) 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
 
 
 
   useEffect(() => {
-    fetchUser()
     getCategories()
   }, [])
 
@@ -26,17 +24,12 @@ function SidebarRender() {
         setCategorias(Array.isArray(data) ? data : data.results || data.data || [])
     }
 
-  const fetchUser = async () => {
-        const data = await ServicesLogin.getUserSession();
-        setUser(data);
-      }
 
   // Función para alternar el estado del submenú de categorías
   const toggleCategories = () => {
     setIsCategoriesOpen(!isCategoriesOpen); 
   }
 
-  const grupo = user?.grupos[0] // El primer grupo del usuario
 
   // Define una función para manejar la navegación o acciones de la categoría
   const handleCategoryClick = (categoriaId) => {
@@ -96,8 +89,14 @@ function SidebarRender() {
         {/* Opciones de Navegación principales*/}
 
          <>
-        {grupo === "admin" ? (
-
+        {
+          location.pathname === '/Administrador' ||
+          location.pathname === '/Administrador/usuarios' ||
+          location.pathname === '/Administrador/solicitudes' ||
+          location.pathname === '/Administrador/servicios' ||
+          location.pathname === '/Administrador/resenhas' ||
+          location.pathname === '/Administrador/categorias'
+            ? (
             <div className='navOptions'>
             <ul className='nav-list'>
                 <li className='nav-item'>
@@ -105,7 +104,7 @@ function SidebarRender() {
                 <h3 onClick={handleAdminClick}><FontAwesomeIcon icon={faChartBar} />Inicio</h3>
                 </button>
                 </li>
-                
+
                 <li className='nav-item'>
                 <button className='nav-link' onClick={handleUsersClick}>
                     <h3><FontAwesomeIcon icon={faUser} /> Usuarios</h3>

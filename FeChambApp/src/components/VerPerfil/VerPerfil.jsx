@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import ServicesLogin from '../../Services/ServicesLogin';
+// import ServicesLogin from '../../Services/ServicesLogin'; // Removed
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import ServicesCantones from '../../Services/ServicesCantones';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './VerPerfil.css';
 import { Form, Button } from 'react-bootstrap';
+import { useUser } from '../../../Context/UserContext';
 
 function VerPerfil() {
   // Datos del usuario
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null); // Removed local state
+  const { user, setUser } = useUser(); // Use hook
 
   // Lista de cantones
   const [cantones, setCantones] = useState([]);
@@ -33,15 +35,27 @@ function VerPerfil() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.first_name || '');
+      setLastName(user.last_name || '');
+      setEmail(user.email || '');
+      setDireccion(user.direccion || '');
+      setCantonProvincia(user.canton_provincia || '');
+      setImagePreview(user.foto_perfil);
+    }
+  }, [user]);
+
   // Obtener datos del usuario y la lista de cantones
   const fetchData = async () => {
     try {
-      const sessionUser = await ServicesLogin.getUserSession();
+      // const sessionUser = await ServicesLogin.getUserSession(); // Removed
       const cantonesData = await ServicesCantones.getCanton();
 
       // Asegurar que cantones sea lista válida
       setCantones(Array.isArray(cantonesData) ? cantonesData : cantonesData.results || []);
 
+      /* Removed manual user setting
       // Llenar campos del usuario
       if (sessionUser) {
         setUser(sessionUser);
@@ -52,6 +66,7 @@ function VerPerfil() {
         setCantonProvincia(sessionUser.canton_provincia || '');
         setImagePreview(sessionUser.foto_perfil);
       }
+      */
 
       setLoading(false);
     } catch (error) {
@@ -98,7 +113,14 @@ function VerPerfil() {
         ...dataToSend,
       };
 
+      // Si subieron una nueva foto, actualizar preview y user.foto_perfil con la URL temporal
+      if (fotoPerfil instanceof File) {
+        const newPreview = URL.createObjectURL(fotoPerfil);
+        updatedUser.foto_perfil = newPreview;
+      }
+
       setUser(updatedUser);
+
       toast.success("Perfil actualizado correctamente");
 
     } catch (error) {

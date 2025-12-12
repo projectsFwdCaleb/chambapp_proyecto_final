@@ -7,8 +7,9 @@ import "../AreaSolicitudes/AreaSolicitudes.css";
 import ServicesSolicitudes from "../../Services/ServicesSolicitudes";
 import ServicesCategoria from '../../Services/ServicesCategoria';
 import ServicesCantones from '../../Services/ServicesCantones';
-import ServicesLogin from '../../Services/ServicesLogin';
+// import ServicesLogin from '../../Services/ServicesLogin'; // Removed
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
+import { useUser } from '../../../Context/UserContext';
 
 function AreaSolicitudes() {
 
@@ -27,7 +28,8 @@ function AreaSolicitudes() {
     const [solicitudEditando, setSolicitudEditando] = useState(null);
 
     /* información del usuario */
-    const [user, setUser] = useState("");
+    // const [user, setUser] = useState(""); // Removed local state
+    const { user } = useUser(); // Use hook
     const [usuarios, setUsuarios] = useState([]);
 
     /* constante para las nuevas solicitudes */
@@ -45,7 +47,7 @@ function AreaSolicitudes() {
         cargarSolicitudes();
         fetchCategorias();
         fetchCantones();
-        fetchUser();
+        // fetchUser(); // Removed
         fetchUsuarios()
     }, []);
 
@@ -73,9 +75,11 @@ function AreaSolicitudes() {
         };
     }, [mostrarModalA, mostrarModalB]);
 
-    
+
+    /* Removed fetchUser
     /*el fetch para traer los usuarios, es importante tenerlos
      para saber de quien es cada solicitud */
+    /*
     const fetchUser = async () => {
         try {
             const data = await ServicesLogin.getUserSession();
@@ -84,6 +88,8 @@ function AreaSolicitudes() {
             console.error("Error al obtener usuario en sesión:", error);
         }
     };
+    */
+
     /*la funcion que carga las solicides en la pagia, 
     la llamaremos por ahi de la linea 165 y la 217 */
     const cargarSolicitudes = async () => {
@@ -126,24 +132,24 @@ function AreaSolicitudes() {
 
     /*traer los nombres de usuario de la base (asi se sabre quien esta pidiendo) */
     const getNombreUsuarios = (usuarioId) => {
-    if (!usuarioId) return 'Sin nombre especificado';
+        if (!usuarioId) return 'Sin nombre especificado';
 
-    const uNombre = usuarios.find(us => us.id === usuarioId);
-    return uNombre ? uNombre.username : 'nombre no disponible';
+        const uNombre = usuarios.find(us => us.id === usuarioId);
+        return uNombre ? uNombre.username : 'nombre no disponible';
     };
 
     /*para traer las imagenes de perfil de la base
     (cuantos goku habra una ves que pongamos esto en lienea)*/
     const getFotoUsuario = (usuarioId) => {
-    const usuario = usuarios.find(u => u.id === usuarioId);
+        const usuario = usuarios.find(u => u.id === usuarioId);
 
-    if (usuario && usuario.foto_perfil) {
-        return usuario.foto_perfil;  
-    }
+        if (usuario && usuario.foto_perfil) {
+            return usuario.foto_perfil;
+        }
 
-     /*Imagen por defecto si no tienen foto de perfil, pero si van a tener que poner para ser
-     travajadores*/
-    return "/default.png"; 
+        /*Imagen por defecto si no tienen foto de perfil, pero si van a tener que poner para ser
+        travajadores*/
+        return "/default.png";
     };
 
 
@@ -179,10 +185,10 @@ function AreaSolicitudes() {
                 await ServicesSolicitudes.postSolicitud(nuevaSolicitud);
             }
 
-            /*llamar a la funcion para cargar las solicitudes */ 
+            /*llamar a la funcion para cargar las solicitudes */
             cargarSolicitudes();
 
-            /*limpiar el area para la siguientes solicitudes */ 
+            /*limpiar el area para la siguientes solicitudes */
             setNuevaSolicitud({
                 titulo: "",
                 descripcion: "",
@@ -221,8 +227,8 @@ function AreaSolicitudes() {
 
     /* abrir el modal B */
     const abrirModalB = (sol) => {
-    setSolicitudSeleccionada(sol);
-    setMostrarModalB(true);
+        setSolicitudSeleccionada(sol);
+        setMostrarModalB(true);
     };
 
     /* borrar solicitud */
@@ -357,10 +363,10 @@ function AreaSolicitudes() {
                 <ul className="lista-solicitudes row">
                     {solicitud.map(sol => (
                         <li key={sol.id} className="solicitud-item col-md-4">
-                            <div 
+                            <div
                                 className="card shadow-sm p-3 solicitud-card"
                                 onClick={() => abrirModalB(sol)}
-                                style={{ cursor: "pointer" }} 
+                                style={{ cursor: "pointer" }}
                             >
 
                                 {/* el cuerpo de las solicitudes  */}
@@ -385,9 +391,9 @@ function AreaSolicitudes() {
                                 </div>
 
                                 {/* Botones del dueño */}
-                                {sol.usuario === user.id && (
+                                {sol.usuario === user?.id && (
                                     <div className='mt-3 d-flex gap-2'>
-                                        <button 
+                                        <button
                                             className='btn btn-warning btn-sm w-50'
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -397,7 +403,7 @@ function AreaSolicitudes() {
                                             Editar
                                         </button>
 
-                                        <button 
+                                        <button
                                             className='btn btn-danger btn-sm w-50'
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -424,8 +430,8 @@ function AreaSolicitudes() {
                                 <h1 className="modal-title">
                                     Detalle de Solicitud
                                 </h1>
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     className="btn-close"
                                     onClick={() => setMostrarModalB(false)}
                                 ></button>
@@ -467,7 +473,7 @@ function AreaSolicitudes() {
                             </div>
 
                             <div className="modal-footer">
-                                <button 
+                                <button
                                     className="btn btn-secondary"
                                     onClick={() => setMostrarModalB(false)}
                                 >

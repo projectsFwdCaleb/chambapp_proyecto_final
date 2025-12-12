@@ -2,7 +2,6 @@ import React from 'react'
 import Header from '../components/Header/Header'
 import Footer from '../components/Footer/Footer'
 import SidebarRender from '../components/SidebarRender/SidebarRender'
-import "../pages/LandingPage.css"
 import AdminDashboard from '../components/AdminDashboard/AdminDashboard'
 
 function PaginaAdministrador() {

@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeftCircle, MessageSquare } from "lucide-react";
 import ServicesMensajes from "../../Services/ServicesMensajes";
 import "./SidebarChats.css";
-import ServicesLogin from "../../Services/ServicesLogin";
+// import ServicesLogin from "../../Services/ServicesLogin"; // Removed
+import { useUser } from '../../../Context/UserContext';
 
 function SidebarChats() {
   const [conversaciones, setConversaciones] = useState([]);
@@ -10,7 +11,8 @@ function SidebarChats() {
   const [mensajes, setMensajes] = useState([]);
   const [nuevoMensaje, setNuevoMensaje] = useState("");
   const mensajesEndRef = useRef(null);
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null); // Removed local state
+  const { user } = useUser(); // Use hook
 
   // Helper para hacer scroll al último mensaje
   const scrollToBottom = () => {
@@ -19,7 +21,9 @@ function SidebarChats() {
     }
   };
 
+  /* Removed fetchUser
   /* Obtener usuario en sesión usando el token */
+  /*
   useEffect(() => {
       const fetchUser = async () => {
         try {
@@ -31,7 +35,7 @@ function SidebarChats() {
       };
     fetchUser();
   }, []);
-  
+  */
 
 
   // Cargar conversaciones al montar o cuando cambie usuario
@@ -113,10 +117,10 @@ function SidebarChats() {
       }
     } catch (err) {
       console.error("Error enviando mensaje:", err);
-     
+
     }
   };
-console.log("Usuario ID recibido por Sidebar:", user?.id);
+  console.log("Usuario ID recibido por Sidebar:", user?.id);
   // Tecla Enter para enviar
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {

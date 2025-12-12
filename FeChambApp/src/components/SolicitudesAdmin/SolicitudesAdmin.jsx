@@ -28,7 +28,7 @@ function SolicitudesAdmin() {
   // Carga solicitudes
   const cargarDatos = async () => {
     try {
-      const dataSolicitudes = await ServicesSolicitudes.getSolicitud();
+      const dataSolicitudes = await ServicesSolicitudes.getSolicitudes();
       const solicitudesArray = Array.isArray(dataSolicitudes)
         ? dataSolicitudes
         : dataSolicitudes.results || dataSolicitudes.data || [];

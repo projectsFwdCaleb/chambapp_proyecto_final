@@ -2,68 +2,71 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import ServicesServicio from '../../Services/ServicesServicio';
-import ServicesLogin from "../../Services/ServicesLogin";
+// import ServicesLogin from "../../Services/ServicesLogin"; // Removed as it is not used anymore
 import Dropdown from 'react-bootstrap/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../Header/Header.css"
 import { toast, ToastContainer } from 'react-toastify';
+import { useUser } from '../../../Context/UserContext';
 
 function Header() {
   /*las constantes, para hoy tenemos constantes para usuarios, servicios,paginas y asta busqueda */
   const [search, setSearch] = useState("");
   const [servicios, setServicios] = useState([]);
   const [page, setPage] = useState(1);
-  const [user, setUser] = useState(null);
-  const navigate= useNavigate()
+  // const [user, setUser] = useState(null); // Removed local state
+  const { user } = useUser(); // Use hook
+  const navigate = useNavigate()
   const location = useLocation();
 
 
-// Obtener usuario en sesión usando el token
-useEffect(() => {
-    const fetchUser = async () => {
+  // Removed useEffect for fetching user
+  /*
+  useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const data = await ServicesLogin.getUserSession();
+          setUser(data);
+        } catch (err) {
+          console.error("Error al obtener usuario en sesión:", err);
+        }
+      };
+    fetchUser();
+  }, []);
+  */
+
+  useEffect(() => {
+    // Solo buscar si hay texto en el search
+    if (!search.trim()) {
+      setServicios([]); // Limpiar resultados si no hay búsqueda
+      return;
+    }
+    const TraerServicios = async () => {
       try {
-        const data = await ServicesLogin.getUserSession();
-        setUser(data);
+        const data = await ServicesServicio.getServicio(search, page);
+        setServicios(data.results || data);
       } catch (err) {
-        console.error("Error al obtener usuario en sesión:", err);
+        console.error("Error al obtener servicios:", err);
       }
     };
-  fetchUser();
-}, []);
 
+    const delay = setTimeout(TraerServicios, 400);
+    return () => clearTimeout(delay);
+  }, [search, page]);
 
-useEffect(() => {
-// Solo buscar si hay texto en el search
-  if (!search.trim()) {
-    setServicios([]); // Limpiar resultados si no hay búsqueda
-    return;
+  const handleResultClick = (id) => {
+    navigate(`/trabajador/${id}`);
   }
-  const TraerServicios = async () => {
-    try {
-      const data = await ServicesServicio.getServicio(search, page);
-      setServicios(data.results || data);
-    } catch (err) {
-      console.error("Error al obtener servicios:", err);
+
+  const handleServiceButton = () => {
+    if (user) {
+      return navigate('/nuevo-servicio');
     }
+    toast.error('Necesitas iniciar sesión para agregar un servicio');
+    setTimeout(() => {
+      navigate('/loging');
+    }, 1200); // 1.2s para que sí se vea el toast
   };
-
-  const delay = setTimeout(TraerServicios, 400);
-  return () => clearTimeout(delay);
-}, [search, page]);
-
-const handleResultClick = (id) => {
-      navigate(`/trabajador/${id}`);
-  }
-
-const handleServiceButton = () => {
-  if (user) {
-    return navigate('/nuevo-servicio');
-  }
-  toast.error('Necesitas iniciar sesión para agregar un servicio');
-  setTimeout(() => {
-    navigate('/loging');
-  }, 1200); // 1.2s para que sí se vea el toast
-};
 
   return (
     <div className='header-container'>
@@ -72,9 +75,9 @@ const handleServiceButton = () => {
       <div className='searchBar'>
         <span className='search-icon'></span>
         {/*aqui es donde se podran digitar parametros para la busqueda de servisios*/}
-        <input 
-          type="text" 
-          placeholder='Buscar por nombre o servicio' 
+        <input
+          type="text"
+          placeholder='Buscar por nombre o servicio'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -89,15 +92,15 @@ const handleServiceButton = () => {
           </ul>
         )}
       </div>
-        {/*basicaminente muesta el perfil logeado o te da la opcion de loguearte si no lo estas al darte un link al loging*/}
+      {/*basicaminente muesta el perfil logeado o te da la opcion de loguearte si no lo estas al darte un link al loging*/}
       {/* Usuario */}
-    {location.pathname !== "/nuevo-servicio" ? (
-    <div className='service-section'>
-      <button className='btn-user' onClick={handleServiceButton}>
-          Ofrecer un servicio
-      </button>
-    </div>
-    ) : null}
+      {location.pathname !== "/nuevo-servicio" ? (
+        <div className='service-section'>
+          <button className='btn-user' onClick={handleServiceButton}>
+            Ofrecer un servicio
+          </button>
+        </div>
+      ) : null}
 
       <div className='user-section'>
         {!user ? (

@@ -89,11 +89,13 @@ class ServicioListCreateView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['usuario', 'categoria']
     search_fields = ['nombre_servicio', 'descripcion']
+    permission_classes = [IsAuthenticated]
+
 
 class ServicioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Servicio.objects.all()
     serializer_class=ServicioSerializer
-    permission_classes = [IsAuthenticated, IsTrabajador | IsAdminUser]    
+    permission_classes = [IsAuthenticated, IsTrabajador | IsAdmin]    
 
 # Solicitud
 class SolicitudListCreateView(generics.ListCreateAPIView):

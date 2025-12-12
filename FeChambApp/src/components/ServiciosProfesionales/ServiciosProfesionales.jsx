@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import ServicesServicio from '../../Services/ServicesServicio';
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
-import ServicesLogin from '../../Services/ServicesLogin';
+// import ServicesLogin from '../../Services/ServicesLogin'; // Removed
 import ServicesCategoria from '../../Services/ServicesCategoria';
 import ServicesCantones from '../../Services/ServicesCantones';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './ServiciosProfesionales.css';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { useUser } from '../../../Context/UserContext';
 
 function ServiciosProfesionales() {
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null); // Removed local state
+  const { user, setUser } = useUser(); // Use hook
   const [categorias, setCategorias] = useState([]);
   const [cantones, setCantones] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -37,11 +39,28 @@ function ServiciosProfesionales() {
 
   // Cargar usuario, categorías y cantones
   useEffect(() => {
-    fetchUserData();
+    // fetchUserData(); // Removed
     fetchCategorias();
     fetchCantones();
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      // Rellenar el formulario de perfil
+      setProfileData({
+        first_name: user.first_name || '',
+        last_name: user.last_name || '',
+        direccion: user.direccion || '',
+        canton_provincia: user.canton_provincia || '',
+        foto_perfil: user.foto_perfil || null
+      });
+
+      // Usar la URL existente como preview (puede ser string)
+      setImagePreview(user.foto_perfil || null);
+    }
+  }, [user]);
+
+  /* Removed fetchUserData
   // Obtener datos del usuario en sesión
   const fetchUserData = async () => {
     try {
@@ -66,6 +85,7 @@ function ServiciosProfesionales() {
       toast.error("Error al obtener sesión de usuario");
     }
   };
+  */
 
   // Obtener lista de categorías
   const fetchCategorias = async () => {
@@ -86,7 +106,7 @@ function ServiciosProfesionales() {
       console.error("Error al obtener cantones", error);
     }
   };
-  
+
 
   // Validar que el perfil esté completo
   const isProfileComplete = () => {
@@ -117,14 +137,14 @@ function ServiciosProfesionales() {
         nombre_servicio: serviceData.nombre_servicio,
         descripcion: serviceData.descripcion,
         categoria: serviceData.categoria ? parseInt(serviceData.categoria, 10) : null,
-        precio_referencial: serviceData.precio_referencial !== '' 
-          ? parseFloat(serviceData.precio_referencial) 
+        precio_referencial: serviceData.precio_referencial !== ''
+          ? parseFloat(serviceData.precio_referencial)
           : null,
         usuario: user.id
       };
 
       console.log(payload);
-      
+
       //post
       await ServicesServicio.postServicio(payload);
       toast.success("Servicio creado exitosamente!");
@@ -161,7 +181,7 @@ function ServiciosProfesionales() {
 
       await ServicesUsuarios.putUsuarios(user.id, dataToSend);
 
-      // Actualizar estado local del usuario
+      // Actualizar estado local del usuario (ahora global)
       setUser({ ...user, ...dataToSend });
 
       // Si subieron una nueva foto, actualizar preview y user.foto_perfil con la URL temporal

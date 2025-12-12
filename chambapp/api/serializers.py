@@ -163,19 +163,20 @@ class ServicioSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        # Evita que el mismo usuario cree dos servicios con el mismo nombre
         usuario = data.get('usuario')
         nombre = data.get('nombre_servicio')
+    # Validar usuario obligatorio
+        if not usuario:
+            raise serializers.ValidationError("El usuario es requerido.")
+        # Evita más de 3 servicios
+        if Servicio.objects.filter(usuario=usuario).count() >= 3:
+            raise serializers.ValidationError("No puedes registrar más de 3 servicios.")
+        #Evita duplicados por nombre
         if Servicio.objects.filter(usuario=usuario, nombre_servicio__iexact=nombre).exists():
             raise serializers.ValidationError("Ya tienes un servicio con ese nombre.")
+
         return data
-    
-    def validate_cantidad_servicios(self, data):
-        #Evita que usuario añada mas de 3 servicios
-        user = data['usuario']
-        if Servicio.objects.filter(usuario=user).count() >= 3:
-            raise serializers.ValidationError("No puedes registrar más de 3 servicios.")
-        return data
+
 
 
 # Solicitud

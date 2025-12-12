@@ -20,6 +20,7 @@ function PaginaTrabajador() {
   const { id } = useParams();
   console.log(id);
   const [open, setOpen] = useState(false);
+  const [section, setSection] = useState("trabajos");  // trabajos | comentarios
   return (
     <div className="d-flex">
       <div className="col-2">
@@ -30,9 +31,9 @@ function PaginaTrabajador() {
         <Header/>
           <div className="d-flex">
             <div className="mainNav col-8">
-              <BanerTrabajador id={id} />
-              <CarruselPortafolio id={id} />
-              <BuzonComentarios id={id}/>
+              <BanerTrabajador id={id} section={section} onChangeSection={setSection} />
+              {section === "trabajos" && <CarruselPortafolio id={id}/>}
+              {section === "comentarios" && <BuzonComentarios id={id}/>}
             </div>
             
             <div className="col-4 d-flex flex-column columna-derecha-completa">

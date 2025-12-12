@@ -53,7 +53,7 @@ async function postServicio(consulta) {
 
 async function deleteServicio(id) {
   try {
-    const response = await fetch(`${API_URL}${id}/`, {
+    const response = await fetch(`${API_URL}${id}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
@@ -67,7 +67,7 @@ async function deleteServicio(id) {
 
 async function putServicio(id, consulta) {
   try {
-    const response = await fetch(`${API_URL}${id}/`, {
+    const response = await fetch(`${API_URL}${id}`, {
       method: "PATCH",
       headers: getAuthHeaders(),
       body: JSON.stringify(consulta),

@@ -3,25 +3,28 @@ import ServicesFav from '../../Services/ServicesFav';
 import './MainFavoritos.css';
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import ServicesServicio from '../../Services/ServicesServicio';
-import ServicesLogin from '../../Services/ServicesLogin';
+// import ServicesLogin from '../../Services/ServicesLogin'; // Removed
 import BoosiMan from '../../assets/BoosiMan.webp';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../../Context/UserContext';
 
 function MainFavoritos() {
     const [favoritos, setFavoritos] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState([])
-    const [userInSession, setUserInSession] = useState([])
+    const [usuarios, setUsuarios] = useState([]) // Renamed from user to avoid conflict
+    // const [userInSession, setUserInSession] = useState([]) // Removed
+    const { user: userInSession } = useUser();
     const [services, SetServices] = useState([])
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchUserInSession()
+        // fetchUserInSession() // Removed
         fetchUsuarios()
         fetchFavoritos()
         fetchServices()
     }, []);
 
+    /* Removed fetchUserInSession
     const fetchUserInSession = async () => {
             try {
               const data = await ServicesLogin.getUserSession();
@@ -30,15 +33,16 @@ function MainFavoritos() {
               console.error("Error al obtener usuario en sesión:", err);
             }
           };
+    */
 
     const fetchServices = async () => {
         const response = await ServicesServicio.getServicio();
         const data = Array.isArray(response.data)
             ? response.data
             : Array.isArray(response)
-            ? response
-            : [];
-            SetServices(data)
+                ? response
+                : [];
+        SetServices(data)
     }
 
     const fetchUsuarios = async () => {
@@ -46,9 +50,9 @@ function MainFavoritos() {
         const data = Array.isArray(response.data)
             ? response.data
             : Array.isArray(response)
-            ? response
-            : [];
-            setUser(data)
+                ? response
+                : [];
+        setUsuarios(data)
     }
 
     const fetchFavoritos = async () => {
@@ -56,13 +60,13 @@ function MainFavoritos() {
         try {
             const response = await ServicesFav.getFavoritos();
             const data = Array.isArray(response.data)
-            ? response.data
-            : Array.isArray(response)
-            ? response
-            : [];
+                ? response.data
+                : Array.isArray(response)
+                    ? response
+                    : [];
             setFavoritos(data)
             console.log(favoritos);
-                
+
         } catch (error) {
             console.error("Error cargando favoritos:", error);
             setFavoritos([]);
@@ -71,30 +75,30 @@ function MainFavoritos() {
         }
     };
 
-    
+
 
     const agregarServiciosATrabajadores = (trabajadores, services) => {
-    return trabajadores.map(trabajador => {
-        // servicios que pertenece a este trabajador
-        const serviciosTrabajador = services.filter(
-            serv => serv.trabajador === trabajador
-        );
-        console.log(serviciosTrabajador);
-        
-        return {
-            ...trabajador,
-            servicios: serviciosTrabajador
-        };
-    });
+        return trabajadores.map(trabajador => {
+            // servicios que pertenece a este trabajador
+            const serviciosTrabajador = services.filter(
+                serv => serv.trabajador === trabajador
+            );
+            console.log(serviciosTrabajador);
+
+            return {
+                ...trabajador,
+                servicios: serviciosTrabajador
+            };
+        });
     };
-    
-    const favoritosDelUsuario = favoritos.filter(f => f.usuario === userInSession.id);
+
+    const favoritosDelUsuario = favoritos.filter(f => f.usuario === userInSession?.id);
     const favoritosIDs = favoritosDelUsuario.map(f => f.trabajador);
-    const trabajadoresSinServicio = user.filter(u => favoritosIDs.includes(u.id));
+    const trabajadoresSinServicio = usuarios.filter(u => favoritosIDs.includes(u.id));
     const trabajadores = agregarServiciosATrabajadores(trabajadoresSinServicio, services);
     console.log(trabajadores);
 
-        
+
 
     const handleContactButton = (id) => {
         navigate(`/trabajador/${id}`);

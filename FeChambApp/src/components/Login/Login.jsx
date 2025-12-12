@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import ServicesLogin from '../../Services/ServicesLogin'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useUser } from '../../../Context/UserContext'
 
 function Login({ onSwitchToRegister }) {
 
@@ -11,6 +12,7 @@ function Login({ onSwitchToRegister }) {
   const [nombreU, SetNombreU] = useState('')
   const [contraseña, setContraseña] = useState('')
   const navigate = useNavigate()
+  const { setUser } = useUser();
 
   const verificarU = async () => {
 
@@ -54,13 +56,19 @@ function Login({ onSwitchToRegister }) {
       /* Guardando tokens como si fueran tesoros del dragón Smaug */
       localStorage.setItem('access_token', response.access)
       localStorage.setItem('refresh_token', response.refresh)
-      
+
       /*trallendo los datos de usuario por contrabando dese la base */
       const user = await ServicesLogin.getUserSession()
+      setUser(user); // Update context
 
       /*guardando los datos en laugh tale*/
-       const grupo = user.grupos[0] // El primer grupo del usuario
-      localStorage.setItem("grupo", JSON.stringify(grupo)); 
+      /*guardando los datos en laugh tale*/
+      const grupo = user.grupos && user.grupos.length > 0 ? user.grupos[0] : null;
+      if (grupo) {
+        localStorage.setItem("grupo", JSON.stringify(grupo));
+      } else {
+        localStorage.removeItem("grupo");
+      }
 
       toast.success('¡Login exitoso! Bienvenido', {
         position: "top-right",
@@ -72,13 +80,13 @@ function Login({ onSwitchToRegister }) {
       })
 
       console.log("Login exitoso :)")
-      
+
       /* Redirigir según el grupo del usuario */
       setTimeout(() => {
         if (grupo === "clientes") {
           navigate("/")
         } else if (grupo === "trabajadores") {
-          navigate("/Trabajador/"+ user.id )
+          navigate("/Trabajador/" + user.id)
         } else if (grupo === "admin") {
           navigate("/Administrador")
         } else {
@@ -88,7 +96,7 @@ function Login({ onSwitchToRegister }) {
 
     } catch (error) {
       console.error("Error al del Login:", error)
-      
+
       /* Validación de credenciales incorrectas */
       if (error.response && error.response.status === 401) {
         toast.error('Usuario o contraseña incorrectos', {
@@ -114,76 +122,76 @@ function Login({ onSwitchToRegister }) {
 
   return (
     <>
-    <ToastContainer />
-    <div className="login-container">
+      <ToastContainer />
+      <div className="login-container">
 
-      <div className="login-left">
-        <div className="login-content">
-          <h2>Conecta con expertos</h2>
-          <p>Disfruta de servicios profesionales cerca de ti</p>
+        <div className="login-left">
+          <div className="login-content">
+            <h2>Conecta con expertos</h2>
+            <p>Disfruta de servicios profesionales cerca de ti</p>
 
-          <ul className="login-features">
-            <li>✓ Verificación de identidad</li>
-            <li>✓ Calificaciones de usuarios</li>
-          </ul>
-          {/*boton para abrir el complemento de register*/}
-          <br />
-          <button className="btn-register" onClick={onSwitchToRegister}>
-            Registro
-          </button>
+            <ul className="login-features">
+              <li>✓ Verificación de identidad</li>
+              <li>✓ Calificaciones de usuarios</li>
+            </ul>
+            {/*boton para abrir el complemento de register*/}
+            <br />
+            <button className="btn-register" onClick={onSwitchToRegister}>
+              Registro
+            </button>
+          </div>
+        </div>
+
+        <div className="login-right">
+
+          <div className="login-header">
+            <img src="/logo.png" alt="ChambApp" className='logo' />
+            <h2>Login</h2>
+          </div>
+
+          <div className="login-form">
+
+            {/* InNom = ingresar nombre */}
+            <div className="form-group">
+              <input
+                type="text"
+                id="InNom"
+                placeholder="Nombre de usuario"
+                value={nombreU}
+                onChange={(e) => SetNombreU(e.target.value)}
+                className="form-control"
+              />
+            </div>
+
+            {/* InCon = ingresar contraseña */}
+            <div className="form-group">
+              <input
+                type="password"
+                id="InCon"
+                placeholder="Contraseña"
+                value={contraseña}
+                onChange={(e) => setContraseña(e.target.value)}
+                className="form-control"
+              />
+            </div>
+
+            <a href="#" className="forgot-password">
+              Olvidó su contraseña?
+            </a>
+            {/*El boton login para llamar la fucion "verificarU"*/}
+            <button className="btn-login" onClick={verificarU}>
+              Login
+            </button>
+
+            <p className="login-social">O inicia sesión con Google</p>
+            {/*un divide para guardar varios iconos a usar*/}
+            <div className="social-icons">
+              <a href="#" className="social-icon google">G</a>
+            </div>
+          </div>
+
         </div>
       </div>
-
-      <div className="login-right">
-
-        <div className="login-header">
-          <img src="/logo.png" alt="ChambApp" className='logo' />
-          <h2>Login</h2>
-        </div>
-
-        <div className="login-form">
-
-          {/* InNom = ingresar nombre */}
-          <div className="form-group">
-            <input
-              type="text"
-              id="InNom"
-              placeholder="Nombre de usuario"
-              value={nombreU}
-              onChange={(e) => SetNombreU(e.target.value)}
-              className="form-control"
-            />
-          </div>
-
-          {/* InCon = ingresar contraseña */}
-          <div className="form-group">
-            <input
-              type="password"
-              id="InCon"
-              placeholder="Contraseña"
-              value={contraseña}
-              onChange={(e) => setContraseña(e.target.value)}
-              className="form-control"
-            />
-          </div>
-
-          <a href="#" className="forgot-password">
-            Olvidó su contraseña?
-          </a>
-          {/*El boton login para llamar la fucion "verificarU"*/}
-          <button className="btn-login" onClick={verificarU}>
-            Login
-          </button>
-
-          <p className="login-social">O inicia sesión con Google</p>
-          {/*un divide para guardar varios iconos a usar*/}
-          <div className="social-icons">
-            <a href="#" className="social-icon google">G</a>
-          </div>
-        </div>
-
-      </div>
-    </div>
     </>
   )
 }

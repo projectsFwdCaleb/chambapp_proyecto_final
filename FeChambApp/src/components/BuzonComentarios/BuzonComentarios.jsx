@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import ReactStars from "react-stars";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ServicesLogin from '../../Services/ServicesLogin';
+// import ServicesLogin from '../../Services/ServicesLogin'; // Removed
 import ServicesResenhas from '../../Services/ServicesResenhas';
 import ServicesServicio from '../../Services/ServicesServicio';
 import '../BuzonComentarios/BuzonComentarios.css'
+import { useUser } from '../../../Context/UserContext';
 
 const ConfirmToast = ({ message, onConfirm, onCancel }) => (
   <div className="toast align-items-center show" role="alert">
@@ -27,7 +28,8 @@ const ConfirmToast = ({ message, onConfirm, onCancel }) => (
 function BuzonComentarios({ id }) {
   const [Resenhas, setResenhas] = useState([]);
   const [NuevoComentario, setNuevoComentario] = useState("");
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null); // Removed local state
+  const { user } = useUser(); // Use hook
   const [ServicioElegido, setServicioElegido] = useState("");
   const [services, SetServices] = useState([]);
   const [todosServicios, setTodosServicios] = useState([]);
@@ -38,7 +40,7 @@ function BuzonComentarios({ id }) {
 
   useEffect(() => {
     traerResenhas();
-    traerUser();
+    // traerUser(); // Removed
     fetchServices();
   }, [id]);
 
@@ -54,6 +56,7 @@ function BuzonComentarios({ id }) {
     }
   };
 
+  /* Removed traerUser
   const traerUser = async () => {
     try {
       const datosU = await ServicesLogin.getUserSession();
@@ -63,6 +66,7 @@ function BuzonComentarios({ id }) {
       console.error("Error cargando usuario:", error);
     }
   };
+  */
 
   const fetchServices = async () => {
     try {
@@ -72,7 +76,7 @@ function BuzonComentarios({ id }) {
         : Array.isArray(response) ? response : [];
 
       console.log("Todos los servicios:", data);
-      
+
       //Guardamos TODOS los servicios para poder buscar nombres después
       setTodosServicios(data);
 
@@ -131,17 +135,17 @@ function BuzonComentarios({ id }) {
       if (editingId) {
         const updatedOpinion = await ServicesResenhas.putResenha(editingId, opinion);
         console.log("Reseña actualizada:", updatedOpinion);
-        
+
         // Recargar reseñas para obtener datos completos del servidor
         await traerResenhas();
         toast.success("Comentario actualizado");
         cancelarEdicion();
       } else {
         await ServicesResenhas.postResenha(opinion);
-        
+
         // Recargar reseñas para obtener datos completos del servidor
         await traerResenhas();
-        
+
         setNuevoComentario("");
         setServicioElegido("");
         setCalificacion(0);
@@ -174,7 +178,7 @@ function BuzonComentarios({ id }) {
   // Busca en TODOS los servicios, no solo los del trabajador
   const getNombreServicio = (servicioId) => {
     if (!servicioId) return 'Sin servicio especificado';
-    
+
     const serv = todosServicios.find(s => s.id === servicioId);
     console.log(`Buscando servicio ${servicioId}:`, serv);
     return serv ? serv.nombre_servicio : 'Servicio no disponible';
@@ -203,10 +207,10 @@ function BuzonComentarios({ id }) {
               <div className="card h-100 shadow-sm border-0 comentario_card">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start mb-2">
-                    
+
                     <div className="dropdownProfileMenu">
                       <img
-                        src={comentario.autor_detalle?.foto_perfil || BoosiMan} 
+                        src={comentario.autor_detalle?.foto_perfil || "/default.png"}
                         alt={comentario.autor_detalle?.usermane}
                         className="img-perfil"
                       />
