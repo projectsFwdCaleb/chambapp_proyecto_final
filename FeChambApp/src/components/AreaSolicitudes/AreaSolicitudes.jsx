@@ -39,7 +39,7 @@ function AreaSolicitudes() {
         usuario: "",
         estado: true,
     });
-
+            
     /* se cargan solicitudes, categorías, cantones y user */
     useEffect(() => {
         cargarSolicitudes();
@@ -74,7 +74,7 @@ function AreaSolicitudes() {
     }, [mostrarModalA, mostrarModalB]);
 
     
-    /*el fetch para traer los usuarios, es importante tenerlos
+    /*el fetch para traer el usuarios, es importante tenerlos
      para saber de quien es cada solicitud */
     const fetchUser = async () => {
         try {
