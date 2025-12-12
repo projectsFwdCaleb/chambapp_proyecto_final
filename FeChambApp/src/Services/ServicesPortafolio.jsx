@@ -1,6 +1,6 @@
 async function getPortafolio(id) {
     try {
-        const response = await fetch(`http://localhost:8000/api/portafolio/${id}`, {
+        const response = await fetch(`http://localhost:8000/api/portafolio/`, {
             method:'GET',
             headers: {
                 'Content-Type': 'application/json'

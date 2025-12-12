@@ -41,7 +41,7 @@ function AreaSolicitudes() {
         usuario: "",
         estado: true,
     });
-
+            
     /* se cargan solicitudes, categorías, cantones y user */
     useEffect(() => {
         cargarSolicitudes();
