@@ -31,7 +31,7 @@ function CarruselPortafolio({ id }) {
     return fecha.toLocaleDateString("es-CR");
   };
 
-  // Usuario en sesión
+  /*Usuario en sesión*/ 
   const fetchUser = async () => {
     try {
       const data = await ServicesLogin.getUserSession();
@@ -41,7 +41,7 @@ function CarruselPortafolio({ id }) {
     }
   };
 
-  // Obtener portafolio del usuario de la página
+  /*Obtener los portafolios guardados en la base de datos*/ 
   const fetchPortafolio = async () => {
     try {
       const data = await ServicesPortafolio.getPortafolio(id);
@@ -51,20 +51,29 @@ function CarruselPortafolio({ id }) {
     }
   };
 
-  // Cargar al montar
+  /*useEffect para el portafolio y el usuario instalado*/
   useEffect(() => {
     fetchUser();
     fetchPortafolio();
   }, []);
 
-  // Cuando tengamos user → poner su id en el form para crear
+  /*useEffect para tener el id en cuando agregamos los portafolios */ 
   useEffect(() => {
     if (user && user.id) {
       setForm((prev) => ({ ...prev, usuario: user.id }));
     }
   }, [user]);
 
-  // Abrir modal para agregar
+  /*para que no se mueva la pagina cuando el modal se habra */
+  useEffect(() => {
+  if (showModal) {
+    document.body.classList.add("modal-open");
+  } else {
+    document.body.classList.remove("modal-open");
+  }
+}, [showModal]);
+
+  /*constante para abrir el modal de los nuevos portafolios*/ 
   const abrirModalNuevo = () => {
     setModoEditar(false);
     setForm({
@@ -77,7 +86,7 @@ function CarruselPortafolio({ id }) {
     setShowModal(true);
   };
 
-  // Abrir modal para editar
+  /*constante para abrir el modal de editar*/ 
   const abrirModalEditar = (item) => {
     setModoEditar(true);
     setForm({
@@ -91,7 +100,7 @@ function CarruselPortafolio({ id }) {
     setShowModal(true);
   };
 
-  // Convertir imagen a Base64
+  /*para manejar las imagenes..*/ 
   const handleImagen = (e) => {
     const file = e.target.files[0];
 
@@ -105,8 +114,14 @@ function CarruselPortafolio({ id }) {
     reader.readAsDataURL(file);
   };
 
-  // Guardar (crear o editar)
+  /*donde guardamos los porfolios creados...o editados */ 
   const guardarPortafolio = async () => {
+    /*validaciones selores, el futuro de la industria es validar asta la tierra que pisas */
+    if (!form.titulo.trim() || !form.descripcion.trim()) {
+      alert("Completa el título y la descripción antes de guardar");
+      return;
+    }
+
     try {
       if (modoEditar) {
         await ServicesPortafolio.putPortafolio(form.id, form);
@@ -121,7 +136,7 @@ function CarruselPortafolio({ id }) {
     }
   };
 
-  // Eliminar
+  /*la constante de eliminacion, basicamente elimina portafolios*/ 
   const eliminarPortafolio = async (id) => {
     if (!window.confirm("¿Seguro que quieres eliminar este proyecto?")) return;
 
@@ -132,8 +147,11 @@ function CarruselPortafolio({ id }) {
       console.error("Error eliminando portafolio:", error);
     }
   };
-
-  const portafolioFiltrado = portafolio.filter(item => item.usuario === id);
+  /*constante que listra los portafolios y los ordena,
+  asi se vera mas ordenado */
+  const portafolioFiltrado = portafolio
+    .filter(item => item.usuario === id)
+    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
   return (
     <div className="carrusel-container container py-4">
@@ -162,7 +180,9 @@ function CarruselPortafolio({ id }) {
                 {/* Información */}
                 <div className="portafolio-info">
                   <h3>{item.titulo}</h3>
-                  <div className="fecha">{formatFecha(item.fecha)}</div>
+                  <div className="fecha">
+                    {item.fecha ? formatFecha(item.fecha) : "Sin fecha"}
+                  </div>
                   <p className="descripcion">{item.descripcion}</p>
 
                   {/* BOTONES DE EDITAR/ELIMINAR – Solo dueño */}
@@ -267,3 +287,4 @@ function CarruselPortafolio({ id }) {
 }
 
 export default CarruselPortafolio;
+
