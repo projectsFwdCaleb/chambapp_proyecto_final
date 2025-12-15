@@ -71,23 +71,12 @@ async function deleteUsuarios(id) {
 }
 
 
-async function putUsuarios(id, consulta) {
+async function putUsuarios(id, bodyToSend) {
     try {
-        let bodyToSend;
-        let headers = { ...getAuthHeaders() };
-
-        // Si viene un archivo ⇒ usar FormData
-        if (consulta.foto_perfil instanceof File) {
-            bodyToSend = new FormData();
-            Object.keys(consulta).forEach(key => {
-                bodyToSend.append(key, consulta[key]);
-            });
-        } 
-        else {
-            // JSON normal
-            headers["Content-Type"] = "application/json";
-            bodyToSend = JSON.stringify(consulta);
-        }
+        const headers = {
+            ...getAuthHeaders()
+            // ❌ NO Content-Type
+        };
 
         const response = await fetch(`http://localhost:8000/api/usuario/${id}/`, {
             method: "PATCH",
@@ -95,13 +84,13 @@ async function putUsuarios(id, consulta) {
             body: bodyToSend
         });
 
-        const text = await response.text();
-        try {
-            return JSON.parse(text);
-        } catch (e) {
-            console.error("Server returned non-JSON:", text);
-            throw new Error("Server error: " + text.substring(0, 100));
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text);
         }
+
+        return await response.json();
+
     } catch (error) {
         console.error("Error al actualizar los Usuarios", error);
         throw error;
