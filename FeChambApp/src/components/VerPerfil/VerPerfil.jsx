@@ -106,7 +106,7 @@ function VerPerfil() {
       if (fotoPerfil instanceof File) {
         updatedUser.foto_perfil = URL.createObjectURL(fotoPerfil);
       }
-
+      
       setUser(updatedUser);
 
       toast.success("Perfil actualizado correctamente");
@@ -122,8 +122,7 @@ function VerPerfil() {
 
   return (
     <div className="ver-perfil-container">
-      <ToastContainer position="top-right" theme="colored" autoClose={3000} closeOnClick pauseOnHover/>
-
+      <>{/*porque esto esta aqui...buena pregunta...ToastContainer...*/}
       <div className="profile-card">
 
         {/* Encabezado del perfil */}
@@ -230,6 +229,7 @@ function VerPerfil() {
 
         </Form>
       </div>
+      </>{/*porque esto esta aqui...buena pregunta...ToastContainer...*/}
     </div>
   );
 }
