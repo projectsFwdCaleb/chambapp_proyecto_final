@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ServicesPortafolio from "../../Services/ServicesPortafolio";
-import ServicesLogin from "../../Services/ServicesLogin";
 import { Carousel } from "react-bootstrap";
 import "./CarruselPortafolio.css";
+import { useUser } from '../../../Context/UserContext';
 
 function CarruselPortafolio({ id }) {
 
   // Estado principal
   const [portafolio, setPortafolio] = useState([]);
-  const [user, setUser] = useState(null);
+  const { user, setUser } = useUser(); // Use hook
 
   // Modal
   const [showModal, setShowModal] = useState(false);
@@ -31,20 +31,11 @@ function CarruselPortafolio({ id }) {
     return fecha.toLocaleDateString("es-CR");
   };
 
-  /*Usuario en sesión*/ 
-  const fetchUser = async () => {
-    try {
-      const data = await ServicesLogin.getUserSession();
-      setUser(data);
-    } catch (error) {
-      console.error("Error obteniendo user:", error);
-    }
-  };
 
   /*Obtener los portafolios guardados en la base de datos*/ 
   const fetchPortafolio = async () => {
     try {
-      const data = await ServicesPortafolio.getPortafolio(id);
+      const data = await ServicesPortafolio.getPortafolio();
       setPortafolio(data || []);
     } catch (error) {
       console.error("Error trayendo portafolio:", error);
@@ -53,9 +44,10 @@ function CarruselPortafolio({ id }) {
 
   /*useEffect para el portafolio y el usuario instalado*/
   useEffect(() => {
-    fetchUser();
     fetchPortafolio();
   }, []);
+  console.log(portafolio);
+  
 
   /*useEffect para tener el id en cuando agregamos los portafolios */ 
   useEffect(() => {
@@ -150,8 +142,10 @@ function CarruselPortafolio({ id }) {
   /*constante que listra los portafolios y los ordena,
   asi se vera mas ordenado */
   const portafolioFiltrado = portafolio
-    .filter(item => item.usuario === id)
+    .filter(item => item.usuario === Number(id))
     .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  console.log(portafolioFiltrado);
+  
 
   return (
     <div className="carrusel-container container py-4">
