@@ -153,7 +153,7 @@ function CarruselPortafolio({ id }) {
       {/* BOTÓN PARA AGREGAR (solo dueño) */}
       {user?.id == id && (
         <div className="text-end mb-3">
-          <button className="btn-portafolio btn-portafolio-add" onClick={abrirModalNuevo}>
+          <button className="btn-save" onClick={abrirModalNuevo}>
             + Agregar Proyecto
           </button>
         </div>
@@ -183,14 +183,14 @@ function CarruselPortafolio({ id }) {
                   {user?.id == id && (
                     <div className="d-flex gap-3 mt-3">
                       <button
-                        className="btn-portafolio btn-portafolio-edit w-50"
+                        className="btn btn-primary btn-sm"
                         onClick={() => abrirModalEditar(item)}
                       >
                         Editar
                       </button>
 
                       <button
-                        className="btn-portafolio btn-portafolio-delete w-50"
+                        className="btn btn-danger btn-sm"
                         onClick={() => eliminarPortafolio(item.id)}
                       >
                         Eliminar

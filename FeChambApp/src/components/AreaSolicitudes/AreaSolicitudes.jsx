@@ -248,6 +248,7 @@ function AreaSolicitudes() {
         <div className="area-solicitudes-container">
 
             {/* Botón para abrir modal */}
+            <br />
             <button
                 className="btn btn-success mb-3"
                 onClick={() => {
@@ -381,9 +382,9 @@ function AreaSolicitudes() {
 
                                     {/* Nombre de usuario y título de la solicitud */}
                                     <div>
-                                        <h6 className="m-0 fw-bold">
+                                        <h3 className="m-0 fw-bold">
                                             {getNombreUsuarios(sol.usuario)}
-                                        </h6>
+                                        </h3>
                                         <p className="text-muted m-0 small">
                                             {sol.titulo}
                                         </p>
@@ -394,7 +395,7 @@ function AreaSolicitudes() {
                                 {sol.usuario === user?.id && (
                                     <div className='mt-3 d-flex gap-2'>
                                         <button
-                                            className='btn btn-warning btn-sm w-50'
+                                            className='btn btn-outline-primary btn-sm'
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 abrirModalEditar(sol);
@@ -404,7 +405,7 @@ function AreaSolicitudes() {
                                         </button>
 
                                         <button
-                                            className='btn btn-danger btn-sm w-50'
+                                            className='btn btn-outline-danger btn-sm'
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 eliminarSolicitud(sol.id);
