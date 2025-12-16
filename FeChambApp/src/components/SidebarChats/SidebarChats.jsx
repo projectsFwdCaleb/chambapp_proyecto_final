@@ -5,7 +5,7 @@ import "./SidebarChats.css";
 // import ServicesLogin from "../../Services/ServicesLogin"; // Removed
 import { useUser } from '../../../Context/UserContext';
 
-function SidebarChats() {
+function SidebarChats({ activeChatUser, onChatClose }) {
   const [conversaciones, setConversaciones] = useState([]);
   const [chatAbierto, setChatAbierto] = useState(null);
   const [mensajes, setMensajes] = useState([]);
@@ -60,6 +60,13 @@ function SidebarChats() {
   useEffect(() => {
     scrollToBottom();
   }, [mensajes]);
+
+  // Efecto para abrir chat desde props (externo)
+  useEffect(() => {
+    if (activeChatUser) {
+      abrirChat(activeChatUser);
+    }
+  }, [activeChatUser]);
 
   // Abrir chat y obtener mensajes entre usuario y otherUser
   const abrirChat = async (otherUser) => {
@@ -168,7 +175,10 @@ function SidebarChats() {
         <div className="chat-panel d-flex flex-column flex-grow-1 p-3">
           <button
             className="btn btn-link text-decoration-none mb-2 d-flex align-items-center"
-            onClick={() => setChatAbierto(null)}
+            onClick={() => {
+              setChatAbierto(null);
+              if (onChatClose) onChatClose();
+            }}
           >
             <ArrowLeftCircle className="me-2" /> Volver
           </button>

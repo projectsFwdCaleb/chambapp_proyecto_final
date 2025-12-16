@@ -21,40 +21,57 @@ function PaginaTrabajador() {
   console.log(id);
   const [open, setOpen] = useState(false);
   const [section, setSection] = useState("trabajos");  // trabajos | comentarios
+  const [chatUser, setChatUser] = useState(null);
+
+  const handleMessageClick = (user) => {
+    setChatUser(user);
+  };
+
+  const handleChatClose = () => {
+    setChatUser(null);
+  };
   return (
     <div className="d-flex">
       <div className="col-2">
-        <SidebarRender/>
+        <SidebarRender />
       </div>
-      
+
       <div className="col-10">
-        <Header/>
-          <div className="d-flex">
-            <div className="mainNav col-8">
-              <BanerTrabajador id={id} section={section} onChangeSection={setSection} />
-              {section === "trabajos" && <CarruselPortafolio id={id}/>}
-              {section === "comentarios" && <BuzonComentarios id={id}/>}
-            </div>
-            
-            <div className="col-4 d-flex flex-column columna-derecha-completa">
-
-              <div className="flex-grow-1 sidebar-chats-container">
-                <SidebarChats />
-              </div>
-
-              <div className="">
-                <ChatBot3D onOpenChat={() => setOpen(true)} />
-                {open && <ChatBot onClose={() => setOpen(false)} />}
-              </div>
-           </div>
+        <Header />
+        <div className="d-flex">
+          <div className="mainNav col-8">
+            <BanerTrabajador
+              id={id}
+              section={section}
+              onChangeSection={setSection}
+              onMessageClick={handleMessageClick}
+            />
+            {section === "trabajos" && <CarruselPortafolio id={id} />}
+            {section === "comentarios" && <BuzonComentarios id={id} />}
           </div>
+
+          <div className="col-4 d-flex flex-column columna-derecha-completa">
+
+            <div className="flex-grow-1 sidebar-chats-container">
+              <SidebarChats
+                activeChatUser={chatUser}
+                onChatClose={handleChatClose}
+              />
+            </div>
+
+            <div className="">
+              <ChatBot3D onOpenChat={() => setOpen(true)} />
+              {open && <ChatBot onClose={() => setOpen(false)} />}
+            </div>
+          </div>
+        </div>
       </div>
-      
+
       {/* <Footer/> */}
-     
+
     </div>
   )
 }
 
 export default PaginaTrabajador
- /* </> */
+/* </> */

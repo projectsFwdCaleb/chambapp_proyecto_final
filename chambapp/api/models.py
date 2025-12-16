@@ -96,11 +96,10 @@ class Solicitud(models.Model):
 class Resenha(models.Model):
     autor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='resenhas_realizadas')
     trabajador = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='resenhas_recibidas')
-    puntuacion = models.IntegerField(default=5)
+    puntuacion = models.DecimalField(max_digits=2, decimal_places=1, default=5.0)
     comentario = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(auto_now_add=True)
     servicio = models.ForeignKey(Servicio, on_delete=models.SET_NULL, null=True, related_name='resenhas')
-
     def __str__(self):
         return f"Reseña de {self.autor.username} a {self.trabajador.username}"
 

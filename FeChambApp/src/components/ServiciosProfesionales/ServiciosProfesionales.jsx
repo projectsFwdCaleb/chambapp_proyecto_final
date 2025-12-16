@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import ServicesServicio from '../../Services/ServicesServicio';
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
-// import ServicesLogin from '../../Services/ServicesLogin'; // Removed
 import ServicesCategoria from '../../Services/ServicesCategoria';
 import ServicesCantones from '../../Services/ServicesCantones';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './ServiciosProfesionales.css';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Table } from 'react-bootstrap';
 import { useUser } from '../../../Context/UserContext';
 
 function ServiciosProfesionales() {
-  // const [user, setUser] = useState(null); // Removed local state
-  const { user, setUser } = useUser(); // Use hook
+  const { user, setUser } = useUser();
   const [categorias, setCategorias] = useState([]);
   const [cantones, setCantones] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
+
+  // Estado para Mis Servicios
+  const [showMyServicesModal, setShowMyServicesModal] = useState(false);
+  const [myServices, setMyServices] = useState([]);
+  const [editingService, setEditingService] = useState(null);
 
   // Estado del formulario de servicios
   const [serviceData, setServiceData] = useState({
@@ -34,19 +37,15 @@ function ServiciosProfesionales() {
     canton_provincia: ''
   });
 
-  // Vista previa de la imagen (misma lógica que en VerPerfil)
   const [imagePreview, setImagePreview] = useState(null);
 
-  // Cargar usuario, categorías y cantones
   useEffect(() => {
-    // fetchUserData(); // Removed
     fetchCategorias();
     fetchCantones();
   }, []);
 
   useEffect(() => {
     if (user) {
-      // Rellenar el formulario de perfil
       setProfileData({
         first_name: user.first_name || '',
         last_name: user.last_name || '',
@@ -54,40 +53,10 @@ function ServiciosProfesionales() {
         canton_provincia: user.canton_provincia || '',
         foto_perfil: user.foto_perfil || null
       });
-
-      // Usar la URL existente como preview (puede ser string)
       setImagePreview(user.foto_perfil || null);
     }
   }, [user]);
 
-  /* Removed fetchUserData
-  // Obtener datos del usuario en sesión
-  const fetchUserData = async () => {
-    try {
-      const sessionUser = await ServicesLogin.getUserSession();
-      if (sessionUser) {
-        setUser(sessionUser);
-
-        // Rellenar el formulario de perfil
-        setProfileData({
-          first_name: sessionUser.first_name || '',
-          last_name: sessionUser.last_name || '',
-          direccion: sessionUser.direccion || '',
-          canton_provincia: sessionUser.canton_provincia || '',
-          foto_perfil: sessionUser.foto_perfil || null
-        });
-
-        // Usar la URL existente como preview (puede ser string)
-        setImagePreview(sessionUser.foto_perfil || null);
-      }
-    } catch (error) {
-      console.error("Error al obtener sesión de usuario", error);
-      toast.error("Error al obtener sesión de usuario");
-    }
-  };
-  */
-
-  // Obtener lista de categorías
   const fetchCategorias = async () => {
     try {
       const data = await ServicesCategoria.getCategoria();
@@ -97,7 +66,6 @@ function ServiciosProfesionales() {
     }
   };
 
-  // Obtener lista de cantones
   const fetchCantones = async () => {
     try {
       const data = await ServicesCantones.getCanton();
@@ -107,11 +75,20 @@ function ServiciosProfesionales() {
     }
   };
 
+  const fetchMyServices = async () => {
+    if (!user) return;
+    try {
+      const data = await ServicesServicio.getServicio({ usuario: user.id });
+      setMyServices(Array.isArray(data) ? data : data.results || []);
+      setShowMyServicesModal(true);
+    } catch (error) {
+      console.error("Error al obtener mis servicios", error);
+      toast.error("Error al cargar tus servicios");
+    }
+  };
 
-  // Validar que el perfil esté completo
   const isProfileComplete = () => {
     if (!user) return false;
-
     return (
       user.first_name &&
       user.last_name &&
@@ -121,14 +98,32 @@ function ServiciosProfesionales() {
     );
   };
 
-  // Registrar un nuevo servicio
   const handleServiceSubmit = async (e) => {
     e.preventDefault();
 
-    // Evita crear servicio si el perfil está incompleto
+    if (editingService) {
+      await handleUpdateService();
+      return;
+    }
+
     if (!isProfileComplete()) {
       setShowProfileModal(true);
       toast.info("Por favor completa tu perfil antes de agregar un servicio.");
+      return;
+    }
+
+    // Verificar límite de 3 servicios
+    try {
+      const currentServices = await ServicesServicio.getServicio({ usuario: user.id });
+      const servicesList = Array.isArray(currentServices) ? currentServices : currentServices.results || [];
+
+      if (servicesList.length >= 3) {
+        toast.error("Solo puedes tener un máximo de 3 servicios.");
+        return;
+      }
+    } catch (error) {
+      console.error("Error al verificar límite de servicios", error);
+      toast.error("Error al verificar tus servicios. Intenta de nuevo.");
       return;
     }
 
@@ -143,13 +138,9 @@ function ServiciosProfesionales() {
         usuario: user.id
       };
 
-      console.log(payload);
-
-      //post
       await ServicesServicio.postServicio(payload);
       toast.success("Servicio creado exitosamente!");
 
-      // Reiniciar formulario
       setServiceData({
         nombre_servicio: '',
         descripcion: '',
@@ -163,7 +154,73 @@ function ServiciosProfesionales() {
     }
   };
 
-  // Guardar cambios en el perfil
+  const handleDeleteService = async (id) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este servicio?")) {
+      try {
+        await ServicesServicio.deleteServicio(id);
+        toast.success("Servicio eliminado correctamente");
+        const data = await ServicesServicio.getServicio({ usuario: user.id });
+        setMyServices(Array.isArray(data) ? data : data.results || []);
+      } catch (error) {
+        console.error("Error al eliminar servicio", error);
+        toast.error("Error al eliminar el servicio");
+      }
+    }
+  };
+
+  const prepareEditService = (service) => {
+    setEditingService(service);
+    setServiceData({
+      nombre_servicio: service.nombre_servicio,
+      descripcion: service.descripcion,
+      precio_referencial: service.precio_referencial || '',
+      categoria: service.categoria
+    });
+    setShowMyServicesModal(false);
+    toast.info("Edita los datos en el formulario y guarda los cambios.");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleUpdateService = async () => {
+    if (!editingService) return;
+
+    try {
+      const payload = {
+        nombre_servicio: serviceData.nombre_servicio,
+        descripcion: serviceData.descripcion,
+        categoria: serviceData.categoria ? parseInt(serviceData.categoria, 10) : null,
+        precio_referencial: serviceData.precio_referencial !== ''
+          ? parseFloat(serviceData.precio_referencial)
+          : null,
+        usuario: user.id
+      };
+
+      await ServicesServicio.putServicio(editingService.id, payload);
+      toast.success("Servicio actualizado exitosamente!");
+
+      setEditingService(null);
+      setServiceData({
+        nombre_servicio: '',
+        descripcion: '',
+        precio_referencial: '',
+        categoria: ''
+      });
+    } catch (error) {
+      console.error("Error al actualizar servicio", error);
+      toast.error("Error al actualizar el servicio");
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingService(null);
+    setServiceData({
+      nombre_servicio: '',
+      descripcion: '',
+      precio_referencial: '',
+      categoria: ''
+    });
+  };
+
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -174,17 +231,13 @@ function ServiciosProfesionales() {
         canton_provincia: profileData.canton_provincia
       };
 
-      // Enviar foto solo si es un File (nueva seleccionada)
       if (profileData.foto_perfil instanceof File) {
         dataToSend.foto_perfil = profileData.foto_perfil;
       }
 
       await ServicesUsuarios.putUsuarios(user.id, dataToSend);
-
-      // Actualizar estado local del usuario (ahora global)
       setUser({ ...user, ...dataToSend });
 
-      // Si subieron una nueva foto, actualizar preview y user.foto_perfil con la URL temporal
       if (profileData.foto_perfil instanceof File) {
         const newPreview = URL.createObjectURL(profileData.foto_perfil);
         setImagePreview(newPreview);
@@ -200,17 +253,14 @@ function ServiciosProfesionales() {
     }
   };
 
-  // Manejar cambios del formulario de servicio
   const handleServiceChange = (e) => {
     setServiceData({ ...serviceData, [e.target.name]: e.target.value });
   };
 
-  // Manejar cambios del formulario de perfil (no incluye la foto)
   const handleProfileChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
 
-  // Manejar cambio de foto para el perfil (misma lógica que VerPerfil)
   const handleProfileImageChange = (e) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
@@ -223,10 +273,25 @@ function ServiciosProfesionales() {
     <div className="servicios-profesionales-container text-dark">
       <ToastContainer position="top-right" theme="dark" />
 
-      <h2 className="page-title">Ofrecer mis Servicios</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="page-title mb-0">Ofrecer mis Servicios</h2>
+        {user && (
+          <Button variant="outline-primary" onClick={fetchMyServices}>
+            Mis servicios
+          </Button>
+        )}
+      </div>
 
       <div className="add-service-section">
-        <h3 className="mb-4">Agregar Nuevo Servicio</h3>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h3 className="mb-0">{editingService ? 'Editar Servicio' : 'Agregar Nuevo Servicio'}</h3>
+          {editingService && (
+            <Button variant="secondary" size="sm" onClick={cancelEdit}>
+              Cancelar Edición
+            </Button>
+          )}
+        </div>
+
         <Form onSubmit={handleServiceSubmit}>
           <div className="row">
             <div className="col-md-6 mb-3">
@@ -270,7 +335,7 @@ function ServiciosProfesionales() {
             </div>
 
             <div className="col-md-6 mb-3">
-              <Form.Label className="form-label">precio_referencial Estimado (₡)</Form.Label>
+              <Form.Label className="form-label">Precio Referencial Estimado (₡)</Form.Label>
               <Form.Control
                 type="number"
                 name="precio_referencial"
@@ -283,7 +348,7 @@ function ServiciosProfesionales() {
 
           <div className="text-end mt-3">
             <Button className='btn-save' type="submit">
-              Publicar Servicio
+              {editingService ? 'Guardar Cambios' : 'Publicar Servicio'}
             </Button>
           </div>
         </Form>
@@ -344,7 +409,6 @@ function ServiciosProfesionales() {
               </div>
               <div className="col-md-12 mb-3">
                 <Form.Label>Foto de perfil</Form.Label>
-                {/* No usar value en input type=file; usar el mismo manejo que VerPerfil */}
                 <Form.Control
                   type="file"
                   name="foto_perfil"
@@ -352,7 +416,6 @@ function ServiciosProfesionales() {
                   onChange={handleProfileImageChange}
                   required
                 />
-                {/* Mostrar preview si existe */}
                 {imagePreview && (
                   <div className="mt-2">
                     <img src={imagePreview} alt="Preview" style={{ maxWidth: '120px', borderRadius: '6px' }} />
@@ -377,6 +440,71 @@ function ServiciosProfesionales() {
             </div>
           </Form>
         </Modal.Body>
+      </Modal>
+
+      {/* Modal Mis Servicios */}
+      <Modal
+        show={showMyServicesModal}
+        onHide={() => setShowMyServicesModal(false)}
+        size="lg"
+        centered
+      >
+        <div className='headerModal'>
+          <Modal.Header closeButton >
+            <Modal.Title>Mis Servicios</Modal.Title>
+          </Modal.Header>
+        </div>
+        <Modal.Body>
+          {myServices.length === 0 ? (
+            <p className="text-center">No tienes servicios registrados.</p>
+          ) : (
+            <div className="table-responsive">
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>Servicio</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {myServices.map((service) => (
+                    <tr key={service.id}>
+                      <td>{service.nombre_servicio}</td>
+                      <td>
+                        {categorias.find(c => c.id === service.categoria)?.nombre || service.categoria}
+                      </td>
+                      <td>{service.precio_referencial || 'N/A'}</td>
+                      <td>
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
+                          className="me-2"
+                          onClick={() => prepareEditService(service)}
+                        >
+                          Editar
+                        </Button>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => handleDeleteService(service.id)}
+                        >
+                          Eliminar
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowMyServicesModal(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

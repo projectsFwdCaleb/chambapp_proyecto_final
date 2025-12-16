@@ -41,7 +41,7 @@ urlpatterns = [
     path('notificacion/<int:pk>', NotificacionRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Notificaciones'),
     # Favorito
     path('favorito/', FavoritoListCreateView.as_view(), name='get y post Favoritos'),
-    path('favorito/<int:pk>', FavoritoRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Favoritos'),
+    path('favorito/<int:pk>/', FavoritoRetrieveUpdateDestroyView.as_view(), name='Put,Delete y ById Favoritos'),
 
     # ------------------------ CUSTOM ENDPOINTS ------------------------
     # Servicios por categoría
@@ -63,4 +63,6 @@ urlpatterns = [
     path('chat/', ChatBotAPIView.as_view(), name='chatbot-api'),
     # Admin Dashboard Stats
     path('admin/dashboard-stats/', admin_dashboard_stats, name='admin_dashboard_stats'),
+    # Job Suggestions
+    path('job-suggestions/', job_suggestions, name='job_suggestions'),
 ]

@@ -23,8 +23,10 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 
 
-OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+from django.conf import settings
+
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
+GOOGLE_SEARCH_URL = "https://www.googleapis.com/customsearch/v1"
 
 # usuario en sesion
 class UserInSession(APIView):
@@ -89,7 +91,6 @@ class ServicioListCreateView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['usuario', 'categoria']
     search_fields = ['nombre_servicio', 'descripcion']
-    permission_classes = [IsAuthenticated]
 
 
 class ServicioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -350,16 +351,16 @@ class ChatBotAPIView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
         # ---- DIAGNÓSTICO ----
         print("=== DIAGNOSTICO OPENAI ===")
-        print("OPENAI_KEY cargada?", bool(OPENAI_KEY))
-        if OPENAI_KEY:
-            print("Primeros 8 caracteres:", OPENAI_KEY[:8])
+        print("OPENAI_KEY cargada?", bool(settings.OPENAI_KEY))
+        if settings.OPENAI_KEY:
+            print("Primeros 8 caracteres:", settings.OPENAI_KEY[:8])
         else:
             print("OPENAI_KEY es None")
         print("===========================")
 
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {OPENAI_KEY}"
+            "Authorization": f"Bearer {settings.OPENAI_KEY}"
         }
 
         data = {
@@ -368,7 +369,7 @@ class ChatBotAPIView(APIView):
         }
 
         try:
-            response = requests.post(OPENAI_URL, headers=headers, json=data)
+            response = requests.post(OPENAI_URL, headers=headers, json=data, timeout=30)
 
             print("STATUS CODE:", response.status_code)
             print("RESPUESTA RAW:", response.text[:300], "...")
@@ -378,8 +379,14 @@ class ChatBotAPIView(APIView):
             reply = response.json()['choices'][0]['message']['content']
             return Response({"reply": reply})
 
+        except requests.exceptions.HTTPError as e:
+            print(f"HTTP Error from OpenAI: {e}")
+            return Response(
+                {"error": f"Error de OpenAI: {e.response.status_code} - {e.response.reason}"},
+                status=e.response.status_code
+            )
         except Exception as e:
-            print("ERROR REAl:", e)
+            print("ERROR REAL:", e)
             return Response(
                 {"error": "Error interno en el servidor."},
                 status=500
@@ -426,3 +433,51 @@ def admin_dashboard_stats(request):
             "top_cantones": list(top_cantones)
         }
     })
+
+@api_view(['GET'])
+def job_suggestions(request):
+    query = request.query_params.get('query', '')
+    if not query:
+        return Response({"error": "Query parameter is required"}, status=400)
+
+    if not settings.GOOGLE_API_KEY or not settings.GOOGLE_CX:
+        print("WARNING: GOOGLE_API_KEY or GOOGLE_CX missing")
+        return Response({"error": "Server configuration error: Missing API Keys"}, status=500)
+
+    params = {
+        'key': settings.GOOGLE_API_KEY,
+        'cx': settings.GOOGLE_CX,
+        'q': f"{query} empleo OR vacante site:indeed.com OR site:computrabajo.com OR site:empleate.cr Costa Rica",
+        'gl': 'cr', 
+        'num': 10 # Pedimos mas para filtrar
+    }
+
+    try:
+        response = requests.get(GOOGLE_SEARCH_URL, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        
+        items = data.get('items', [])
+        results = []
+        KEYWORDS = ['empleo', 'vacante', 'oferta', 'puesto', 'trabajo', 'contratación', 'buscamos']
+
+        for item in items:
+            title = item.get('title', '')
+            snippet = item.get('snippet', '')
+            text = f"{title} {snippet}".lower()
+            
+            # Filtro simple de palabras clave
+            if not any(k in text for k in KEYWORDS):
+                continue
+
+            results.append({
+                'title': title,
+                'link': item.get('link'),
+                'snippet': snippet,
+                'source': item.get('displayLink')
+            })
+            
+        return Response(results[:5]) # Devolvemos top 5 filtrados
+    except Exception as e:
+        print(f"Error fetching jobs: {e}")
+        return Response({"error": "Failed to fetch job suggestions"}, status=500)

@@ -3,7 +3,7 @@ import ServicesFav from '../../Services/ServicesFav';
 import './MainFavoritos.css';
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import ServicesServicio from '../../Services/ServicesServicio';
-// import ServicesLogin from '../../Services/ServicesLogin'; // Removed
+
 import BoosiMan from '../../assets/BoosiMan.webp';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../../Context/UserContext';
@@ -11,29 +11,19 @@ import { useUser } from '../../../Context/UserContext';
 function MainFavoritos() {
     const [favoritos, setFavoritos] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [usuarios, setUsuarios] = useState([]) // Renamed from user to avoid conflict
-    // const [userInSession, setUserInSession] = useState([]) // Removed
+    const [usuarios, setUsuarios] = useState([]) 
+
     const { user: userInSession } = useUser();
     const [services, SetServices] = useState([])
     const navigate = useNavigate();
 
     useEffect(() => {
-        // fetchUserInSession() // Removed
         fetchUsuarios()
         fetchFavoritos()
         fetchServices()
     }, []);
 
-    /* Removed fetchUserInSession
-    const fetchUserInSession = async () => {
-            try {
-              const data = await ServicesLogin.getUserSession();
-              setUserInSession(data);
-            } catch (err) {
-              console.error("Error al obtener usuario en sesión:", err);
-            }
-          };
-    */
+    
 
     const fetchServices = async () => {
         const response = await ServicesServicio.getServicio();
@@ -95,7 +85,18 @@ function MainFavoritos() {
     const favoritosDelUsuario = favoritos.filter(f => f.usuario === userInSession?.id);
     const favoritosIDs = favoritosDelUsuario.map(f => f.trabajador);
     const trabajadoresSinServicio = usuarios.filter(u => favoritosIDs.includes(u.id));
-    const trabajadores = agregarServiciosATrabajadores(trabajadoresSinServicio, services);
+    const trabajadores = agregarServiciosATrabajadores(
+    trabajadoresSinServicio.map(trabajador => {
+    const fav = favoritosDelUsuario.find(
+            f => f.trabajador === trabajador.id
+        );
+        return {
+            ...trabajador,
+            favorito_id: fav?.id
+        };
+        }),
+    services
+    );
     console.log(trabajadores);
 
 
@@ -104,18 +105,11 @@ function MainFavoritos() {
         navigate(`/trabajador/${id}`);
     }
 
-    const handleDeleteButton = async (trabajadorId) => {
+    const handleDeleteButton = async (favoritoId) => {
+        if (!favoritoId) return;
+
         try {
-            const favorito = favoritos.find(f => f.trabajador === trabajadorId);
-
-            if (!favorito) {
-                console.warn("No se encontró el favorito");
-                return;
-            }
-
-            await ServicesFav.deleteFavorito(favorito.id);
-
-            // actualizar lista
+            await ServicesFav.deleteFavorito(favoritoId);
             fetchFavoritos();
         } catch (error) {
             console.error("Error eliminando favorito:", error);
@@ -132,7 +126,7 @@ function MainFavoritos() {
                     trabajadores.map((trabajador) => (
                         <div key={trabajador.id} className="trabajador-card">
                             <div className="card-header">
-                                <button onClick={() => handleDeleteButton(trabajador.id)}><h3>X</h3></button>
+                                <button onClick={() => handleDeleteButton(trabajador.favorito_id)}><h3>X</h3></button>
                                 <div className="card-avatar-container">
                                     <img
                                         src={trabajador.foto_perfil || BoosiMan}

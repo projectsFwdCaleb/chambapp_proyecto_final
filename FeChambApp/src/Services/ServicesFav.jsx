@@ -1,5 +1,13 @@
 const API_URL = "http://localhost:8000/api/favorito/";
 
+function getAuthHeaders() {
+    const token = localStorage.getItem("access_token");
+    return {
+        "Content-Type": "application/json",
+        "Authorization": token ? `Bearer ${token}` : ""
+    };
+}
+
 async function getFavoritos() {
     // Esta función mantiene la lógica de autenticación (Token/Bearer)
     const token = localStorage.getItem('access_token');
@@ -35,7 +43,7 @@ async function postFavorito(consulta) {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers:getAuthHeaders(),
       body: JSON.stringify(consulta),
     });
 
@@ -51,7 +59,7 @@ async function deleteFavorito(id) {
   try {
     const response = await fetch(`${API_URL}${id}/`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) throw new Error("Error al eliminar Favorito");
