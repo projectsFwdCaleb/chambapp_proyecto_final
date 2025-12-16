@@ -10,11 +10,24 @@ function getAuthHeaders() {
 
 async function getServicio(search = "", page = 1) {
   try {
-    // Construimos la URL dinámicamente con los parámetros opcionales
     let url = `${API_URL}?page=${page}`;
-    if (search) {
-      url += `&search=${encodeURIComponent(search)}`;
+
+    // Refactorizando para ser más limpio:
+    // Si 'search' es un objeto, lo usamos como filtros. Si es string, es búsqueda de texto.
+    let queryParams = new URLSearchParams();
+    queryParams.append('page', page);
+
+    if (typeof search === 'string' && search) {
+      queryParams.append('search', search);
+    } else if (typeof search === 'object' && search) {
+      Object.keys(search).forEach(key => {
+        if (search[key] !== null && search[key] !== undefined) {
+          queryParams.append(key, search[key]);
+        }
+      });
     }
+
+    url = `${API_URL}?${queryParams.toString()}`;
 
     const response = await fetch(url, {
       method: "GET",

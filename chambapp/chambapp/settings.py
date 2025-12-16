@@ -32,6 +32,8 @@ load_dotenv()
 OPENAI_KEY = os.getenv("OPENAI_API_KEY")
 SECRET_KEY = 'django-insecure-m$a_hlokwxoxl_k=-)efuxc(bzgq=7!l)!=*#5r37kypi_3)3e'
 ENCRYPTION_KEY = b'5HqeT3lRK9tMdWIaQW8LtUk9hlJcU_4h5pOe6q04WrA='
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+GOOGLE_CX = os.getenv('GOOGLE_CX')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
