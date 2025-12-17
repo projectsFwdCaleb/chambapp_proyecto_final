@@ -12,6 +12,7 @@ function Favorite() {
 const { id } = useParams();
   const [open, setOpen] = useState(false);
   return (
+  <div>
     <div className="d-flex">
       <div className="col-2">
         <SidebarRender/>
@@ -38,9 +39,11 @@ const { id } = useParams();
           </div>
       </div>
       
-      {/* <Footer/> */}
+      
      
     </div>
+    <Footer/>
+  </div>
   )
 }
 

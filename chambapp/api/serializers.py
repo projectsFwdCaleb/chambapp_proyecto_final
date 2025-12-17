@@ -163,17 +163,35 @@ class ServicioSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
+        # Manejo de actualizaciones parciales (PATCH)
+        # Si 'usuario'/'nombre_servicio' no viene en data, lo tomamos de la instancia
         usuario = data.get('usuario')
         nombre = data.get('nombre_servicio')
-    # Validar usuario obligatorio
+
+        if self.instance:
+            if not usuario:
+                usuario = self.instance.usuario
+            if not nombre:
+                nombre = self.instance.nombre_servicio
+
+        # Validar usuario obligatorio
         if not usuario:
             raise serializers.ValidationError("El usuario es requerido.")
-        # Evita más de 3 servicios
-        if Servicio.objects.filter(usuario=usuario).count() >= 3:
-            raise serializers.ValidationError("No puedes registrar más de 3 servicios.")
-        #Evita duplicados por nombre
-        if Servicio.objects.filter(usuario=usuario, nombre_servicio__iexact=nombre).exists():
-            raise serializers.ValidationError("Ya tienes un servicio con ese nombre.")
+        
+        # Lógica diferenciada para Creación vs Actualización
+        if self.instance:
+            # ESTAMOS ACTUALIZANDO
+            # Solo verificamos duplicado si el nombre existe en OTRO servicio (excluyendo el actual)
+            if nombre and Servicio.objects.filter(usuario=usuario, nombre_servicio__iexact=nombre).exclude(id=self.instance.id).exists():
+                raise serializers.ValidationError("Ya tienes un servicio con ese nombre.")
+        else:
+            # ESTAMOS CREANDO
+            # Evita más de 3 servicios
+            if Servicio.objects.filter(usuario=usuario).count() >= 3:
+                raise serializers.ValidationError("No puedes registrar más de 3 servicios.")
+            # Evita duplicados por nombre
+            if nombre and Servicio.objects.filter(usuario=usuario, nombre_servicio__iexact=nombre).exists():
+                raise serializers.ValidationError("Ya tienes un servicio con ese nombre.")
 
         return data
 
@@ -219,14 +237,28 @@ class ResenhaSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
+        # Manejo de partial update
+        autor = data.get('autor')
+        trabajador = data.get('trabajador')
+
+        if self.instance:
+            if not autor:
+                autor = self.instance.autor
+            if not trabajador:
+                trabajador = self.instance.trabajador
+
         # Evita que un usuario se reseñe a sí mismo
-        autor = data['autor']
-        trabajador = data['trabajador']
-        if autor == trabajador:
+        if autor and trabajador and autor == trabajador:
             raise serializers.ValidationError("No puedes reseñarte a ti mismo.")
         
-        if Resenha.objects.filter(autor=autor, trabajador=trabajador).exists():
-            raise serializers.ValidationError("Ya has reseñado a este trabajador.")
+        # Verificamos duplicado, excluyendo la propia reseña si es update
+        if autor and trabajador:
+            qs = Resenha.objects.filter(autor=autor, trabajador=trabajador)
+            if self.instance:
+                qs = qs.exclude(id=self.instance.id)
+            
+            if qs.exists():
+                raise serializers.ValidationError("Ya has reseñado a este trabajador.")
         return data
 
 # Mensaje

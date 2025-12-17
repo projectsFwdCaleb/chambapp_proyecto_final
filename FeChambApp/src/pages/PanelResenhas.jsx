@@ -10,6 +10,7 @@ function PanelResenhas() {
 
 
   return (
+  <div>
     <div className='d-flex'>
       <div className='col-2'>
         <SidebarRender />
@@ -17,10 +18,11 @@ function PanelResenhas() {
 
       <div className='col-10'>
         <ResenhasAdmin/>
-        <Footer/>
       </div>  
 
     </div>
+      <Footer/>
+  </div>  
   )
 }
 

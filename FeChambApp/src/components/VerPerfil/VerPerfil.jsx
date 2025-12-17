@@ -55,18 +55,6 @@ function VerPerfil() {
       // Asegurar que cantones sea lista válida
       setCantones(Array.isArray(cantonesData) ? cantonesData : cantonesData.results || []);
 
-      /* Removed manual user setting
-      // Llenar campos del usuario
-      if (sessionUser) {
-        setUser(sessionUser);
-        setFirstName(sessionUser.first_name || '');
-        setLastName(sessionUser.last_name || '');
-        setEmail(sessionUser.email || '');
-        setDireccion(sessionUser.direccion || '');
-        setCantonProvincia(sessionUser.canton_provincia || '');
-        setImagePreview(sessionUser.foto_perfil);
-      }
-      */
 
       setLoading(false);
     } catch (error) {
@@ -88,37 +76,37 @@ function VerPerfil() {
 
   // Guardar cambios
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
     try {
-      const dataToSend = {
+      const formData = new FormData();
+
+      formData.append("first_name", firstName);
+      formData.append("last_name", lastName);
+      formData.append("email", email);
+      formData.append("direccion", direccion);
+      formData.append("canton_provincia", cantonProvincia);
+
+      // Agregar imagen solo si existe
+      if (fotoPerfil instanceof File) {
+        formData.append("foto_perfil", fotoPerfil);
+      }
+
+      await ServicesUsuarios.putUsuarios(user.id, formData);
+
+      const updatedUser = {
+        ...user,
         first_name: firstName,
         last_name: lastName,
-        email: email,
-        direccion: direccion,
+        email,
+        direccion,
         canton_provincia: cantonProvincia,
       };
 
-      // Enviar foto solo si se seleccionó nueva
       if (fotoPerfil instanceof File) {
-        dataToSend.foto_perfil = fotoPerfil;
+        updatedUser.foto_perfil = URL.createObjectURL(fotoPerfil);
       }
-
-      // Enviar datos actualizados
-      await ServicesUsuarios.putUsuarios(user.id, dataToSend);
-
-      // Actualizar datos en pantalla
-      const updatedUser = {
-        ...user,
-        ...dataToSend,
-      };
-
-      // Si subieron una nueva foto, actualizar preview y user.foto_perfil con la URL temporal
-      if (fotoPerfil instanceof File) {
-        const newPreview = URL.createObjectURL(fotoPerfil);
-        updatedUser.foto_perfil = newPreview;
-      }
-
+      
       setUser(updatedUser);
 
       toast.success("Perfil actualizado correctamente");
@@ -134,8 +122,7 @@ function VerPerfil() {
 
   return (
     <div className="ver-perfil-container">
-      <ToastContainer position="top-right" theme="colored" />
-
+      <>{/*porque esto esta aqui...buena pregunta...ToastContainer...*/}
       <div className="profile-card">
 
         {/* Encabezado del perfil */}
@@ -242,6 +229,7 @@ function VerPerfil() {
 
         </Form>
       </div>
+      </>{/*porque esto esta aqui...buena pregunta...ToastContainer...*/}
     </div>
   );
 }

@@ -10,6 +10,7 @@ function PanelServicios() {
 
 
   return (
+  <div>
     <div className='d-flex'>
       <div className='col-2'>
         <SidebarRender />
@@ -17,10 +18,11 @@ function PanelServicios() {
 
       <div className='col-10'>
         <ServiciosAdmin/>
-        <Footer/>
       </div>  
 
     </div>
+      <Footer/>
+  </div>
   )
 }
 

@@ -1,4 +1,4 @@
-async function getPortafolio(id) {
+async function getPortafolio() {
     try {
         const response = await fetch(`http://localhost:8000/api/portafolio/`, {
             method:'GET',

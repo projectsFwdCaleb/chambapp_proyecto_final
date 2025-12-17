@@ -6,6 +6,7 @@ import AdminDashboard from '../components/AdminDashboard/AdminDashboard'
 
 function PaginaAdministrador() {
   return (
+  <div>
     <div className='d-flex'>
       <div className='col-2'>
         <SidebarRender />
@@ -13,10 +14,11 @@ function PaginaAdministrador() {
 
       <div className='col-10'>
         <AdminDashboard/>
-        <Footer/>
       </div>  
     
     </div>
+      <Footer/>
+  </div>
   )
 }
 
