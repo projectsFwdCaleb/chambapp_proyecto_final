@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import ServicesServicio from '../../Services/ServicesServicio';
+// import ServicesLogin from "../../Services/ServicesLogin"; // Removed as it is not used anymore
 import Dropdown from 'react-bootstrap/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../Header/Header.css"
@@ -18,6 +19,21 @@ function Header() {
   const navigate = useNavigate()
   const location = useLocation();
 
+
+  // Removed useEffect for fetching user
+  /*
+  useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const data = await ServicesLogin.getUserSession();
+          setUser(data);
+        } catch (err) {
+          console.error("Error al obtener usuario en sesión:", err);
+        }
+      };
+    fetchUser();
+  }, []);
+  */
 
   useEffect(() => {
     // Solo buscar si hay texto en el search
@@ -42,10 +58,6 @@ function Header() {
     navigate(`/trabajador/${id}`);
   }
 
-  const handleAdminClick = () => {
-    navigate(`/Administrador`);
-  }
-
   const handleServiceButton = () => {
     if (user) {
       return navigate('/nuevo-servicio');
@@ -62,7 +74,7 @@ function Header() {
       {/* Barra de búsqueda */}
       <div className='searchBar'>
         <span className='search-icon'></span>
-        {/*aqui es donde se podran digitar parametros para la busqueda de servicios*/}
+        {/*aqui es donde se podran digitar parametros para la busqueda de servisios*/}
         <input
           type="text"
           placeholder='Buscar por nombre o servicio'
@@ -87,15 +99,8 @@ function Header() {
           <button className='btn-user' onClick={handleServiceButton}>
             Ofrecer un servicio
           </button>
-          {user?.grupos[0] === "admin" ? (
-          <button className='btn-user' onClick={handleAdminClick}>
-            Admin
-          </button>
-      ) : null}
         </div>
       ) : null}
-
-      
 
       <div className='user-section'>
         {!user ? (

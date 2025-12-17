@@ -79,9 +79,6 @@ async function deleteServicio(id) {
 }
 
 async function putServicio(id, consulta) {
-  console.log(id);
-  console.log(consulta);
-  
   try {
     const response = await fetch(`${API_URL}${id}`, {
       method: "PATCH",

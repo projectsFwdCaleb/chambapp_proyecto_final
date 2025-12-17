@@ -215,7 +215,7 @@ function ResenhasAdmin() {
             <div className="modal-content">
 
               <div className="modal-header">
-                <h3 className="modal-title">Confirmar eliminación</h3>
+                <h5 className="modal-title">Confirmar eliminación</h5>
                 <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
               </div>
 

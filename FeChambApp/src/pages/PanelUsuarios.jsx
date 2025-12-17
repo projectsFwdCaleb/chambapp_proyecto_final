@@ -10,7 +10,6 @@ function PanelUsuarios() {
 
 
   return (
-  <div>
     <div className='d-flex'>
       <div className='col-2'>
         <SidebarRender />
@@ -18,11 +17,10 @@ function PanelUsuarios() {
 
       <div className='col-10'>
         <UsuariosAdmin/>
+        <Footer/>
       </div>  
 
     </div>
-      <Footer/>
-  </div>
   )
 }
 

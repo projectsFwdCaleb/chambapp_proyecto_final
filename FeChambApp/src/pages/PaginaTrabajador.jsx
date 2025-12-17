@@ -31,7 +31,6 @@ function PaginaTrabajador() {
     setChatUser(null);
   };
   return (
-  <div>
     <div className="d-flex">
       <div className="col-2">
         <SidebarRender />
@@ -67,9 +66,10 @@ function PaginaTrabajador() {
           </div>
         </div>
       </div>
+
+      {/* <Footer/> */}
+
     </div>
-      <Footer/>
-  </div>  
   )
 }
 

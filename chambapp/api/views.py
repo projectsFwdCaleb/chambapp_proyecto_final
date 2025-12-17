@@ -18,7 +18,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 import os
 import json
 import requests
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 
@@ -59,7 +59,7 @@ class UsuarioGroupListCreateView(generics.ListAPIView):
 class UsuarioGroupUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioGroupSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
 # Usuario
 class UsuarioListCreateView(generics.ListCreateAPIView):
@@ -68,7 +68,7 @@ class UsuarioListCreateView(generics.ListCreateAPIView):
 class UsuarioRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser]
 
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
@@ -82,7 +82,7 @@ class CategoriaListCreateView(generics.ListCreateAPIView):
 class CategoriaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Categoria.objects.all()
     serializer_class=CategoriaSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
 # Servicio
 class ServicioListCreateView(generics.ListCreateAPIView):

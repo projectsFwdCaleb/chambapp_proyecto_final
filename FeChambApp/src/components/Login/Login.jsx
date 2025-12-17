@@ -120,6 +120,14 @@ function Login({ onSwitchToRegister }) {
     }
   }
 
+    /*una funcion para entrar con enter, como dios manda */ 
+  const enterParaEntrar = (event) => {
+    if (event.key === 'Enter') {
+      /*yamamos a la fucion verificarU, esa es la que*/
+      verificarU(); 
+    }
+  };
+
   return (
     <>
       <ToastContainer />
@@ -159,6 +167,7 @@ function Login({ onSwitchToRegister }) {
                 placeholder="Nombre de usuario"
                 value={nombreU}
                 onChange={(e) => SetNombreU(e.target.value)}
+                 onKeyDown={enterParaEntrar}
                 className="form-control"
               />
             </div>
@@ -171,6 +180,7 @@ function Login({ onSwitchToRegister }) {
                 placeholder="Contraseña"
                 value={contraseña}
                 onChange={(e) => setContraseña(e.target.value)}
+                 onKeyDown={enterParaEntrar}
                 className="form-control"
               />
             </div>
@@ -179,7 +189,7 @@ function Login({ onSwitchToRegister }) {
               Olvidó su contraseña?
             </a>
             {/*El boton login para llamar la fucion "verificarU"*/}
-            <button className="btn-login" onClick={verificarU}>
+            <button onKeyDown={enterParaEntrar} className="btn-login" onClick={verificarU}>
               Login
             </button>
 

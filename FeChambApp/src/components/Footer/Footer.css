@@ -1,143 +1,74 @@
-/* Importar fuente Roboto */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
-
 .footer {
-  background: linear-gradient(135deg, #1f2937 50%, #667eea 100%);
-  padding: 3rem 0 2rem 0;
-  color: white;
-  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #182224 0%, #e937ad 100%);
+  padding: 2.5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
   position: relative;
+  backdrop-filter: blur(8px);
   width: 100%;
-  height: auto;
-  /* Allow content to define height, but normally we'd want a fixed height for margin calc */
-  min-height: 300px;
-  /* Ensure substantial presence */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .footer-title {
   font-weight: 700;
-  font-size: 1.8rem;
+  font-size: 1.4rem;
+  color: white;
   letter-spacing: 1px;
-  margin-bottom: 1rem;
-  background: linear-gradient(to right, #fff, #a5b4fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.footer-subtitle {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 1.2rem;
-  color: #a5b4fc;
 }
 
 .footer-text {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.95rem;
-  line-height: 1.6;
-  max-width: 300px;
+  max-width: 350px;
 }
 
-/* Links Section */
-.footer-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer-links li {
-  margin-bottom: 0.8rem;
-}
-
-.footer-links a,
-.btn-link-footer {
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.footer-links a:hover,
-.btn-link-footer:hover {
-  color: white;
-  transform: translateX(5px);
-  display: inline-block;
-}
-
-/* WhatsApp Button */
 .whatsapp-link {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   font-weight: 600;
   text-decoration: none;
-  color: #fff;
-  font-size: 1rem;
+  color: #25D366;
+  font-size: 18px;
   transition: all 0.3s ease;
-  padding: 0.6rem 1.4rem;
+  padding: 0.5rem 1rem;
   border-radius: 50px;
-  background: #25D366;
-  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .whatsapp-link:hover {
-  background: #1EBC57;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-  color: white;
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  color: #1EBC57;
 }
 
 .whatsapp-icon {
-  font-size: 1.4rem;
-}
-
-/* Social Icons */
-.social-icon {
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.social-icon:hover {
-  color: white;
-  transform: scale(1.1);
-}
-
-/* Divider & Copy */
-.divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  width: 100%;
-  margin-bottom: 1.5rem;
+  font-size: 28px;
 }
 
 .footer-copy {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 1rem;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .footer {
-    position: relative;
-    /* On mobile, static/relative is often better than reveal to avoid z-index oddities */
-    z-index: 1;
-    text-align: center;
-    padding: 3rem 1rem;
+    padding: 2rem 1rem;
   }
 
-  .footer-links a:hover {
-    transform: none;
+  .footer-title {
+    text-align: center;
   }
 
   .footer-text {
-    margin: 0 auto;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .whatsapp-link {
+    font-size: 16px;
+    padding: 0.5rem 1.2rem;
   }
 }

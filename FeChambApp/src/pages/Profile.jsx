@@ -10,7 +10,6 @@ import VerPerfil from '../components/VerPerfil/VerPerfil';
 function Profile() {
     const [open, setOpen] = useState(false);
   return (
-  <div>
     <div className="d-flex">
       <div className="col-2">
         <SidebarRender/>
@@ -35,10 +34,11 @@ function Profile() {
               </div>
            </div>
           </div>
-      </div>  
+      </div>
+      
+      {/* <Footer/> */}
+     
     </div>
-      <Footer/>
-  </div>  
   )
 }
 

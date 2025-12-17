@@ -29,10 +29,6 @@ body {
     padding: 0;
 }
 
-::-webkit-scrollbar {
-    display: none; /* O width: 0; */
-}
-
 /* ================================================ */
 /* 2. CONTENEDOR PRINCIPAL DEL SIDEBAR */
 /* ================================================ */
