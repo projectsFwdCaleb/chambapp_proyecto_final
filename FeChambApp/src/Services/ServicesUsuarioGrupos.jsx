@@ -1,13 +1,18 @@
-async function getUsuarioGrupos
-    () {
+function getAuthHeaders() {
+    const token = localStorage.getItem("access_token");
+    return {
+        "Content-Type": "application/json",
+        "Authorization": token ? `Bearer ${token}` : ""
+    };
+}
+
+async function getUsuarioGrupos() {
 
     try {
 
         const response = await fetch("http://localhost:8000/api/usuario_group/", {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: getAuthHeaders()
         })
         const Grupos = await response.json()
 
@@ -28,9 +33,7 @@ async function postUsuarioGrupos(consulta) {
 
         const response = await fetch("http://localhost:8000/api/usuario_group/", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify(consulta)
         })
         const Grupos = await response.json()
@@ -51,13 +54,12 @@ async function deleteUsuarioGrupos(id) {
 
         const response = await fetch("http://localhost:8000/api/usuario_group/" + id, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: getAuthHeaders()
         })
         /* const products = await response.json()
         
         return products
+ 
  */
     } catch (error) {
         console.error("Error al eliminar las Grupos", error)
@@ -72,9 +74,7 @@ async function putUsuarioGrupos(id, consulta) {
 
         const response = await fetch(`http://localhost:8000/api/usuario_group/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify(consulta)
         })
 

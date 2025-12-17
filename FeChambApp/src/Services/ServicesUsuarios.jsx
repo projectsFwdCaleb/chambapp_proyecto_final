@@ -74,14 +74,14 @@ async function deleteUsuarios(id) {
 async function putUsuarios(id, bodyToSend) {
     try {
         const headers = {
-            ...getAuthHeaders()
-            // ❌ NO Content-Type
+            ...getAuthHeaders(),
+            "Content-Type": "application/json"
         };
 
         const response = await fetch(`http://localhost:8000/api/usuario/${id}/`, {
             method: "PATCH",
             headers,
-            body: bodyToSend
+            body: JSON.stringify(bodyToSend)
         });
 
         if (!response.ok) {

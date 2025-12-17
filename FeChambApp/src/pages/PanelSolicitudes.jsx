@@ -9,6 +9,7 @@ function PanelSolicitudes() {
 
 
   return (
+  <div>
     <div className='d-flex'>
       <div className='col-2'>
         <SidebarRender />
@@ -16,10 +17,11 @@ function PanelSolicitudes() {
 
       <div className='col-10'>
         <SolicitudesAdmin/>
-        <Footer/>
       </div>  
 
     </div>
+      <Footer/>
+  </div>
   )
 }
 

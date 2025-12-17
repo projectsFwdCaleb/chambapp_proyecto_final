@@ -19,6 +19,8 @@ function ServiciosProfesionales() {
   const [showMyServicesModal, setShowMyServicesModal] = useState(false);
   const [myServices, setMyServices] = useState([]);
   const [editingService, setEditingService] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState(null);
 
   // Estado del formulario de servicios
   const [serviceData, setServiceData] = useState({
@@ -154,17 +156,24 @@ function ServiciosProfesionales() {
     }
   };
 
-  const handleDeleteService = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este servicio?")) {
-      try {
-        await ServicesServicio.deleteServicio(id);
-        toast.success("Servicio eliminado correctamente");
-        const data = await ServicesServicio.getServicio({ usuario: user.id });
-        setMyServices(Array.isArray(data) ? data : data.results || []);
-      } catch (error) {
-        console.error("Error al eliminar servicio", error);
-        toast.error("Error al eliminar el servicio");
-      }
+  const handleDeleteService = (id) => {
+    setServiceToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteService = async () => {
+    if (!serviceToDelete) return;
+    try {
+      await ServicesServicio.deleteServicio(serviceToDelete);
+      toast.success("Servicio eliminado correctamente");
+      const data = await ServicesServicio.getServicio({ usuario: user.id });
+      setMyServices(Array.isArray(data) ? data : data.results || []);
+    } catch (error) {
+      console.error("Error al eliminar servicio", error);
+      toast.error("Error al eliminar el servicio");
+    } finally {
+      setShowDeleteModal(false);
+      setServiceToDelete(null);
     }
   };
 
@@ -195,7 +204,12 @@ function ServiciosProfesionales() {
         usuario: user.id
       };
 
-      await ServicesServicio.putServicio(editingService.id, payload);
+      console.log(payload);
+
+
+      const msg = await ServicesServicio.putServicio(editingService.id, payload);
+      console.log(msg);
+
       toast.success("Servicio actualizado exitosamente!");
 
       setEditingService(null);
@@ -503,6 +517,29 @@ function ServiciosProfesionales() {
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowMyServicesModal(false)}>
             Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal de Confirmación de Eliminación */}
+      <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        centered
+        backdrop="static"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className='text-dark'>
+          ¿Estás seguro de que deseas eliminar este servicio?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={confirmDeleteService}>
+            Eliminar
           </Button>
         </Modal.Footer>
       </Modal>

@@ -204,7 +204,7 @@
 
 
 /* -----------------------------------------------------------
-   BOTON DENTRO DEL CARRUSEL (SOLO PARA EL DUEÑO)
+   BOTONES DENTRO DEL CARRUSEL (SOLO PARA EL DUEÑO)
 ------------------------------------------------------------*/
 .btn-portafolio {
   padding: 10px 18px;
@@ -214,4 +214,29 @@
   transition: 0.2s ease;
 }
 
+.btn-portafolio-edit {
+  background: #ffc107;
+  color: #333;
+}
 
+.btn-portafolio-edit:hover {
+  background: #e0ac06;
+}
+
+.btn-portafolio-delete {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-portafolio-delete:hover {
+  background: #bb2d3b;
+}
+
+.btn-portafolio-add {
+  background: #0d6efd;
+  color: white;
+}
+
+.btn-portafolio-add:hover {
+  background: #0a56c7;
+}

@@ -123,12 +123,7 @@ function Register({ onSwitchToLogin }) {
       })
     }
   }
-   // Manejador para la tecla Enter
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleLogin(); // Ejecuta la misma función del botón
-    }
-  };
+
   return (
     <>
     <ToastContainer />
@@ -196,7 +191,7 @@ function Register({ onSwitchToLogin }) {
           </div>
           <br />
           {/*y el boton al final para llamar la fucion que tanto costo hacer arriba */}
-          <button onKeyDown={handleKeyPress} className="btn-register-submit" onClick={ManejarRegistros}>
+          <button className="btn-register-submit" onClick={ManejarRegistros}>
             Registrar
           </button>
           <Link to='/acerca-de'><small className='text-muted'>*Al usar Chambapp aceptas los terminos y condiciones*</small></Link>

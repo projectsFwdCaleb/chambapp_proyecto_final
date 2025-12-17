@@ -6,6 +6,8 @@ import { useUser } from '../../../Context/UserContext';
 import '../BanerTrabajador/BanerTrabajador.css'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faBan, faHeart, faMessage } from '@fortawesome/free-solid-svg-icons'
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate} from "react-router-dom";
 
 function BanerTrabajador({ id, section, onChangeSection, onMessageClick }) {
   const [userStats, setuserStats] = useState(null);
@@ -13,6 +15,7 @@ function BanerTrabajador({ id, section, onChangeSection, onMessageClick }) {
   const { user } = useUser(); // Use hook
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState(null);
+  const navigate = useNavigate()
 
 
   /* llamar las estadísticas */
@@ -75,44 +78,68 @@ function BanerTrabajador({ id, section, onChangeSection, onMessageClick }) {
   )
   console.log(usuarioConEstadistica);
 
-  const handleMensaggeClick = () => {
-    if (onMessageClick && usuarioConEstadistica) {
-      onMessageClick(usuarioConEstadistica);
-    }
+const handleMensaggeClick = () => {
+  // 1️ No hay sesión
+  if (!user) {
+    toast.error('Necesitas iniciar sesión');
+    setTimeout(() => {
+      navigate('/loging');
+    }, 1200);
+    return;
   }
+  // 2️Hay sesión pero no hay datos del usuario destino
+  if (!usuarioConEstadistica) {
+    toast.error('No se pudo cargar la información del usuario');
+    return;
+  }
+  // 3️Todo OK
+  if (onMessageClick) {
+    onMessageClick(usuarioConEstadistica);
+  }
+};
 
   const handleToggleFavorite = async () => {
-    if (isFavorite && favoriteId) {
-      // Eliminar de favoritos
-      try {
-        await ServicesFav.deleteFavorito(favoriteId);
-        setIsFavorite(false);
-        setFavoriteId(null);
-      } catch (error) {
-        console.error("Error removing favorite:", error);
+  if (!user) {
+    toast.error('Necesitas iniciar sesión para agregar un favorito');
+    setTimeout(() => {
+      navigate('/loging');
+    }, 1200);
+    return;
+  }
+
+  if (isFavorite && favoriteId) {
+    // Eliminar de favoritos
+    try {
+      await ServicesFav.deleteFavorito(favoriteId);
+      setIsFavorite(false);
+      setFavoriteId(null);
+    } catch (error) {
+      console.error("Error removing favorite:", error);
+    }
+  } else {
+    // Agregar a favoritos
+    const nuevoFav = {
+      usuario: user.id,
+      trabajador: id
+    };
+
+    try {
+      const response = await ServicesFav.postFavorito(nuevoFav);
+      if (response?.id) {
+        setFavoriteId(response.id);
+      } else {
+        await checkFavoriteStatus();
       }
-    } else {
-      // Agregar a favoritos
-      const nuevoFav = {
-        usuario: user.id,
-        trabajador: id
-      }
-      try {
-        const response = await ServicesFav.postFavorito(nuevoFav);
-        if (response && response.id) {
-          setFavoriteId(response.id);
-        } else {
-          await checkFavoriteStatus();
-        }
-        setIsFavorite(true);
-      } catch (error) {
-        console.error("Error adding favorite:", error);
-      }
+      setIsFavorite(true);
+    } catch (error) {
+      console.error("Error adding favorite:", error);
     }
   }
+};
 
   return (
     <div className="container baner-container mt-4 p-3 m-0">
+      <ToastContainer position="top-right" theme="dark" />
 
       {/* ROW PRINCIPAL */}
       <div className="row">

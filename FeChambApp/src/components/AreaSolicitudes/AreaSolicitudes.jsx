@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+
 /* se trae la hoja de estilos */
 import "../AreaSolicitudes/AreaSolicitudes.css";
+
 /* se traen los Services */
 import ServicesSolicitudes from "../../Services/ServicesSolicitudes";
 import ServicesCategoria from '../../Services/ServicesCategoria';
 import ServicesCantones from '../../Services/ServicesCantones';
+// import ServicesLogin from '../../Services/ServicesLogin'; // Removed
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import { useUser } from '../../../Context/UserContext';
 
@@ -20,12 +23,12 @@ function AreaSolicitudes() {
     /* estados del modal (mostrar, editar, eliminar) */
     const [mostrarModalA, setMostrarModalA] = useState(false);
     const [mostrarModalB, setMostrarModalB] = useState(false);
-    const [mostrarModalE, setMostrarModalE] = useState(false);
     const [solicitudSeleccionada, setSolicitudSeleccionada] = useState(null);
     const [modoEdicion, setModoEdicion] = useState(false);
     const [solicitudEditando, setSolicitudEditando] = useState(null);
 
     /* información del usuario */
+    // const [user, setUser] = useState(""); // Removed local state
     const { user } = useUser(); // Use hook
     const [usuarios, setUsuarios] = useState([]);
 
@@ -44,6 +47,7 @@ function AreaSolicitudes() {
         cargarSolicitudes();
         fetchCategorias();
         fetchCantones();
+        // fetchUser(); // Removed
         fetchUsuarios()
     }, []);
 
@@ -60,7 +64,7 @@ function AreaSolicitudes() {
     /*Para evitar que se pueda mover la pagina al abrir el modadal,
      es por estilo y ya */
     useEffect(() => {
-        if (mostrarModalA || mostrarModalB || mostrarModalE) {
+        if (mostrarModalA || mostrarModalB) {
             document.body.style.overflow = "hidden";
         } else {
             document.body.style.overflow = "auto";
@@ -69,8 +73,22 @@ function AreaSolicitudes() {
         return () => {
             document.body.style.overflow = "auto";
         };
-    }, [mostrarModalA, mostrarModalB, mostrarModalE]);
+    }, [mostrarModalA, mostrarModalB]);
 
+
+    /* Removed fetchUser
+    /*el fetch para traer los usuarios, es importante tenerlos
+     para saber de quien es cada solicitud */
+    /*
+    const fetchUser = async () => {
+        try {
+            const data = await ServicesLogin.getUserSession();
+            setUser(data);
+        } catch (error) {
+            console.error("Error al obtener usuario en sesión:", error);
+        }
+    };
+    */
 
     /*la funcion que carga las solicides en la pagia, 
     la llamaremos por ahi de la linea 165 y la 217 */
@@ -213,30 +231,23 @@ function AreaSolicitudes() {
         setMostrarModalB(true);
     };
 
-    /* abrir el modal E */
-    const abrirModalE = (sol) => {
-        setSolicitudSeleccionada(sol);
-        setMostrarModalE(true);
-    };
-
-
     /* borrar solicitud */
-    const confirmarEliminar = async () => {
+    const eliminarSolicitud = async (id) => {
+        const confirmar = window.confirm("¿Seguro que deseas eliminar esta solicitud?");
+        if (!confirmar) return;
+
         try {
-            await ServicesSolicitudes.deleteSolicitud(solicitudSeleccionada.id);
+            await ServicesSolicitudes.deleteSolicitud(id);
             cargarSolicitudes();
-            setMostrarModalE(false);
         } catch (error) {
-            console.error("Error eliminando solicitud", error);
+            console.error("Error al eliminar solicitud:", error);
         }
     };
-
 
     return (
         <div className="area-solicitudes-container">
 
             {/* Botón para abrir modal */}
-            <br />
             <button
                 className="btn btn-success mb-3"
                 onClick={() => {
@@ -260,6 +271,7 @@ function AreaSolicitudes() {
                 <div className='modal fade show d-block' tabIndex="-1">
                     <div className='modal-dialog'>
                         <div className='modal-content modal-custom'>
+
                             <div className='modal-header'>
                                 <h1 className='modal-title'>
                                     {modoEdicion ? "Editar Solicitud" : "Nueva Solicitud"}
@@ -334,6 +346,7 @@ function AreaSolicitudes() {
                                     </button>
                                 </form>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -368,9 +381,9 @@ function AreaSolicitudes() {
 
                                     {/* Nombre de usuario y título de la solicitud */}
                                     <div>
-                                        <h3 className="m-0 fw-bold">
+                                        <h6 className="m-0 fw-bold">
                                             {getNombreUsuarios(sol.usuario)}
-                                        </h3>
+                                        </h6>
                                         <p className="text-muted m-0 small">
                                             {sol.titulo}
                                         </p>
@@ -381,7 +394,7 @@ function AreaSolicitudes() {
                                 {sol.usuario === user?.id && (
                                     <div className='mt-3 d-flex gap-2'>
                                         <button
-                                            className='btn btn-outline-primary btn-sm'
+                                            className='btn btn-warning btn-sm w-50'
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 abrirModalEditar(sol);
@@ -391,10 +404,10 @@ function AreaSolicitudes() {
                                         </button>
 
                                         <button
-                                            className='btn btn-outline-danger btn-sm'
+                                            className='btn btn-danger btn-sm w-50'
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                abrirModalE(sol);
+                                                eliminarSolicitud(sol.id);
                                             }}
                                         >
                                             Eliminar
@@ -407,46 +420,12 @@ function AreaSolicitudes() {
                 </ul>
             )}
 
-            {/* Modal eliminar */}
-            {mostrarModalE && solicitudSeleccionada && (
-                <div className="modal fade show d-block" tabIndex="-1">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h3 className="modal-title">Confirmar eliminación</h3>
-                                <button
-                                    type="button"
-                                    className="btn-close"
-                                    onClick={() => setMostrarModalE(false)}
-                                />
-                            </div>
-
-                            <div className="modal-body">
-                                ¿Seguro que deseas eliminar la solicitud
-                                <strong> "{solicitudSeleccionada.titulo}"</strong>?
-                            </div>
-
-                            <div className="modal-footer">
-                                <button className="btn btn-secondary"
-                                    onClick={() => setMostrarModalE(false)}>
-                                    Cancelar
-                                </button>
-
-                                <button className="btn btn-danger"
-                                 onClick={confirmarEliminar}>
-                                    Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Modal B */}
+            {/* Modal B (fuera del map — AHORA SOLO SE RENDERIZA UNA VEZ) */}
             {mostrarModalB && solicitudSeleccionada && (
                 <div className="modal fade show d-block" tabIndex="-1">
                     <div className="modal-dialog modal-lg">
                         <div className="modal-content modal-custom">
+
                             <div className="modal-header">
                                 <h1 className="modal-title">
                                     Detalle de Solicitud
@@ -501,6 +480,7 @@ function AreaSolicitudes() {
                                     Cerrar
                                 </button>
                             </div>
+
                         </div>
                     </div>
                 </div>

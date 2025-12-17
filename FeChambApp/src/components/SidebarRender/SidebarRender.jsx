@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react'
 // import Dropdown from 'react-bootstrap/Dropdown';
 import ServicesCategoria from '../../Services/ServicesCategoria';
 import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useUser } from '../../../Context/UserContext';
 import "../SidebarRender/SidebarRender.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faHeart, faInbox, faComment, faUser, faGear, faFilter, faArrowAltCircleRight, faChartBar} from '@fortawesome/free-solid-svg-icons'
+import { faEye, faHeart, faInbox, faComment, faUser, faGear, faFilter, faArrowAltCircleRight, faChartBar, faArrowAltCircleLeft} from '@fortawesome/free-solid-svg-icons'
 
 function SidebarRender() {
   const [categorias, setCategorias] = useState([])
@@ -12,6 +13,7 @@ function SidebarRender() {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false) 
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useUser(); // Use hook
 
 
 
@@ -134,6 +136,18 @@ function SidebarRender() {
                     <h3><FontAwesomeIcon icon={faArrowAltCircleRight} /> Servicios</h3>
                 </button>
                 </li>
+                <br />
+                <li>
+                  {user?.grupos[0] === "admin" ? (      
+                  <button className='nav-link'
+                   onClick={() => {
+                    localStorage.removeItem("access_token");
+                    localStorage.removeItem("refresh_token");
+                    window.location.href = "/";
+                  }}
+                  ><h3><FontAwesomeIcon icon={faArrowAltCircleLeft} /> Cerrar Sesión</h3></button>
+                  ) : null}
+                  </li>
             </ul>
             </div>
 
