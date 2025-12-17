@@ -74,8 +74,8 @@ async function deleteUsuarios(id) {
 async function putUsuarios(id, bodyToSend) {
     try {
         const headers = {
-            ...getAuthHeaders(),
-            "Content-Type": "application/json"
+            ...getAuthHeaders()
+            // ❌ NO Content-Type
         };
 
         const response = await fetch(`http://localhost:8000/api/usuario/${id}/`, {
