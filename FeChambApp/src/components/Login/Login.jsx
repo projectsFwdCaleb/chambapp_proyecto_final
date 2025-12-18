@@ -5,12 +5,15 @@ import ServicesLogin from '../../Services/ServicesLogin'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useUser } from '../../../Context/UserContext'
+import { Modal } from 'react-bootstrap'
+import { FaWhatsapp } from 'react-icons/fa'
 
 function Login({ onSwitchToRegister }) {
 
   /* Las constantes, porque si no declaramos 20 useState al día nos da ansiedad */
   const [nombreU, SetNombreU] = useState('')
   const [contraseña, setContraseña] = useState('')
+  const [showModal, setShowModal] = useState(false)
   const navigate = useNavigate()
   const { setUser } = useUser();
 
@@ -120,11 +123,11 @@ function Login({ onSwitchToRegister }) {
     }
   }
 
-    /*una funcion para entrar con enter, como dios manda */ 
+  /*una funcion para entrar con enter, como dios manda */
   const enterParaEntrar = (event) => {
     if (event.key === 'Enter') {
       /*yamamos a la fucion verificarU, esa es la que*/
-      verificarU(); 
+      verificarU();
     }
   };
 
@@ -167,7 +170,7 @@ function Login({ onSwitchToRegister }) {
                 placeholder="Nombre de usuario"
                 value={nombreU}
                 onChange={(e) => SetNombreU(e.target.value)}
-                 onKeyDown={enterParaEntrar}
+                onKeyDown={enterParaEntrar}
                 className="form-control"
               />
             </div>
@@ -180,28 +183,69 @@ function Login({ onSwitchToRegister }) {
                 placeholder="Contraseña"
                 value={contraseña}
                 onChange={(e) => setContraseña(e.target.value)}
-                 onKeyDown={enterParaEntrar}
+                onKeyDown={enterParaEntrar}
                 className="form-control"
               />
             </div>
 
-            <a href="#" className="forgot-password">
+            <button
+              type="button"
+              className="forgot-password"
+              onClick={() => setShowModal(true)}
+              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+            >
               Olvidó su contraseña?
-            </a>
+            </button>
             {/*El boton login para llamar la fucion "verificarU"*/}
             <button onKeyDown={enterParaEntrar} className="btn-login" onClick={verificarU}>
               Login
             </button>
 
-            <p className="login-social">O inicia sesión con Google</p>
+            {/* <p className="login-social">O inicia sesión con Google</p>
             {/*un divide para guardar varios iconos a usar*/}
-            <div className="social-icons">
+            {/* <div className="social-icons">
               <a href="#" className="social-icon google">G</a>
-            </div>
+            </div>  */}
           </div>
 
         </div>
       </div>
+
+      {/* Modal de recuperación de contraseña */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton style={{ background: '#1f2937', borderBottom: '1px solid #374151' }}>
+          <Modal.Title style={{ color: 'white' }}>Recuperar Contraseña</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ background: '#1f2937', color: 'white', textAlign: 'center', padding: '2rem' }}>
+          <p style={{ marginBottom: '1.5rem', fontSize: '1rem' }}>
+            Para restablecer tu contraseña, contacta a nuestro equipo de soporte a través de WhatsApp.
+          </p>
+          <a
+            href="https://api.whatsapp.com/send?phone=50662071398&text=Hola!%20Necesito%20recuperar%20mi%20contraseña%20en%20ChambApp"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              background: '#25D366',
+              color: 'white',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontWeight: '600',
+              fontSize: '1rem',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            <FaWhatsapp size={24} />
+            Contactar por WhatsApp
+          </a>
+          <p style={{ marginTop: '1.5rem', fontSize: '0.875rem', color: '#9CA3AF' }}>
+            Horario de atención: Lunes a Viernes, 8:00 AM - 5:00 PM
+          </p>
+        </Modal.Body>
+      </Modal>
     </>
   )
 }
