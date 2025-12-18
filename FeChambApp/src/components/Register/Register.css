@@ -24,11 +24,13 @@
 
 /* Curve effect mirrored */
 .register-left::before {
-  content: '';
+   content: '';
   position: absolute;
   top: 0;
-  left: -6.25rem;
+  right: -6.25rem;
+  /* -100px */
   width: 12.5rem;
+  /* 200px */
   height: 100%;
   background: var(--primary);
   border-radius: 50%;
@@ -81,14 +83,13 @@
 }
 
 .btn-login-switch:hover {
-  background: white;
-  color: var(--primary);
+  border: 0.125rem solid white;
   transform: translateY(-0.125rem);
 }
 
 .register-right {
-  background: #808080;
-  color: #333;
+  background: #1f2937;
+  color: white;
   padding: 3.125rem 2.5rem;
   display: flex;
   flex-direction: column;
@@ -111,7 +112,7 @@
 }
 
 .register-right h2 {
-  color: #333;
+  color: white;
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.625rem;
@@ -130,21 +131,23 @@
   margin-bottom: 0;
 }
 
-.form-control {
+.register-form .form-control {
   width: 100%;
   padding: 0.9375rem 1.25rem;
-  border: none;
+  /* 15px 20px */
+  border: none !important;
   border-radius: 8px;
-  background: #e0e0e0;
-  color: #333;
+  background: #ffffff !important;
+  color: #333 !important;
   font-size: 1rem;
   transition: all 0.3s ease;
 }
 
-.form-control:focus {
-  outline: none;
-  background: #fff;
-  box-shadow: 0 0 0 0.125rem var(--primary);
+.register-form .form-control:focus {
+  background: #b4b1b1 !important;
+  outline: none !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 0 0.125rem var(--primary) !important;
 }
 
 .form-control::placeholder {

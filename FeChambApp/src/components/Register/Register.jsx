@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './Register.css'
+import '../Register/Register.css'
 import { useNavigate, Link } from "react-router-dom";
 import ServicesUsuarios from '../../Services/ServicesUsuarios'
 import ServicesLogin from '../../Services/ServicesLogin';
@@ -199,7 +199,7 @@ function Register({ onSwitchToLogin }) {
           <button onKeyDown={handleKeyPress} className="btn-register-submit" onClick={ManejarRegistros}>
             Registrar
           </button>
-          <Link to='/acerca-de'><small className='text-muted'>*Al usar Chambapp aceptas los terminos y condiciones*</small></Link>
+          <Link to='/acerca-de'><small className='text-white'>*Al usar Chambapp aceptas los terminos y condiciones*</small></Link>
         </div>
       </div>
     </div>

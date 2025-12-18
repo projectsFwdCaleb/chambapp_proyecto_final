@@ -7,7 +7,7 @@
 
 :root {
   --base-font-size: 16px;   /* cambiar el tamaño base aquí */
-  --primary: #4FC3F7;
+  --primary: linear-gradient(135deg, #1f2937 0%, #4FC3F7  100%);
   --muted-bg: #e8e8e8;
   --card-bg: #fff;
 }

@@ -1,23 +1,16 @@
-function getAuthHeaders() {
-    const token = localStorage.getItem("access_token");
+import { authFetch, getAuthHeaders } from './authFetch';
 
-    return {
-        "Authorization": token ? `Bearer ${token}` : ""
-    };
-}
+const API_BASE = "http://localhost:8000";
 
 async function getUsuarios() {
-
     try {
-
-        const response = await fetch("http://localhost:8000/api/usuario/", {
+        const response = await fetch(`${API_BASE}/api/usuario/`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
         const Usuarios = await response.json()
-
         return Usuarios
 
     } catch (error) {
@@ -26,14 +19,9 @@ async function getUsuarios() {
     }
 }
 
-
-
-
 async function postUsuarios(consulta) {
-
     try {
-
-        const response = await fetch("http://localhost:8000/api/usuario/", {
+        const response = await fetch(`${API_BASE}/api/usuario/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -41,7 +29,6 @@ async function postUsuarios(consulta) {
             body: JSON.stringify(consulta)
         })
         const Usuarios = await response.json()
-
         return Usuarios
 
     } catch (error) {
@@ -50,38 +37,40 @@ async function postUsuarios(consulta) {
     }
 }
 
-
-
 async function deleteUsuarios(id) {
-
     try {
-
-        const response = await fetch("http://localhost:8000/api/usuario/" + id, {
-            method: 'DELETE',
-            headers: getAuthHeaders()
+        // Usar authFetch para manejo automático de renovación de token
+        const response = await authFetch(`/api/usuario/${id}`, {
+            method: 'DELETE'
         })
-        /* const products = await response.json()
-        
-        return products
- */
+
+        if (!response.ok) {
+            throw new Error("Error al eliminar usuario")
+        }
+
     } catch (error) {
         console.error("Error al eliminar los Usuarios", error)
         throw error
     }
 }
 
-
-async function putUsuarios(id, bodyToSend) {
+async function putUsuarios(id, consulta) {
     try {
-        const headers = {
-            ...getAuthHeaders()
-            // ❌ NO Content-Type
-        };
+        // Siempre usar FormData - funciona para archivos Y texto
+        // El backend ya soporta MultiPartParser
+        const bodyToSend = new FormData();
+        Object.keys(consulta).forEach(key => {
+            // Solo agregar valores que no sean null/undefined
+            if (consulta[key] !== null && consulta[key] !== undefined) {
+                bodyToSend.append(key, consulta[key]);
+            }
+        });
+        // No establecer Content-Type - el navegador lo hace automáticamente para FormData
 
-        const response = await fetch(`http://localhost:8000/api/usuario/${id}/`, {
+        // Usar authFetch para manejo automático de renovación de token
+        const response = await authFetch(`/api/usuario/${id}/`, {
             method: "PATCH",
-            headers,
-            body: JSON.stringify(bodyToSend)
+            body: bodyToSend
         });
 
         if (!response.ok) {

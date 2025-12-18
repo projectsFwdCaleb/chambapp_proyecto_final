@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './Login.css'
+import '../Login/Login.css'
 import { useNavigate } from 'react-router-dom'
 import ServicesLogin from '../../Services/ServicesLogin'
 import { toast, ToastContainer } from 'react-toastify'
@@ -139,7 +139,7 @@ function Login({ onSwitchToRegister }) {
             <p>Disfruta de servicios profesionales cerca de ti</p>
 
             <ul className="login-features">
-              <li>✓ Verificación de identidad</li>
+              <li>✓ Encuentra en tu zona</li>
               <li>✓ Calificaciones de usuarios</li>
             </ul>
             {/*boton para abrir el complemento de register*/}
