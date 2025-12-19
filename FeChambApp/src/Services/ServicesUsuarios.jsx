@@ -40,7 +40,7 @@ async function postUsuarios(consulta) {
 async function deleteUsuarios(id) {
     try {
         // Usar authFetch para manejo automático de renovación de token
-        const response = await authFetch(`/api/usuario/${id}`, {
+        const response = await authFetch(`/api/usuario/${id}/`, {
             method: 'DELETE'
         })
 
@@ -56,15 +56,21 @@ async function deleteUsuarios(id) {
 
 async function putUsuarios(id, consulta) {
     try {
-        // Siempre usar FormData - funciona para archivos Y texto
-        // El backend ya soporta MultiPartParser
-        const bodyToSend = new FormData();
-        Object.keys(consulta).forEach(key => {
-            // Solo agregar valores que no sean null/undefined
-            if (consulta[key] !== null && consulta[key] !== undefined) {
-                bodyToSend.append(key, consulta[key]);
-            }
-        });
+        let bodyToSend;
+
+        // Si ya es FormData, usarlo directamente
+        if (consulta instanceof FormData) {
+            bodyToSend = consulta;
+        } else {
+            // Convertir objeto a FormData
+            bodyToSend = new FormData();
+            Object.keys(consulta).forEach(key => {
+                // Solo agregar valores que no sean null/undefined
+                if (consulta[key] !== null && consulta[key] !== undefined) {
+                    bodyToSend.append(key, consulta[key]);
+                }
+            });
+        }
         // No establecer Content-Type - el navegador lo hace automáticamente para FormData
 
         // Usar authFetch para manejo automático de renovación de token

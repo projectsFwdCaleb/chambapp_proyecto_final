@@ -7,6 +7,10 @@ import ServicesCategoria from '../../Services/ServicesCategoria';
 import ServicesCantones from '../../Services/ServicesCantones';
 import ServicesUsuarios from '../../Services/ServicesUsuarios';
 import { useUser } from '../../../Context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMessage } from '@fortawesome/free-solid-svg-icons';
 
 function AreaSolicitudes() {
 
@@ -28,6 +32,7 @@ function AreaSolicitudes() {
     /* información del usuario */
     const { user } = useUser(); // Use hook
     const [usuarios, setUsuarios] = useState([]);
+    const navigate = useNavigate();
 
     /* constante para las nuevas solicitudes */
     const [nuevaSolicitud, setNuevaSolicitud] = useState({
@@ -38,7 +43,7 @@ function AreaSolicitudes() {
         usuario: "",
         estado: true,
     });
-            
+
     /* se cargan solicitudes, categorías, cantones y user */
     useEffect(() => {
         cargarSolicitudes();
@@ -229,6 +234,31 @@ function AreaSolicitudes() {
         } catch (error) {
             console.error("Error eliminando solicitud", error);
         }
+    };
+
+    /* Manejar click en enviar mensaje */
+    const handleMessageClick = (solicitud) => {
+        // Verificar si hay sesión
+        if (!user) {
+            toast.error('Necesitas iniciar sesión para enviar mensajes');
+            setTimeout(() => {
+                navigate('/loging');
+            }, 1200);
+            return;
+        }
+
+        // Obtener datos del usuario de la solicitud
+        const usuarioSolicitud = usuarios.find(u => u.id === solicitud.usuario);
+
+        if (!usuarioSolicitud) {
+            toast.error('No se pudo cargar la información del usuario');
+            return;
+        }
+
+        // Navegar a la página del trabajador
+        setMostrarModalB(false);
+        navigate(`/trabajador/${solicitud.usuario}`, {
+        });
     };
 
 
@@ -433,7 +463,7 @@ function AreaSolicitudes() {
                                 </button>
 
                                 <button className="btn btn-danger"
-                                 onClick={confirmarEliminar}>
+                                    onClick={confirmarEliminar}>
                                     Eliminar
                                 </button>
                             </div>
@@ -494,6 +524,16 @@ function AreaSolicitudes() {
                             </div>
 
                             <div className="modal-footer">
+                                {/* Botón enviar mensaje - solo si no es tu propia solicitud */}
+                                {solicitudSeleccionada.usuario !== user?.id && (
+                                    <button
+                                        className="btn btn-primary"
+                                        onClick={() => handleMessageClick(solicitudSeleccionada)}
+                                    >
+                                        <FontAwesomeIcon icon={faMessage} className="me-2" />
+                                        Contactar
+                                    </button>
+                                )}
                                 <button
                                     className="btn btn-secondary"
                                     onClick={() => setMostrarModalB(false)}
