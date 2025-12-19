@@ -41,7 +41,7 @@ function ChatBot({ onClose }) {
       /*aqui vamos a imprimir la respuesta del IA o un mensaje de error en caso de que todo falle */
       const data = await response.json();
 
-      const reply = data.reply || "Lo siento, hubo un error"
+      const reply = data.reply || data.error || "Lo siento, hubo un error"
 
       setMessages([...newMessages, { role: "assistant", content: reply }]);
       /*el catch para tomar los errores con un mensaje para saber donde paso*/

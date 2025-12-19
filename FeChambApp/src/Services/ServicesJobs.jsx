@@ -16,7 +16,10 @@ async function getJobSuggestions(query) {
             headers: getAuthHeaders(),
         });
 
-        if (!response.ok) throw new Error("Error al obtener sugerencias de empleo");
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Error al obtener sugerencias de empleo");
+        }
         const data = await response.json();
         return data;
     } catch (error) {

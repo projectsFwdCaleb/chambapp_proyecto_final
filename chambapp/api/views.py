@@ -440,13 +440,17 @@ def job_suggestions(request):
     if not query:
         return Response({"error": "Query parameter is required"}, status=400)
 
-    if not settings.GOOGLE_API_KEY or not settings.GOOGLE_CX:
+    google_key = settings.GOOGLE_API_KEY or os.getenv('GOOGLE_API_KEY')
+    google_cx = settings.GOOGLE_CX or os.getenv('GOOGLE_CX')
+
+    if not google_key or not google_cx:
         print("WARNING: GOOGLE_API_KEY or GOOGLE_CX missing")
+
         return Response({"error": "Server configuration error: Missing API Keys"}, status=500)
 
     params = {
-        'key': settings.GOOGLE_API_KEY,
-        'cx': settings.GOOGLE_CX,
+        'key': google_key,
+        'cx': google_cx,
         'q': f"{query} empleo OR vacante site:indeed.com OR site:computrabajo.com OR site:empleate.cr Costa Rica",
         'gl': 'cr', 
         'num': 10 # Pedimos mas para filtrar

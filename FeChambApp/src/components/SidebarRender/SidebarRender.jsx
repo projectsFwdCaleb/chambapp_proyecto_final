@@ -217,7 +217,7 @@ function SidebarRender() {
         {/* Sección del menú general*/}
         <div className='generalMenu'>
             <h3 className='text-muted'> General</h3>
-            <button><FontAwesomeIcon icon={faGear} />Ajustes</button>
+            
             <button onClick={() => handleAboutButton()}>Sobre nosotros</button>
         </div>
     </div>

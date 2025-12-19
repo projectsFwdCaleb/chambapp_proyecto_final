@@ -16,7 +16,7 @@ function JobSuggestions({ initialQuery }) {
             const results = await ServicesJobs.getJobSuggestions(searchQuery);
             setJobs(results);
         } catch (err) {
-            setError("No se pudieron cargar las ofertas.");
+            setError(err.message || "No se pudieron cargar las ofertas.");
         } finally {
             setLoading(false);
         }
